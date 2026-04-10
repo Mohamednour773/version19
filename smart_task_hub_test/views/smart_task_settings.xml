@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Smart Task Hub Settings — Standalone Form (no inheritance headaches)
+        Uses res.config.settings with a dedicated action window
+    -->
+
+    <!-- Dedicated settings view — no xpath, no inheritance issues -->
+    <record id="smart_task_settings_view_form" model="ir.ui.view">
+        <field name="name">smart.task.hub.settings.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <form string="Smart Task Hub — Settings" class="oe_form_configuration">
+                <header>
+                    <button string="Save" type="object"
+                            name="execute" class="btn-primary"/>
+                    <button string="Discard" type="object"
+                            name="cancel" class="btn-secondary"
+                            special="cancel"/>
+                </header>
+                <sheet>
+                    <div class="app_settings_block">
+
+                        <h2>🤖 AI Configuration</h2>
+                        <div class="row mt16 o_settings_container">
+
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_openai_api_key"
+                                           string="OpenAI API Key"/>
+                                    <div class="text-muted">
+                                        Get from platform.openai.com
+                                    </div>
+                                    <field name="smart_openai_api_key"
+                                           password="true"/>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_anthropic_api_key"
+                                           string="Anthropic (Claude) API Key"/>
+                                    <div class="text-muted">
+                                        Get from console.anthropic.com
+                                    </div>
+                                    <field name="smart_anthropic_api_key"
+                                           password="true"/>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_openai_model"
+                                           string="OpenAI Model"/>
+                                    <div class="text-muted">
+                                        e.g. gpt-4o or gpt-4o-mini
+                                    </div>
+                                    <field name="smart_openai_model"/>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_claude_model"
+                                           string="Claude Model"/>
+                                    <div class="text-muted">
+                                        e.g. claude-opus-4-5-20251001
+                                    </div>
+                                    <field name="smart_claude_model"/>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <h2>⚙️ Behavior</h2>
+                        <div class="row mt16 o_settings_container">
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane">
+                                    <field name="smart_auto_analyze"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_auto_analyze"
+                                           string="Auto-Analyze on Task Create"/>
+                                    <div class="text-muted">
+                                        Automatically trigger AI analysis
+                                        when a task is created
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_odoo_version" string="Odoo Version"/>
+                                    <div class="text-muted">AI searches docs and forum for this exact version</div>
+                                    <field name="smart_odoo_version"/>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_openai_model" string="AI Model"/>
+                                    <div class="text-muted">o4-mini = deep thinking. GPT-4o = faster.</div>
+                                    <field name="smart_openai_model"/>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <h2>🎤 Voice &amp; Vision</h2>
+                        <div class="row mt16 o_settings_container">
+
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_whisper_model" string="Whisper Model"/>
+                                    <div class="text-muted">OpenAI Whisper model for voice transcription (default: whisper-1)</div>
+                                    <field name="smart_whisper_model"/>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_vision_model" string="Vision Model (GPT-4V)"/>
+                                    <div class="text-muted">OpenAI model for screenshot analysis (default: gpt-4o)</div>
+                                    <field name="smart_vision_model"/>
+                                </div>
+                            </div>
+
+
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_whisper_language" string="Voice Language Code"/>
+                                    <div class="text-muted">ar = Arabic, en = English, fr = French. Leave empty for auto-detect.</div>
+                                    <field name="smart_whisper_language"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h2>👥 Default Assignment</h2>
+                        <div class="row mt16 o_settings_container">
+
+                            <div class="col-12 col-lg-4 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_default_functional_user"
+                                           string="Default Functional Consultant"/>
+                                    <field name="smart_default_functional_user"/>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-4 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_default_developer_user"
+                                           string="Default Developer"/>
+                                    <field name="smart_default_developer_user"/>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-4 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <label for="smart_default_support_user"
+                                           string="Default Support Agent"/>
+                                    <field name="smart_default_support_user"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open Smart Task Hub settings -->
+    <record id="action_smart_task_settings" model="ir.actions.act_window">
+        <field name="name">⚙️ Smart Task Hub Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="smart_task_settings_view_form"/>
+        <field name="target">current</field>
+        <field name="context">{'module' : 'smart_task_hub_test'}</field>
+    </record>
+
+</odoo>
