@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_generate_sessions_wizard_form" model="ir.ui.view">
+        <field name="name">club.generate.sessions.wizard.form</field>
+        <field name="model">club.generate.sessions.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate Recurring Sessions">
+                <group>
+                    <group string="Class">
+                        <field name="class_id" readonly="1"/>
+                        <field name="trainer_id" readonly="1"/>
+                    </group>
+                    <group string="Schedule">
+                        <field name="time_start" widget="float_time" readonly="1"/>
+                        <field name="time_end" widget="float_time" readonly="1"/>
+                    </group>
+                </group>
+                <group>
+                    <group string="Date Range">
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                    </group>
+                    <group string="Options">
+                        <field name="skip_existing"/>
+                        <field name="preview_count" readonly="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_generate" string="Generate Sessions" type="object"
+                            class="btn-primary" data-hotkey="s"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

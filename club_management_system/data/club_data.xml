@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ═══════════════════════════════════════════
+             SEQUENCES
+        ═══════════════════════════════════════════ -->
+
+        <record id="seq_club_trainer" model="ir.sequence">
+            <field name="name">Club Trainer</field>
+            <field name="code">club.trainer</field>
+            <field name="prefix">TRN/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_club_package" model="ir.sequence">
+            <field name="name">Club Package</field>
+            <field name="code">club.package</field>
+            <field name="prefix">PKG/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_club_membership" model="ir.sequence">
+            <field name="name">Club Membership</field>
+            <field name="code">club.membership</field>
+            <field name="prefix">MEM/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_club_class" model="ir.sequence">
+            <field name="name">Club Class</field>
+            <field name="code">club.class</field>
+            <field name="prefix">CLS/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_club_rental" model="ir.sequence">
+            <field name="name">Club Rental</field>
+            <field name="code">club.rental</field>
+            <field name="prefix">RNT/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- ═══════════════════════════════════════════
+             SCHEDULED ACTIONS (CRON)
+        ═══════════════════════════════════════════ -->
+
+        <!-- Daily: expire memberships past their end date -->
+        <record id="cron_expire_memberships" model="ir.cron">
+            <field name="name">Club: Auto-expire Memberships</field>
+            <field name="model_id" ref="model_club_membership"/>
+            <field name="code">model._cron_check_expired_memberships()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

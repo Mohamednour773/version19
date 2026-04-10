@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ════════════════════════════════════
+         CALENDAR VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_rental_calendar" model="ir.ui.view">
+        <field name="name">club.rental.calendar</field>
+        <field name="model">club.rental</field>
+        <field name="arch" type="xml">
+            <calendar string="Facility Bookings" date_start="date_start" date_stop="date_end"
+                      color="facility_id" mode="week" event_limit="5">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="facility_id"/>
+                <field name="branch_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         TREE VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_rental_tree" model="ir.ui.view">
+        <field name="name">club.rental.tree</field>
+        <field name="model">club.rental</field>
+        <field name="arch" type="xml">
+            <list string="Rentals / Bookings"
+                  decoration-success="state == 'done'"
+                  decoration-info="state == 'confirmed'"
+                  decoration-primary="state == 'in_use'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="branch_id"/>
+                <field name="facility_id"/>
+                <field name="facility_type" optional="show"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="duration_hours"/>
+                <field name="total_price"/>
+                <field name="payment_method" optional="show"/>
+                <field name="payment_state" widget="badge"
+                       decoration-success="payment_state == 'paid'"
+                       decoration-warning="payment_state == 'partial'"
+                       decoration-danger="payment_state == 'not_paid'"
+                       optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-info="state == 'confirmed'"
+                       decoration-primary="state == 'in_use'"
+                       decoration-muted="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         FORM VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_rental_form" model="ir.ui.view">
+        <field name="name">club.rental.form</field>
+        <field name="model">club.rental</field>
+        <field name="arch" type="xml">
+            <form string="Facility Booking">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object"
+                            invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_start" string="Check In" type="object"
+                            invisible="state != 'confirmed'" class="btn-success"/>
+                    <button name="action_create_invoice" string="Create Invoice" type="object"
+                            invisible="state not in ('confirmed', 'in_use', 'done') or invoice_id != False"
+                            class="btn-info"/>
+                    <button name="action_done" string="Complete" type="object"
+                            invisible="state != 'in_use'" class="btn-primary"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ('done', 'cancelled')"
+                            confirm="Cancel this booking?"/>
+                    <button name="action_reset_draft" string="Reset to Draft" type="object"
+                            invisible="state not in ('cancelled',)"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,in_use,done"/>
+                </header>
+                <sheet>
+                    <!-- Fields required by modifiers but not displayed directly -->
+                    <field name="invoice_id" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_create_invoice"
+                                class="oe_stat_button" icon="fa-file-text-o"
+                                invisible="invoice_id == False">
+                            <span class="o_stat_text">View Invoice</span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Booking Details">
+                            <field name="partner_id"/>
+                            <field name="branch_id"/>
+                            <field name="facility_id"
+                                   domain="[('branch_id', '=', branch_id)]"/>
+                            <field name="facility_type" readonly="1"/>
+                            <field name="lane_section" readonly="1"/>
+                        </group>
+                        <group string="Trainer (Optional)">
+                            <field name="has_trainer"/>
+                            <field name="trainer_id"
+                                   invisible="not has_trainer"
+                                   domain="[('branch_id', '=', branch_id)]"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Time Slot">
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="duration_hours" readonly="1"/>
+                        </group>
+                        <group string="Pricing">
+                            <field name="price_per_hour" readonly="1"/>
+                            <field name="total_price" readonly="1"/>
+                            <field name="payment_method"/>
+                            <field name="payment_state" readonly="1" invisible="invoice_id == False"/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Notes..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         SEARCH VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_rental_search" model="ir.ui.view">
+        <field name="name">club.rental.search</field>
+        <field name="model">club.rental</field>
+        <field name="arch" type="xml">
+            <search string="Bookings">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="branch_id"/>
+                <field name="facility_id"/>
+                <separator/>
+                <filter string="Confirmed" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="In Use" name="in_use" domain="[('state', '=', 'in_use')]"/>
+                <filter string="Done" name="done" domain="[('state', '=', 'done')]"/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <separator/>
+                <filter string="Unpaid" name="unpaid"
+                        domain="[('payment_state', 'in', ['not_paid', False]),
+                                 ('state', 'not in', ['cancelled'])]"/>
+                <filter string="Today" name="today"
+                        domain="[('date_start', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00')),
+                                 ('date_start', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+                <group>
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                    <filter string="Facility" name="group_facility" context="{'group_by': 'facility_id'}"/>
+                    <filter string="Facility Type" name="group_type" context="{'group_by': 'facility_type'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'date_start:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         ACTION
+    ════════════════════════════════════ -->
+    <record id="action_club_rental" model="ir.actions.act_window">
+        <field name="name">Facility Bookings</field>
+        <field name="res_model">club.rental</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="search_view_id" ref="view_club_rental_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No bookings yet!</p>
+            <p>Book facilities (pools, lanes, courts) with time-slot based scheduling.</p>
+        </field>
+    </record>
+
+</odoo>

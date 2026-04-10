@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ════════════════════════════════════
+         TREE VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_membership_tree" model="ir.ui.view">
+        <field name="name">club.membership.tree</field>
+        <field name="model">club.membership</field>
+        <field name="arch" type="xml">
+            <list string="Memberships"
+                  decoration-success="state == 'active'"
+                  decoration-warning="state == 'suspended'"
+                  decoration-danger="state == 'expired'"
+                  decoration-muted="state in ('cancelled', 'draft')">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="branch_id"/>
+                <field name="package_id"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="sessions_used" string="Used"/>
+                <field name="sessions_remaining" string="Remaining"/>
+                <field name="progress_pct" string="Progress" widget="progressbar"/>
+                <field name="payment_state" widget="badge"
+                       decoration-success="payment_state == 'paid'"
+                       decoration-warning="payment_state == 'partial'"
+                       decoration-danger="payment_state == 'not_paid'"
+                       optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'suspended'"
+                       decoration-danger="state in ('expired', 'cancelled')"
+                       decoration-info="state == 'confirmed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         FORM VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_membership_form" model="ir.ui.view">
+        <field name="name">club.membership.form</field>
+        <field name="model">club.membership</field>
+        <field name="arch" type="xml">
+            <form string="Membership">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object"
+                            invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_activate" string="Activate" type="object"
+                            invisible="state not in ('draft', 'confirmed')" class="btn-success"/>
+                    <button name="action_suspend" string="Suspend" type="object"
+                            invisible="state != 'active'"/>
+                    <button name="action_expire" string="Mark Expired" type="object"
+                            invisible="state not in ('active', 'suspended')"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ('cancelled', 'expired', 'done')"
+                            confirm="Are you sure you want to cancel this membership?"/>
+                    <button name="action_reset_draft" string="Reset to Draft" type="object"
+                            invisible="state not in ('cancelled',)"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,active,expired"/>
+                </header>
+                <sheet>
+                    <!-- Fields required by modifiers but not displayed directly -->
+                    <field name="invoice_id" invisible="1"/>
+                    <field name="payment_state" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_create_invoice" type="object"
+                                class="oe_stat_button" icon="fa-dollar"
+                                invisible="invoice_id != False">
+                            <span class="o_stat_text">Create Invoice</span>
+                        </button>
+                        <button type="object" name="action_create_invoice"
+                                class="oe_stat_button" icon="fa-file-text-o"
+                                invisible="invoice_id == False">
+                            <span class="o_stat_text">View Invoice</span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Client">
+                            <field name="partner_id"
+                                   context="{'default_is_club_client': True}"/>
+                            <field name="is_child" readonly="1"/>
+                            <field name="parent_partner_id" readonly="1"
+                                   invisible="not is_child"/>
+                        </group>
+                        <group string="Package">
+                            <field name="branch_id"/>
+                            <field name="package_id"/>
+                            <field name="price" readonly="1"/>
+                            <field name="payment_method"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Schedule">
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                        <group string="Session Tracker">
+                            <field name="total_sessions" readonly="1"/>
+                            <field name="sessions_per_week" readonly="1"/>
+                            <field name="sessions_used" readonly="1"/>
+                            <field name="sessions_remaining" readonly="1"/>
+                            <field name="sessions_enrolled_total" readonly="1"/>
+                            <field name="sessions_this_week" readonly="1"/>
+                            <field name="progress_pct" readonly="1" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Attendance" name="attendance">
+                            <field name="attendance_ids">
+                                <list decoration-success="state == 'attended'"
+                                      decoration-danger="state == 'absent'"
+                                      decoration-warning="state == 'excused'">
+                                    <field name="date"/>
+                                    <field name="session_id"/>
+                                    <field name="trainer_id"/>
+                                    <field name="check_in"/>
+                                    <field name="check_out"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'attended'"
+                                           decoration-danger="state == 'absent'"
+                                           decoration-warning="state == 'excused'"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         SEARCH VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_membership_search" model="ir.ui.view">
+        <field name="name">club.membership.search</field>
+        <field name="model">club.membership</field>
+        <field name="arch" type="xml">
+            <search string="Memberships">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="branch_id"/>
+                <field name="package_id"/>
+                <separator/>
+                <filter string="Active" name="active_mem" domain="[('state', '=', 'active')]"/>
+                <filter string="Confirmed" name="confirmed_mem" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="Draft" name="draft_mem" domain="[('state', '=', 'draft')]"/>
+                <filter string="Expired" name="expired_mem" domain="[('state', '=', 'expired')]"/>
+                <filter string="Suspended" name="suspended_mem" domain="[('state', '=', 'suspended')]"/>
+                <separator/>
+                <filter string="Children" name="children" domain="[('is_child', '=', True)]"/>
+                <filter string="Unpaid" name="unpaid"
+                        domain="[('payment_state', 'in', ('not_paid', False))]"/>
+                <group>
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                    <filter string="Package" name="group_package" context="{'group_by': 'package_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Start Date" name="group_start" context="{'group_by': 'date_start:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         ACTION
+    ════════════════════════════════════ -->
+    <record id="action_club_membership" model="ir.actions.act_window">
+        <field name="name">Memberships</field>
+        <field name="res_model">club.membership</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_club_membership_search"/>
+        <field name="context">{'search_default_active_mem': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register the first membership!</p>
+            <p>Memberships link clients to packages and track their sessions.</p>
+        </field>
+    </record>
+
+</odoo>

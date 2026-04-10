@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ════════════════════════════════════
+         TREE VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_trainer_tree" model="ir.ui.view">
+        <field name="name">club.trainer.tree</field>
+        <field name="model">club.trainer</field>
+        <field name="arch" type="xml">
+            <list string="Trainers" decoration-muted="not active">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="specialization"/>
+                <field name="employee_type"/>
+                <field name="commission_pct" string="Commission %"/>
+                <field name="phone"/>
+                <field name="class_count" string="Classes"/>
+                <field name="session_count" string="Sessions"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         FORM VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_trainer_form" model="ir.ui.view">
+        <field name="name">club.trainer.form</field>
+        <field name="model">club.trainer</field>
+        <field name="arch" type="xml">
+            <form string="Trainer">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_sessions" type="object"
+                                class="oe_stat_button" icon="fa-calendar-check-o">
+                            <field name="session_count" widget="statinfo" string="Sessions"/>
+                        </button>
+                        <button name="action_view_commissions" type="object"
+                                class="oe_stat_button" icon="fa-money">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="total_commission" widget="monetary"/>
+                                </span>
+                                <span class="o_stat_text">Total Commission</span>
+                            </div>
+                        </button>
+                        <button name="action_create_commission_bill" type="object"
+                                class="oe_stat_button" icon="fa-credit-card">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="pending_commission" widget="monetary"/>
+                                </span>
+                                <span class="o_stat_text">Pay All</span>
+                            </div>
+                        </button>
+                    </div>
+                    <field name="pending_commission" invisible="1"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                            invisible="active"/>
+                    <field name="image_1920" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Trainer Name"/></h1>
+                        <field name="code" class="text-muted"/>
+                    </div>
+                    <group>
+                        <group string="Details">
+                            <field name="partner_id"/>
+                            <field name="user_id"/>
+                            <field name="branch_id"/>
+                            <field name="specialization"/>
+                            <field name="employee_type"/>
+                            <field name="hire_date"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Commission">
+                            <field name="commission_pct" widget="percentage"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Commissions" name="commissions">
+                            <field name="commission_ids">
+                                <list editable="bottom" decoration-success="state == 'paid'"
+                                      decoration-info="state == 'confirmed'"
+                                      decoration-muted="state == 'draft'">
+                                    <field name="date"/>
+                                    <field name="session_id"/>
+                                    <field name="attended_count"/>
+                                    <field name="session_revenue"/>
+                                    <field name="commission_pct" string="%"/>
+                                    <field name="amount"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Internal notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         SEARCH VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_trainer_search" model="ir.ui.view">
+        <field name="name">club.trainer.search</field>
+        <field name="model">club.trainer</field>
+        <field name="arch" type="xml">
+            <search string="Trainers">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="branch_id"/>
+                <field name="partner_id"/>
+                <separator/>
+                <filter string="Full Time" name="full_time"
+                        domain="[('employee_type', '=', 'full_time')]"/>
+                <filter string="Part Time" name="part_time"
+                        domain="[('employee_type', '=', 'part_time')]"/>
+                <filter string="Freelance" name="freelance"
+                        domain="[('employee_type', '=', 'freelance')]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                    <filter string="Specialization" name="group_spec" context="{'group_by': 'specialization'}"/>
+                    <filter string="Employment Type" name="group_emp" context="{'group_by': 'employee_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         COMMISSION KANBAN (Odoo 19 card style)
+    ════════════════════════════════════ -->
+    <record id="view_club_trainer_commission_kanban" model="ir.ui.view">
+        <field name="name">club.trainer.commission.kanban</field>
+        <field name="model">club.trainer.commission</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="trainer_id"/>
+                <field name="date"/>
+                <field name="amount"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <field name="trainer_id" class="fw-bold d-block"/>
+                        <div class="text-muted"><field name="date"/></div>
+                        <div>Amount: <field name="amount" widget="monetary"/></div>
+                        <field name="state" widget="badge"
+                               decoration-success="state == 'paid'"
+                               decoration-info="state == 'confirmed'"
+                               decoration-warning="state == 'draft'"/>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         COMMISSION TREE (standalone)
+    ════════════════════════════════════ -->
+    <record id="view_club_trainer_commission_tree" model="ir.ui.view">
+        <field name="name">club.trainer.commission.tree</field>
+        <field name="model">club.trainer.commission</field>
+        <field name="arch" type="xml">
+            <list string="Commissions"
+                  decoration-success="state == 'paid'"
+                  decoration-info="state == 'confirmed'"
+                  decoration-muted="state == 'draft'">
+                <field name="date"/>
+                <field name="trainer_id"/>
+                <field name="branch_id"/>
+                <field name="session_id"/>
+                <field name="attended_count"/>
+                <field name="session_revenue"/>
+                <field name="commission_pct" string="%"/>
+                <field name="amount"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'paid'"
+                       decoration-info="state == 'confirmed'"
+                       decoration-warning="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_club_trainer_commission_form" model="ir.ui.view">
+        <field name="name">club.trainer.commission.form</field>
+        <field name="model">club.trainer.commission</field>
+        <field name="arch" type="xml">
+            <form string="Commission Record">
+                <header>
+                    <!-- Step 1: Confirm the commission -->
+                    <button name="action_confirm" string="Confirm" type="object"
+                            invisible="state != 'draft'" class="btn-primary"/>
+                    <!-- Step 2a: Create Vendor Bill (pay via Odoo accounting) -->
+                    <button name="action_create_bill" string="Create Vendor Bill" type="object"
+                            invisible="state != 'confirmed' or move_id != False"
+                            class="btn-success"/>
+                    <!-- Step 2b: OR mark paid manually (cash outside Odoo) -->
+                    <button name="action_mark_paid" string="Mark Paid (Manual)" type="object"
+                            invisible="state != 'confirmed'"
+                            confirm="Mark this commission as paid without creating a bill?"/>
+                    <button name="action_reset_draft" string="Reset to Draft" type="object"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,paid"/>
+                </header>
+                <sheet>
+                    <field name="move_id" invisible="1"/>
+                    <!-- Smart button to open the linked bill -->
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_create_bill"
+                                class="oe_stat_button" icon="fa-file-text-o"
+                                invisible="move_id == False">
+                            <span class="o_stat_text">View Bill</span>
+                        </button>
+                    </div>
+                    <div class="alert alert-info" role="alert" invisible="state != 'confirmed' or move_id != False">
+                        <strong>Next step:</strong> Click <em>Create Vendor Bill</em> to generate
+                        a payable bill in Odoo Accounting, then register the payment there.
+                        Or use <em>Mark Paid (Manual)</em> if you paid in cash outside Odoo.
+                    </div>
+                    <div class="alert alert-success" role="alert" invisible="bill_payment_state != 'paid'">
+                        ✅ Vendor bill is fully paid. This commission will be automatically marked as Paid.
+                    </div>
+                    <group>
+                        <group string="Commission Details">
+                            <field name="trainer_id"/>
+                            <field name="branch_id" readonly="1"/>
+                            <field name="session_id"/>
+                            <field name="date"/>
+                        </group>
+                        <group string="Calculation">
+                            <field name="attended_count"/>
+                            <field name="session_revenue"/>
+                            <field name="commission_pct" widget="percentage"/>
+                            <field name="amount" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Linked Bill">
+                        <field name="bill_payment_state" readonly="1" invisible="move_id == False"/>
+                    </group>
+                    <field name="notes" placeholder="Notes..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         ACTIONS
+    ════════════════════════════════════ -->
+    <record id="action_club_trainer" model="ir.actions.act_window">
+        <field name="name">Trainers</field>
+        <field name="res_model">club.trainer</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_club_trainer_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add your first trainer!</p>
+        </field>
+    </record>
+
+    <record id="action_club_trainer_commission" model="ir.actions.act_window">
+        <field name="name">Trainer Commissions</field>
+        <field name="res_model">club.trainer.commission</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No commission records yet.</p>
+        </field>
+    </record>
+
+</odoo>
