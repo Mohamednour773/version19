@@ -1,9 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_smart_task_user,smart.task user,model_smart_task,base.group_user,1,1,1,0
-access_smart_task_manager,smart.task manager,model_smart_task,base.group_system,1,1,1,1
-access_smart_ai_log,smart.ai.log,model_smart_ai_log,base.group_user,1,0,0,0
-access_smart_ai_log_admin,smart.ai.log admin,model_smart_ai_log,base.group_system,1,1,1,1
-access_smart_knowledge_base,smart.knowledge.base,model_smart_knowledge_base,base.group_user,1,1,1,0
-access_smart_knowledge_base_admin,smart.knowledge.base admin,model_smart_knowledge_base,base.group_system,1,1,1,1
-
-access_smart_excel_generator,smart.excel.generator,model_smart_excel_generator,base.group_user,1,1,1,1
