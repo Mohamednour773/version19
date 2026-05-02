@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form View ─────────────────────────────────────────────────────── -->
+    <record id="view_pdc_clear_wizard_form" model="ir.ui.view">
+        <field name="name">pdc.clear.wizard.form</field>
+        <field name="model">pdc.clear.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Mark Checks as Cleared">
+                <field name="multi_currency" invisible="1"/>
+                <group>
+                    <group string="Checks to Clear">
+                        <field name="check_ids" widget="many2many_tags"
+                               options="{'no_create': True}" nolabel="1"/>
+                        <field name="check_count" string="Selected" readonly="1"/>
+                    </group>
+                    <group string="Clearance Details">
+                        <field name="clear_date"/>
+                    </group>
+                </group>
+
+                <!-- Single-currency total -->
+                <div class="alert alert-success" role="alert"
+                     invisible="check_count == 0 or multi_currency">
+                    <i class="fa fa-check-circle"/>
+                    Clearing
+                    <strong><field name="check_count" readonly="1" nolabel="1"/></strong>
+                    check(s) totalling
+                    <strong>
+                        <field name="total_amount" widget="monetary"
+                               options="{'currency_field': 'currency_id'}"
+                               readonly="1" nolabel="1"/>
+                    </strong>.
+                    Each check will transition to "Cleared" and a bank clearance
+                    entry will be created.
+                </div>
+
+                <!-- Multi-currency notice -->
+                <div class="alert alert-info" role="alert"
+                     invisible="not multi_currency">
+                    <i class="fa fa-info-circle"/>
+                    The selected checks span multiple currencies. Each check will be
+                    cleared independently using its own currency.
+                </div>
+
+                <footer>
+                    <button name="action_clear" string="Mark Cleared" type="object"
+                            class="btn-primary" invisible="check_count == 0"/>
+                    <button special="cancel" string="Cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Window Action ─────────────────────────────────────────────────── -->
+    <record id="action_pdc_clear_wizard" model="ir.actions.act_window">
+        <field name="name">Clear Checks</field>
+        <field name="res_model">pdc.clear.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

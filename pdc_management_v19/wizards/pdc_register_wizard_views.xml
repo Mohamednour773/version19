@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form View ─────────────────────────────────────────────────────── -->
+    <record id="view_pdc_register_wizard_form" model="ir.ui.view">
+        <field name="name">pdc.register.wizard.form</field>
+        <field name="model">pdc.register.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Register Checks">
+                <div class="o_form_view">
+                    <group>
+                        <group string="Checks to Register">
+                            <field name="check_ids" widget="many2many_tags"
+                                   options="{'no_create': True, 'no_open': False}"
+                                   nolabel="1"/>
+                            <field name="check_count" string="Selected" readonly="1"/>
+                        </group>
+                        <group string="Options">
+                            <field name="invoice_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"
+                                   string="Link to Invoices"/>
+                            <field name="notes" placeholder="Optional registration note..."/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert"
+                         invisible="check_count == 0">
+                        <i class="fa fa-info-circle"/> Registering
+                        <strong><field name="check_count" readonly="1" nolabel="1"/></strong>
+                        check(s). Each check will transition from Draft → Registered
+                        and an opening journal entry will be created.
+                    </div>
+                </div>
+                <footer>
+                    <button name="action_register" string="Register" type="object"
+                            class="btn-primary" invisible="check_count == 0"/>
+                    <button special="cancel" string="Cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Window Action ─────────────────────────────────────────────────── -->
+    <record id="action_pdc_register_wizard" model="ir.actions.act_window">
+        <field name="name">Register Checks</field>
+        <field name="res_model">pdc.register.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

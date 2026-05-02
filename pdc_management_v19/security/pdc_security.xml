@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ======================================================================
+         SECURITY GROUPS
+         pdc_user      → can create/edit checks, read configuration
+         pdc_manager   → pdc_user + can cancel, manage books, approve
+         pdc_accountant→ pdc_manager + can delete audit logs, manage settings
+    ====================================================================== -->
+
+    <record id="group_pdc_user" model="res.groups">
+        <field name="name">PDC User</field>
+        <field name="implied_ids" eval="[(4, ref('account.group_account_invoice'))]"/>
+    </record>
+
+    <record id="group_pdc_manager" model="res.groups">
+        <field name="name">PDC Manager</field>
+        <field name="implied_ids" eval="[(4, ref('pdc_management_v19.group_pdc_user'))]"/>
+    </record>
+
+    <record id="group_pdc_accountant" model="res.groups">
+        <field name="name">PDC Accountant</field>
+        <field name="implied_ids" eval="[
+            (4, ref('pdc_management_v19.group_pdc_manager')),
+            (4, ref('account.group_account_manager')),
+        ]"/>
+    </record>
+
+    <!-- ======================================================================
+         MULTI-COMPANY RECORD RULES
+         All PDC records are isolated by company_id using the built-in
+         company_ids context variable (includes all user-allowed companies).
+    ====================================================================== -->
+
+    <record id="rule_pdc_check_company" model="ir.rule">
+        <field name="name">PDC Check: Multi-Company</field>
+        <field name="model_id" ref="model_pdc_check"/>
+        <field name="groups" eval="[(4, ref('pdc_management_v19.group_pdc_user'))]"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_pdc_check_book_company" model="ir.rule">
+        <field name="name">PDC Check Book: Multi-Company</field>
+        <field name="model_id" ref="model_pdc_check_book"/>
+        <field name="groups" eval="[(4, ref('pdc_management_v19.group_pdc_user'))]"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_pdc_check_operation_company" model="ir.rule">
+        <field name="name">PDC Operation: Multi-Company</field>
+        <field name="model_id" ref="model_pdc_check_operation"/>
+        <field name="groups" eval="[(4, ref('pdc_management_v19.group_pdc_user'))]"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Inherit account.payment form — add PDC check link ─────────────── -->
+    <record id="view_account_payment_form_pdc" model="ir.ui.view">
+        <field name="name">account.payment.form.pdc</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <!-- Add pdc_check_id field after the amount (ref removed in Odoo 19) -->
+            <xpath expr="//field[@name='amount']" position="after">
+                <field name="is_pdc" invisible="1"/>
+                <field name="pdc_check_id"
+                       readonly="1"
+                       invisible="not is_pdc"
+                       options="{'no_create': True, 'no_open': False}"
+                       help="PDC check that generated this payment."/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ── Inherit account.payment list — add PDC check column ───────────── -->
+    <record id="view_account_payment_list_pdc" model="ir.ui.view">
+        <field name="name">account.payment.list.pdc</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="is_pdc" column_invisible="1"/>
+                <field name="pdc_check_id" optional="show"
+                       invisible="not is_pdc"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

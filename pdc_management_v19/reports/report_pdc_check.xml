@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PDC CHECK PRINT  (printed on physical bank check paper)
+
+         The layout coordinates (X/Y in mm) are read from pdc.bank.layout.
+         If no layout exists for the check's bank, sensible defaults are used
+         so the report never crashes silently.
+
+         Design notes
+         ─────────────
+         • Uses web.html_container only — no company header; this goes
+           directly on the bank's pre-printed check leaf.
+         • Each field is positioned absolute at layout.field_x / field_y mm.
+         • @page size is derived from layout.paper_width × layout.paper_height
+           (defaults: 210 × 100 mm landscape — typical Egyptian/Saudi check).
+         • wkhtmltopdf honours inline @page { size } when no page-size flag
+           overrides it; Odoo 17 passes the page size via the paperformat record,
+           so we create a dedicated "PDC Check Paper" paperformat with no fixed
+           size that lets the CSS @page take control.
+         • For Arabic printing (layout.use_arabic = True) the check fields
+           are output in Arabic and the page direction is RTL.
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Static fallback paper format ────────────────────────────────────
+         Used ONLY when IrActionsReportPDC cannot resolve a layout (e.g. the
+         check has no bank_id set).  For normal prints the Python override in
+         models/ir_actions_report_pdc.py creates or looks up a per-layout
+         report.paperformat record with exact dimensions and returns it from
+         get_paperformat(), so this record is bypassed entirely.
+         Dimensions here are the most common Egyptian/Saudi bank-check size.
+    ── -->
+    <record id="paperformat_pdc_check" model="report.paperformat">
+        <field name="name">PDC Check Paper (fallback 210×100 mm)</field>
+        <field name="format">custom</field>
+        <field name="page_height">100</field>
+        <field name="page_width">210</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">0</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line">False</field>
+        <field name="header_spacing">0</field>
+        <field name="dpi">96</field>
+    </record>
+
+    <!-- ── Report action ─────────────────────────────────────────────────── -->
+    <record id="action_report_pdc_check" model="ir.actions.report">
+        <field name="name">Print Check</field>
+        <field name="model">pdc.check</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pdc_management_v19.report_pdc_check_document</field>
+        <field name="report_file">pdc_management_v19.report_pdc_check_document</field>
+        <field name="print_report_name">'Check - ' + (object.check_number or object.name or '')</field>
+        <field name="binding_model_id" ref="model_pdc_check"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_pdc_check"/>
+    </record>
+
+    <!-- ── QWeb template ─────────────────────────────────────────────────── -->
+    <template id="report_pdc_check_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="check">
+
+                <!-- Resolve layout; fall back to safe defaults -->
+                <t t-set="lyt" t-value="layout_map.get(check.id)"/>
+
+                <!-- Paper dimensions -->
+                <t t-set="pw" t-value="lyt.paper_width  if lyt else 210.0"/>
+                <t t-set="ph" t-value="lyt.paper_height if lyt else 100.0"/>
+
+                <!-- Field coordinates -->
+                <t t-set="date_x"  t-value="lyt.date_x  if lyt else 158.0"/>
+                <t t-set="date_y"  t-value="lyt.date_y  if lyt else 22.0"/>
+                <t t-set="payee_x" t-value="lyt.payee_x if lyt else 35.0"/>
+                <t t-set="payee_y" t-value="lyt.payee_y if lyt else 38.0"/>
+                <t t-set="words_x" t-value="lyt.amount_words_x        if lyt else 35.0"/>
+                <t t-set="words_y" t-value="lyt.amount_words_y        if lyt else 53.0"/>
+                <t t-set="words_w" t-value="lyt.amount_words_max_width if lyt else 130.0"/>
+                <t t-set="nums_x"  t-value="lyt.amount_numbers_x if lyt else 165.0"/>
+                <t t-set="nums_y"  t-value="lyt.amount_numbers_y if lyt else 53.0"/>
+                <t t-set="city_x"  t-value="lyt.city_x if lyt else 35.0"/>
+                <t t-set="city_y"  t-value="lyt.city_y if lyt else 22.0"/>
+
+                <!-- Typography -->
+                <t t-set="ff"  t-value="lyt.font_family if lyt else 'Arial'"/>
+                <t t-set="fs"  t-value="lyt.font_size   if lyt else 11"/>
+                <t t-set="use_ar" t-value="lyt.use_arabic if lyt else False"/>
+
+                <!-- Date: Hijri if company setting is on, else Gregorian per layout format -->
+                <t t-set="use_hijri"
+                   t-value="check.company_id.pdc_use_hijri and bool(check.due_date_hijri)"/>
+                <t t-if="use_hijri">
+                    <t t-set="date_str" t-value="check.due_date_hijri or ''"/>
+                </t>
+                <t t-else="">
+                    <!-- Respect layout date_format (DD/MM/YYYY or YYYY/MM/DD) -->
+                    <t t-set="dfmt"
+                       t-value="lyt.date_format if lyt and lyt.date_format else 'DD/MM/YYYY'"/>
+                    <t t-if="check.due_date">
+                        <t t-if="dfmt == 'YYYY/MM/DD'">
+                            <t t-set="date_str"
+                               t-value="check.due_date.strftime('%Y/%m/%d')"/>
+                        </t>
+                        <t t-else="">
+                            <t t-set="date_str"
+                               t-value="check.due_date.strftime('%d/%m/%Y')"/>
+                        </t>
+                    </t>
+                    <t t-else="">
+                        <t t-set="date_str" t-value="''"/>
+                    </t>
+                </t>
+
+                <!-- Payee: for issued checks use payee_name if set -->
+                <t t-set="payee_str"
+                   t-value="check.payee_name if (check.check_type in ('issued','guarantee_issued') and check.payee_name) else (check.partner_id.name or '')"/>
+
+                <!-- Amount words (Arabic or English per layout) -->
+                <t t-set="words_str"
+                   t-value="(check.amount_in_words_ar if use_ar else check.amount_in_words) or ''"/>
+
+                <!-- Amount figures with asterisk fraud-prevention padding.
+                     Standard MENA banking practice: pad with leading/trailing
+                     asterisks so the printed amount cannot be extended.
+                     e.g.  ***50,000.00*** -->
+                <t t-set="nums_raw" t-value="'{:,.2f}'.format(check.amount)"/>
+                <t t-set="nums_str" t-value="'***' + nums_raw + '***'"/>
+
+                <!-- City (from company setting) -->
+                <t t-set="city_str"
+                   t-value="check.company_id.pdc_company_city or check.company_id.city or ''"/>
+
+                <!-- ── Dynamic CSS ──────────────────────────────────────── -->
+                <style>
+                    @page {
+                        size: <t t-out="pw"/>mm <t t-out="ph"/>mm;
+                        margin: 0mm;
+                    }
+                    body, html {
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .check-wrapper {
+                        position: relative;
+                        width: <t t-out="pw"/>mm;
+                        height: <t t-out="ph"/>mm;
+                        overflow: hidden;
+                        page-break-after: always;
+                    }
+                    .ck {
+                        position: absolute;
+                        font-family: '<t t-out="ff"/>', Arial, sans-serif;
+                        font-size: <t t-out="fs"/>pt;
+                        line-height: 1.2;
+                        white-space: nowrap;
+                    }
+                    .ck-words {
+                        position: absolute;
+                        font-family: '<t t-out="ff"/>', Arial, sans-serif;
+                        font-size: <t t-out="fs"/>pt;
+                        line-height: 1.4;
+                        white-space: normal;
+                    }
+                </style>
+
+                <div class="check-wrapper"
+                     t-att-dir="'rtl' if use_ar else 'ltr'">
+
+                    <!-- City / Place -->
+                    <t t-if="city_str">
+                        <span class="ck"
+                              t-att-style="'left:%smm; top:%smm;' % (city_x, city_y)">
+                            <t t-out="city_str"/>
+                        </span>
+                    </t>
+
+                    <!-- Date -->
+                    <span class="ck"
+                          t-att-style="'left:%smm; top:%smm;' % (date_x, date_y)">
+                        <t t-out="date_str"/>
+                    </span>
+
+                    <!-- Payee name -->
+                    <span class="ck"
+                          t-att-style="'left:%smm; top:%smm;' % (payee_x, payee_y)">
+                        <t t-out="payee_str"/>
+                    </span>
+
+                    <!-- Amount in words (may wrap — uses max-width) -->
+                    <span class="ck-words"
+                          t-att-style="'left:%smm; top:%smm; max-width:%smm;' % (words_x, words_y, words_w)">
+                        <t t-out="words_str"/>
+                    </span>
+
+                    <!-- Amount in figures -->
+                    <span class="ck"
+                          t-att-style="'left:%smm; top:%smm;' % (nums_x, nums_y)">
+                        <t t-out="nums_str"/>
+                    </span>
+
+                </div><!-- /check-wrapper -->
+
+            </t><!-- /foreach -->
+        </t><!-- /html_container -->
+    </template>
+
+    <record id="action_report_pdc_layout_test" model="ir.actions.report">
+        <field name="name">Layout Test Print</field>
+        <field name="model">pdc.bank.layout</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pdc_management_v19.report_pdc_layout_test_document</field>
+        <field name="report_file">pdc_management_v19.report_pdc_layout_test_document</field>
+        <field name="print_report_name">'Layout Test - ' + (object.name or '')</field>
+        <field name="paperformat_id" ref="paperformat_pdc_check"/>
+    </record>
+
+    <template id="report_pdc_layout_test_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="lyt">
+                <!-- Resolve actual page dimensions from layout format + orientation.
+                     The Python override in ir_actions_report_pdc.py sets the
+                     wkhtmltopdf CLI flags to match these same values, so the
+                     rendered PDF will be exactly pw × ph mm. -->
+                <t t-if="lyt.paper_format == 'custom'">
+                    <t t-set="pw" t-value="lyt.paper_width  or 210.0"/>
+                    <t t-set="ph" t-value="lyt.paper_height or 100.0"/>
+                </t>
+                <t t-elif="lyt.paper_format == 'a4'">
+                    <t t-set="pw" t-value="297.0 if lyt.orientation == 'landscape' else 210.0"/>
+                    <t t-set="ph" t-value="210.0 if lyt.orientation == 'landscape' else 297.0"/>
+                </t>
+                <t t-else=""><!-- a5 (default) -->
+                    <t t-set="pw" t-value="210.0 if lyt.orientation == 'landscape' else 148.0"/>
+                    <t t-set="ph" t-value="148.0 if lyt.orientation == 'landscape' else 210.0"/>
+                </t>
+                <t t-set="ff" t-value="lyt.font_family or 'Arial'"/>
+                <t t-set="fs" t-value="lyt.font_size or 11"/>
+                <style>
+                    @page { size: <t t-out="pw"/>mm <t t-out="ph"/>mm; margin: 0mm; }
+                    body, html { margin: 0; padding: 0; }
+                    .layout-test-page {
+                        position: relative;
+                        width: <t t-out="pw"/>mm;
+                        height: <t t-out="ph"/>mm;
+                        overflow: hidden;
+                        page-break-after: always;
+                        font-family: Arial, sans-serif;
+                        background-image:
+                            linear-gradient(to right, rgba(0,0,0,.12) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(0,0,0,.12) 1px, transparent 1px),
+                            linear-gradient(to right, rgba(0,87,160,.20) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(0,87,160,.20) 1px, transparent 1px);
+                        background-size: 5mm 5mm, 5mm 5mm, 10mm 10mm, 10mm 10mm;
+                    }
+                    .layout-title { position: absolute; left: 5mm; top: 4mm; padding: 1.5mm 2mm; background: rgba(255,255,255,.88); border: 0.3mm solid #1f4e79; font-size: 9pt; color: #1f4e79; }
+                    .marker { position: absolute; width: 3mm; height: 3mm; margin-left: -1.5mm; margin-top: -1.5mm; border-radius: 50%; background: #d7263d; border: .4mm solid #fff; }
+                    .label { position: absolute; margin-left: 2mm; margin-top: -3mm; padding: 1mm 1.4mm; background: rgba(255,255,255,.92); border: .25mm solid #555; font-size: 8pt; white-space: nowrap; }
+                    .sample { position: absolute; font-family: '<t t-out="ff"/>', Arial, sans-serif; font-size: <t t-out="fs"/>pt; padding: .5mm 1mm; background: rgba(255,255,210,.65); border: .2mm dashed #777; white-space: nowrap; }
+                    .words-sample { white-space: normal; line-height: 1.25; }
+                </style>
+                <div class="layout-test-page">
+                    <div class="layout-title">
+                        <strong>Layout Test Print</strong><br/>
+                        <span t-out="lyt.name"/> | <span t-out="lyt.bank_id.name"/><br/>
+                        Paper: <span t-out="pw"/>mm x <span t-out="ph"/>mm | Grid: 5mm / 10mm
+                    </div>
+                    <span class="marker" t-att-style="'left:%smm; top:%smm;' % (lyt.city_x, lyt.city_y)"/>
+                    <span class="label" t-att-style="'left:%smm; top:%smm;' % (lyt.city_x, lyt.city_y)">City (<t t-out="lyt.city_x"/>, <t t-out="lyt.city_y"/>)</span>
+                    <span class="sample" t-att-style="'left:%smm; top:%smm;' % (lyt.city_x, lyt.city_y)">Cairo / Riyadh</span>
+                    <span class="marker" t-att-style="'left:%smm; top:%smm;' % (lyt.date_x, lyt.date_y)"/>
+                    <span class="label" t-att-style="'left:%smm; top:%smm;' % (lyt.date_x, lyt.date_y)">Date (<t t-out="lyt.date_x"/>, <t t-out="lyt.date_y"/>)</span>
+                    <span class="sample" t-att-style="'left:%smm; top:%smm;' % (lyt.date_x, lyt.date_y)">30/04/2026</span>
+                    <span class="marker" t-att-style="'left:%smm; top:%smm;' % (lyt.payee_x, lyt.payee_y)"/>
+                    <span class="label" t-att-style="'left:%smm; top:%smm;' % (lyt.payee_x, lyt.payee_y)">Payee (<t t-out="lyt.payee_x"/>, <t t-out="lyt.payee_y"/>)</span>
+                    <span class="sample" t-att-style="'left:%smm; top:%smm;' % (lyt.payee_x, lyt.payee_y)">Sample Beneficiary Name</span>
+                    <span class="marker" t-att-style="'left:%smm; top:%smm;' % (lyt.amount_words_x, lyt.amount_words_y)"/>
+                    <span class="label" t-att-style="'left:%smm; top:%smm;' % (lyt.amount_words_x, lyt.amount_words_y)">Words (<t t-out="lyt.amount_words_x"/>, <t t-out="lyt.amount_words_y"/>)</span>
+                    <span class="sample words-sample" t-att-style="'left:%smm; top:%smm; max-width:%smm;' % (lyt.amount_words_x, lyt.amount_words_y, lyt.amount_words_max_width)">Fifty Thousand Only لا غير</span>
+                    <span class="marker" t-att-style="'left:%smm; top:%smm;' % (lyt.amount_numbers_x, lyt.amount_numbers_y)"/>
+                    <span class="label" t-att-style="'left:%smm; top:%smm;' % (lyt.amount_numbers_x, lyt.amount_numbers_y)">Amount (<t t-out="lyt.amount_numbers_x"/>, <t t-out="lyt.amount_numbers_y"/>)</span>
+                    <span class="sample" t-att-style="'left:%smm; top:%smm;' % (lyt.amount_numbers_x, lyt.amount_numbers_y)">***50,000.00***</span>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

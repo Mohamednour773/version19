@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PDC BOUNCED CHECKS REPORT
+         All checks currently in state='bounced' (unsettled).
+         Includes bounce date, reason, charges.
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Wizard form view ──────────────────────────────────────────────── -->
+    <record id="view_pdc_bounced_wizard_form" model="ir.ui.view">
+        <field name="name">pdc.list.report.wizard.bounced.form</field>
+        <field name="model">pdc.list.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Bounced Checks Report">
+                <group>
+                    <group>
+                        <field name="report_type" invisible="1"/>
+                        <field name="as_of_date"/>
+                        <field name="check_type_filter"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <group string="Filter by Partners (optional)">
+                        <field name="partner_ids"
+                               nolabel="1"
+                               widget="many2many_tags"
+                               placeholder="Leave empty for all partners…"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_print"
+                            string="Print PDF"
+                            type="object"
+                            class="btn-primary"
+                            data-hotkey="p"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Window action ─────────────────────────────────────────────────── -->
+    <record id="action_pdc_bounced_wizard" model="ir.actions.act_window">
+        <field name="name">Bounced Checks Report</field>
+        <field name="res_model">pdc.list.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_pdc_bounced_wizard_form"/>
+        <field name="target">new</field>
+        <field name="context">{'default_report_type': 'bounced'}</field>
+    </record>
+
+    <!-- ── ir.actions.report ─────────────────────────────────────────────── -->
+    <record id="action_report_pdc_bounced" model="ir.actions.report">
+        <field name="name">Bounced Checks Report</field>
+        <field name="model">pdc.list.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pdc_management_v19.report_pdc_bounced_document</field>
+        <field name="report_file">pdc_management_v19.report_pdc_bounced_document</field>
+        <field name="print_report_name">'Bounced Checks ' + str(object.as_of_date)</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ── QWeb template ─────────────────────────────────────────────────── -->
+    <template id="report_pdc_bounced_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+
+                    <div class="text-center mb-3">
+                        <h3 style="color:#dc3545;"><strong>BOUNCED CHECKS REPORT</strong></h3>
+                        <p class="text-muted mb-0">
+                            As of <strong><t t-out="wizard.as_of_date"/></strong>
+                            — <t t-out="wizard.company_id.name"/>
+                        </p>
+                        <p class="text-muted" style="font-size:9pt;">
+                            Unsettled bounced checks (state = Bounced)
+                        </p>
+                    </div>
+
+                    <t t-if="not checks">
+                        <p class="text-center text-muted">
+                            <em>No bounced checks on record. ✓</em>
+                        </p>
+                    </t>
+
+                    <t t-if="checks">
+                        <!-- Summary cards -->
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                <div class="card text-center border-danger">
+                                    <div class="card-body py-2">
+                                        <h5 class="card-title mb-0 text-danger">
+                                            <t t-out="len(checks)"/>
+                                        </h5>
+                                        <small class="text-muted">Bounced Checks</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card text-center border-danger">
+                                    <div class="card-body py-2">
+                                        <h5 class="card-title mb-0 text-danger">
+                                            <t t-out="'{:,.2f}'.format(sum(c.amount for c in checks))"/>
+                                        </h5>
+                                        <small class="text-muted">Total Amount</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card text-center">
+                                    <div class="card-body py-2">
+                                        <h5 class="card-title mb-0">
+                                            <t t-out="'{:,.2f}'.format(sum(c.bounce_charges or 0 for c in checks))"/>
+                                        </h5>
+                                        <small class="text-muted">Total Charges</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card text-center">
+                                    <div class="card-body py-2">
+                                        <h5 class="card-title mb-0">
+                                            <t t-out="len(set(c.partner_id.id for c in checks))"/>
+                                        </h5>
+                                        <small class="text-muted">Partners</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table table-bordered table-sm" style="font-size:8pt;">
+                            <thead style="background:#dc3545; color:white;">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Reference</th>
+                                    <th>Check No.</th>
+                                    <th>Partner</th>
+                                    <th>Bank</th>
+                                    <th>Type</th>
+                                    <th>Due Date</th>
+                                    <th>Bounce Date</th>
+                                    <th>Reason</th>
+                                    <th class="text-end">Amount</th>
+                                    <th class="text-end">Charges</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="idx" t-value="0"/>
+                                <t t-foreach="checks" t-as="chk">
+                                    <t t-set="idx" t-value="idx + 1"/>
+                                    <tr>
+                                        <td><t t-out="idx"/></td>
+                                        <td><t t-out="chk.name or ''"/></td>
+                                        <td><t t-out="chk.check_number or ''"/></td>
+                                        <td><t t-out="chk.partner_id.name if chk.partner_id else ''"/></td>
+                                        <td><t t-out="chk.bank_id.name if chk.bank_id else ''"/></td>
+                                        <td>
+                                            <t t-out="dict(chk._fields['check_type'].selection).get(chk.check_type, '')"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="chk.due_date.strftime('%d/%m/%Y') if chk.due_date else ''"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="chk.bounce_date.strftime('%d/%m/%Y') if chk.bounce_date else '—'"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="chk.bounce_reason_id.name if chk.bounce_reason_id else '—'"/>
+                                        </td>
+                                        <td class="text-end fw-bold text-danger">
+                                            <t t-out="'{:,.2f}'.format(chk.amount)"/>
+                                            <small class="text-muted ms-1">
+                                                <t t-out="chk.currency_id.name if chk.currency_id else ''"/>
+                                            </small>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-if="chk.bounce_charges">
+                                                <t t-out="'{:,.2f}'.format(chk.bounce_charges)"/>
+                                            </t>
+                                            <t t-else="">—</t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tfoot>
+                                <tr style="background:#f8d7da; font-weight:bold;">
+                                    <td colspan="9" class="text-end">Total:</td>
+                                    <td class="text-end text-danger">
+                                        <t t-out="'{:,.2f}'.format(sum(c.amount for c in checks))"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <t t-out="'{:,.2f}'.format(sum(c.bounce_charges or 0 for c in checks))"/>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <!-- Bounce notes section -->
+                        <t t-set="noted_checks"
+                           t-value="[c for c in checks if c.bounce_notes]"/>
+                        <t t-if="noted_checks">
+                            <h6 class="mt-3">Bounce Notes</h6>
+                            <t t-foreach="noted_checks" t-as="chk">
+                                <p style="font-size:8pt;" class="mb-1">
+                                    <strong><t t-out="chk.name"/>:</strong>
+                                    <t t-out="chk.bounce_notes"/>
+                                </p>
+                            </t>
+                        </t>
+
+                    </t>
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

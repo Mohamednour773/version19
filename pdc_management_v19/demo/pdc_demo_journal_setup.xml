@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         PDC Demo Journal Setup — placeholder
+
+         PDC intermediate accounts (received, collection, issued, delivered,
+         bounce charges) are intentionally NOT set here because account codes
+         differ across every chart of accounts (Generic, Egyptian, Saudi…).
+
+         After installing demo data an administrator should open:
+           Accounting → Configuration → Journals → Bank
+         and fill in the five PDC account fields.
+
+         The demo checks below are in pre-transition states (draft / registered)
+         or have their state set directly so they display correctly in views
+         even without journal entries being present.
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+</odoo>

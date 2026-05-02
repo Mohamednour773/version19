@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PDC PARTNER STATEMENT
+         Shows all check transactions for selected partners within a date
+         range, grouped by partner with per-state subtotals.
+         Outputs: PDF (QWeb) + Excel (xlsxwriter).
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Wizard form view ──────────────────────────────────────────────── -->
+    <record id="view_pdc_partner_statement_wizard_form" model="ir.ui.view">
+        <field name="name">pdc.partner.statement.wizard.form</field>
+        <field name="model">pdc.partner.statement.wizard</field>
+        <field name="arch" type="xml">
+            <form string="PDC Partner Statement">
+                <group>
+                    <group string="Date Range">
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="check_type"/>
+                        <field name="include_cancelled"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <group string="Partners">
+                        <field name="partner_ids"
+                               nolabel="1"
+                               widget="many2many_tags"
+                               placeholder="Select one or more partners…"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_print_pdf"
+                            string="Print PDF"
+                            type="object"
+                            class="btn-primary"
+                            data-hotkey="p"/>
+                    <button name="action_print_excel"
+                            string="Export Excel"
+                            type="object"
+                            class="btn-secondary"
+                            data-hotkey="e"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Window action ─────────────────────────────────────────────────── -->
+    <record id="action_pdc_partner_statement_wizard" model="ir.actions.act_window">
+        <field name="name">PDC Partner Statement</field>
+        <field name="res_model">pdc.partner.statement.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_pdc_partner_statement_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ── ir.actions.report ─────────────────────────────────────────────── -->
+    <record id="action_report_pdc_partner_statement" model="ir.actions.report">
+        <field name="name">PDC Partner Statement</field>
+        <field name="model">pdc.partner.statement.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pdc_management_v19.report_pdc_partner_statement_document</field>
+        <field name="report_file">pdc_management_v19.report_pdc_partner_statement_document</field>
+        <field name="print_report_name">'PDC Statement ' + str(object.date_from) + ' ' + str(object.date_to)</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ── PDF QWeb template ─────────────────────────────────────────────── -->
+    <template id="report_pdc_partner_statement_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+
+                    <!-- Title block -->
+                    <div class="text-center mb-3">
+                        <h3><strong>PDC PARTNER STATEMENT</strong></h3>
+                        <p class="text-muted mb-0">
+                            Period: <strong>
+                                <t t-out="wizard.date_from.strftime('%d/%m/%Y')"/>
+                                –
+                                <t t-out="wizard.date_to.strftime('%d/%m/%Y')"/>
+                            </strong>
+                            — <t t-out="wizard.company_id.name"/>
+                        </p>
+                        <p class="text-muted" style="font-size:9pt;">
+                            Type: <t t-out="dict(wizard._fields['check_type'].selection).get(wizard.check_type, wizard.check_type)"/>
+                            <t t-if="wizard.include_cancelled"> | Includes Cancelled</t>
+                        </p>
+                    </div>
+
+                    <t t-if="not statement_data">
+                        <p class="text-center text-muted">
+                            <em>No checks found for the selected criteria.</em>
+                        </p>
+                    </t>
+
+                    <t t-foreach="statement_data" t-as="pd">
+
+                        <!-- Partner header -->
+                        <div class="mt-4 mb-2 p-2"
+                             style="background:#1F4E79; color:white; border-radius:3px;">
+                            <strong style="font-size:11pt;">
+                                <t t-out="pd['partner'].name"/>
+                            </strong>
+                            <t t-if="pd['partner'].ref">
+                                <small> — Ref: <t t-out="pd['partner'].ref"/></small>
+                            </t>
+                        </div>
+
+                        <!-- Check detail table -->
+                        <table class="table table-bordered table-sm" style="font-size:8pt;">
+                            <thead style="background:#D6E4F0;">
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Check No.</th>
+                                    <th>Bank</th>
+                                    <th>Issue Date</th>
+                                    <th>Due Date</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="pd['checks']" t-as="chk">
+                                    <tr t-att-class="'table-danger' if chk.state == 'bounced' else (
+                                                     'table-success' if chk.state in ('cleared','paid') else (
+                                                     'table-secondary' if chk.state == 'cancelled' else ''))">
+                                        <td><t t-out="chk.name or ''"/></td>
+                                        <td><t t-out="chk.check_number or ''"/></td>
+                                        <td>
+                                            <t t-out="chk.bank_id.name if chk.bank_id else ''"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="chk.issue_date.strftime('%d/%m/%Y') if chk.issue_date else ''"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="chk.due_date.strftime('%d/%m/%Y') if chk.due_date else ''"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="dict(chk._fields['check_type'].selection).get(chk.check_type, '')"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="dict(chk._fields['state'].selection).get(chk.state, chk.state)"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-out="'{:,.2f}'.format(chk.amount)"/>
+                                            <small class="text-muted ms-1">
+                                                <t t-out="chk.currency_id.name if chk.currency_id else ''"/>
+                                            </small>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tfoot>
+                                <tr style="background:#EBF5FB; font-weight:bold;">
+                                    <td colspan="7" class="text-end">
+                                        Total — <t t-out="pd['partner'].name"/>:
+                                    </td>
+                                    <td class="text-end">
+                                        <t t-out="'{:,.2f}'.format(pd['total'])"/>
+                                    </td>
+                                </tr>
+                                <!-- Per-state breakdown -->
+                                <t t-foreach="pd['by_state'].items()" t-as="state_item">
+                                    <tr style="font-size:7pt;">
+                                        <td colspan="7" class="text-end text-muted">
+                                            <t t-out="dict(
+                                                env['pdc.check']._fields['state'].selection
+                                            ).get(state_item[0], state_item[0])"/>:
+                                        </td>
+                                        <td class="text-end text-muted">
+                                            <t t-out="'{:,.2f}'.format(state_item[1])"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tfoot>
+                        </table>
+
+                    </t><!-- /foreach partners -->
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

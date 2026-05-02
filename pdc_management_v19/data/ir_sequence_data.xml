@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PDC SEQUENCES
+         noupdate="1" — existing sequences survive module upgrades so that
+         numbering is never reset on a live database.
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Received checks: PDC/RCV/2025/0001 -->
+    <record id="seq_pdc_check_received" model="ir.sequence">
+        <field name="name">PDC Received Check</field>
+        <field name="code">pdc.check.received</field>
+        <field name="prefix">PDC/RCV/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="use_date_range">False</field>
+        <!-- company_id = False → shared fallback; Odoo next_by_code()
+             automatically prefers a company-specific sequence when one exists. -->
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Issued checks: PDC/ISS/2025/0001 -->
+    <record id="seq_pdc_check_issued" model="ir.sequence">
+        <field name="name">PDC Issued Check</field>
+        <field name="code">pdc.check.issued</field>
+        <field name="prefix">PDC/ISS/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="use_date_range">False</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Guarantee checks: PDC/GRT/2025/0001 -->
+    <record id="seq_pdc_check_guarantee" model="ir.sequence">
+        <field name="name">PDC Guarantee Check</field>
+        <field name="code">pdc.check.guarantee</field>
+        <field name="prefix">PDC/GRT/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="use_date_range">False</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Check books: BOOK/2025/0001 -->
+    <record id="seq_pdc_check_book" model="ir.sequence">
+        <field name="name">PDC Check Book</field>
+        <field name="code">pdc.check.book</field>
+        <field name="prefix">BOOK/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="use_date_range">False</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+</odoo>

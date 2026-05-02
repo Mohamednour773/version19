@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── List View ─────────────────────────────────────────────────────── -->
+    <record id="view_pdc_bank_list" model="ir.ui.view">
+        <field name="name">pdc.bank.list</field>
+        <field name="model">pdc.bank</field>
+        <field name="arch" type="xml">
+            <list string="Banks">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="country_id"/>
+                <field name="swift_code" optional="show"/>
+                <field name="active" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form View ─────────────────────────────────────────────────────── -->
+    <record id="view_pdc_bank_form" model="ir.ui.view">
+        <field name="name">pdc.bank.form</field>
+        <field name="model">pdc.bank</field>
+        <field name="arch" type="xml">
+            <form string="Bank">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <field name="logo" widget="image"
+                               style="max-width: 100px; max-height: 60px;"
+                               nolabel="1"/>
+                        <div>
+                            <h1><field name="name" placeholder="Bank Name"/></h1>
+                            <h4 class="text-muted" style="direction:rtl; font-family:'Simplified Arabic',Arial,sans-serif;">
+                                <field name="name_ar" placeholder="اسم البنك بالعربية"/>
+                            </h4>
+                            <h4 class="text-muted">
+                                <field name="code" placeholder="Short Code (e.g. CIB)"/>
+                            </h4>
+                        </div>
+                    </div>
+                    <group>
+                        <group string="Bank Details">
+                            <field name="country_id"/>
+                            <field name="swift_code"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Company">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Internal Notes">
+                        <field name="notes" nolabel="1"
+                               placeholder="Internal notes about this bank..."/>
+                    </group>
+
+                    <!-- Print Layouts Tab -->
+                    <notebook>
+                        <page string="Print Layouts" name="layouts">
+                            <field name="layout_ids"
+                                   context="{'default_bank_id': id}">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="paper_format"/>
+                                    <field name="orientation"/>
+                                    <field name="font_family"/>
+                                    <field name="is_default"/>
+                                    <field name="use_arabic"/>
+                                    <field name="active" optional="show"/>
+                                    <button name="action_test_print" string="Test Print"
+                                            type="object" icon="fa-print"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Search View ───────────────────────────────────────────────────── -->
+    <record id="view_pdc_bank_search" model="ir.ui.view">
+        <field name="name">pdc.bank.search</field>
+        <field name="model">pdc.bank</field>
+        <field name="arch" type="xml">
+            <search string="Search Banks">
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ────────────────────────────────────────────────────────── -->
+    <record id="action_pdc_bank" model="ir.actions.act_window">
+        <field name="name">Banks</field>
+        <field name="res_model">pdc.bank</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No banks configured yet.
+            </p>
+            <p>
+                Add the banks whose checks you receive or issue.
+                Configure print layouts for each bank to enable check printing.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,23 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pdc_bank_user,pdc.bank user,model_pdc_bank,pdc_management_v19.group_pdc_user,1,0,0,0
+access_pdc_bank_manager,pdc.bank manager,model_pdc_bank,pdc_management_v19.group_pdc_manager,1,1,1,1
+access_pdc_bank_layout_user,pdc.bank.layout user,model_pdc_bank_layout,pdc_management_v19.group_pdc_user,1,0,0,0
+access_pdc_bank_layout_manager,pdc.bank.layout manager,model_pdc_bank_layout,pdc_management_v19.group_pdc_manager,1,1,1,1
+access_pdc_check_user,pdc.check user,model_pdc_check,pdc_management_v19.group_pdc_user,1,1,1,0
+access_pdc_check_manager,pdc.check manager,model_pdc_check,pdc_management_v19.group_pdc_manager,1,1,1,1
+access_pdc_check_book_user,pdc.check.book user,model_pdc_check_book,pdc_management_v19.group_pdc_user,1,0,0,0
+access_pdc_check_book_manager,pdc.check.book manager,model_pdc_check_book,pdc_management_v19.group_pdc_manager,1,1,1,1
+access_pdc_check_operation_user,pdc.check.operation user,model_pdc_check_operation,pdc_management_v19.group_pdc_user,1,0,0,0
+access_pdc_check_operation_manager,pdc.check.operation manager,model_pdc_check_operation,pdc_management_v19.group_pdc_manager,1,0,0,0
+access_pdc_check_operation_accountant,pdc.check.operation accountant,model_pdc_check_operation,pdc_management_v19.group_pdc_accountant,1,1,1,1
+access_pdc_bounce_reason_user,pdc.bounce.reason user,model_pdc_bounce_reason,pdc_management_v19.group_pdc_user,1,0,0,0
+access_pdc_bounce_reason_manager,pdc.bounce.reason manager,model_pdc_bounce_reason,pdc_management_v19.group_pdc_manager,1,1,1,1
+access_pdc_aging_wizard_user,pdc.aging.report.wizard user,model_pdc_aging_report_wizard,pdc_management_v19.group_pdc_user,1,1,1,1
+access_pdc_partner_statement_wizard_user,pdc.partner.statement.wizard user,model_pdc_partner_statement_wizard,pdc_management_v19.group_pdc_user,1,1,1,1
+access_pdc_list_report_wizard_user,pdc.list.report.wizard user,model_pdc_list_report_wizard,pdc_management_v19.group_pdc_user,1,1,1,1
+access_pdc_register_wizard_user,pdc.register.wizard user,model_pdc_register_wizard,pdc_management_v19.group_pdc_user,1,1,1,1
+access_pdc_deposit_wizard_user,pdc.deposit.wizard user,model_pdc_deposit_wizard,pdc_management_v19.group_pdc_user,1,1,1,1
+access_pdc_clear_wizard_user,pdc.clear.wizard user,model_pdc_clear_wizard,pdc_management_v19.group_pdc_user,1,1,1,1
+access_pdc_bounce_wizard_user,pdc.bounce.wizard user,model_pdc_bounce_wizard,pdc_management_v19.group_pdc_user,1,1,1,1
+access_pdc_cancel_wizard_manager,pdc.cancel.wizard manager,model_pdc_cancel_wizard,pdc_management_v19.group_pdc_manager,1,1,1,1
+access_pdc_print_check_wizard_user,pdc.print.check.wizard user,model_pdc_print_check_wizard,pdc_management_v19.group_pdc_user,1,1,1,1

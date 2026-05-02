@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── List View ─────────────────────────────────────────────────────── -->
+    <record id="view_pdc_bounce_reason_list" model="ir.ui.view">
+        <field name="name">pdc.bounce.reason.list</field>
+        <field name="model">pdc.bounce.reason</field>
+        <field name="arch" type="xml">
+            <list string="Bounce Reasons">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="is_legal_action"/>
+                <field name="active" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form View ─────────────────────────────────────────────────────── -->
+    <record id="view_pdc_bounce_reason_form" model="ir.ui.view">
+        <field name="name">pdc.bounce.reason.form</field>
+        <field name="model">pdc.bounce.reason</field>
+        <field name="arch" type="xml">
+            <form string="Bounce Reason">
+                <sheet>
+                    <group>
+                        <group string="Identification">
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Classification">
+                            <field name="is_legal_action"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"
+                               placeholder="Detailed description of when this reason applies..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Action ────────────────────────────────────────────────────────── -->
+    <record id="action_pdc_bounce_reason" model="ir.actions.act_window">
+        <field name="name">Bounce Reasons</field>
+        <field name="res_model">pdc.bounce.reason</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No bounce reasons configured yet.
+            </p>
+            <p>
+                Define reasons for bounced checks (e.g. Insufficient Funds,
+                Account Closed) for consistent reporting and follow-up.
+            </p>
+        </field>
+    </record>
+
+</odoo>

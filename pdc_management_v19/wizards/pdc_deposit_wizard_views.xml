@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form View ─────────────────────────────────────────────────────── -->
+    <record id="view_pdc_deposit_wizard_form" model="ir.ui.view">
+        <field name="name">pdc.deposit.wizard.form</field>
+        <field name="model">pdc.deposit.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Deposit Checks for Collection">
+                <group>
+                    <group string="Checks to Deposit">
+                        <field name="check_ids" widget="many2many_tags"
+                               options="{'no_create': True}" nolabel="1"/>
+                        <field name="check_count" string="Selected" readonly="1"/>
+                    </group>
+                    <group string="Deposit Details">
+                        <field name="deposit_journal_id" options="{'no_create': True}"/>
+                        <field name="deposit_date"/>
+                    </group>
+                </group>
+
+                <div class="alert alert-warning" role="alert"
+                     invisible="skipped_count == 0">
+                    <i class="fa fa-exclamation-triangle"/>
+                    <strong><field name="skipped_count" readonly="1" nolabel="1"/></strong>
+                    of the selected check(s) are not in "Registered (Received)" state
+                    and will be skipped.
+                </div>
+                <div class="alert alert-info" role="alert"
+                     invisible="check_count == 0">
+                    <i class="fa fa-info-circle"/>
+                    Depositing <strong><field name="check_count" readonly="1" nolabel="1"/></strong>
+                    check(s) via
+                    <strong><field name="deposit_journal_id" readonly="1" nolabel="1"/></strong>.
+                    Each check will transition to "Under Collection" and a deposit
+                    journal entry will be created.
+                </div>
+                <footer>
+                    <button name="action_deposit" string="Deposit" type="object"
+                            class="btn-primary" invisible="check_count == 0"/>
+                    <button special="cancel" string="Cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Window Action ─────────────────────────────────────────────────── -->
+    <record id="action_pdc_deposit_wizard" model="ir.actions.act_window">
+        <field name="name">Deposit Checks</field>
+        <field name="res_model">pdc.deposit.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

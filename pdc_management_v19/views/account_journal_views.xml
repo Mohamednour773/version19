@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Inherit account.journal form — add PDC tab on bank journals ───── -->
+    <record id="view_account_journal_form_pdc" model="ir.ui.view">
+        <field name="name">account.journal.form.pdc</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="PDC Configuration" name="pdc_config"
+                      invisible="type != 'bank'">
+                    <p class="text-muted mb-3">
+                        Configure the intermediate accounts used for PDC check
+                        journal entries. These accounts must be set before registering
+                        or depositing checks through this journal.
+                    </p>
+                    <group>
+                        <group string="Default Bank">
+                            <field name="pdc_default_bank_id"/>
+                        </group>
+                    </group>
+                    <group string="Received Checks (Customer PDC)">
+                        <group>
+                            <field name="pdc_received_account_id"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="pdc_received_collection_account_id"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group string="Issued Checks (Supplier PDC)">
+                        <group>
+                            <field name="pdc_issued_account_id"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="pdc_issued_delivered_account_id"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group string="Other">
+                        <group>
+                            <field name="pdc_bounce_charges_account_id"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

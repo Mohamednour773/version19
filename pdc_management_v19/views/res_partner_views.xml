@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Inherit res.partner form — PDC smart buttons + stats ──────────── -->
+    <record id="view_res_partner_form_pdc" model="ir.ui.view">
+        <field name="name">res.partner.form.pdc</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Smart Buttons -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_pdc_received"
+                        type="object"
+                        class="oe_stat_button" icon="fa-arrow-down"
+                        invisible="pdc_received_count == 0"
+                        groups="pdc_management_v19.group_pdc_user">
+                    <field name="pdc_received_count" widget="statinfo"
+                           string="Received PDC"/>
+                </button>
+                <button name="action_view_pdc_issued"
+                        type="object"
+                        class="oe_stat_button" icon="fa-arrow-up"
+                        invisible="pdc_issued_count == 0"
+                        groups="pdc_management_v19.group_pdc_user">
+                    <field name="pdc_issued_count" widget="statinfo"
+                           string="Issued PDC"/>
+                </button>
+                <!-- PDC Statement — opens partner statement wizard pre-filtered -->
+                <button name="action_open_pdc_statement"
+                        type="object"
+                        class="oe_stat_button" icon="fa-file-text-o"
+                        invisible="pdc_received_count == 0 and pdc_issued_count == 0"
+                        groups="pdc_management_v19.group_pdc_user">
+                    <span class="o_stat_text">PDC Statement</span>
+                </button>
+            </xpath>
+
+            <!-- PDC Blocked warning banner (after button_box) -->
+            <xpath expr="//div[@name='button_box']" position="after">
+                <div class="alert alert-danger mb-3" role="alert"
+                     invisible="not pdc_blocked">
+                    <strong>PDC Blocked.</strong>
+                    This partner is blocked from PDC operations due to
+                    excessive bounced checks.
+                </div>
+            </xpath>
+
+            <!-- PDC tab in notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="PDC" name="pdc"
+                      groups="pdc_management_v19.group_pdc_user">
+                    <group string="PDC Settings">
+                        <group>
+                            <field name="pdc_blocked"/>
+                            <field name="pdc_bounce_threshold"
+                                   help="0 = use company default"/>
+                        </group>
+                        <group string="Statistics">
+                            <field name="pdc_received_count" readonly="1"/>
+                            <field name="pdc_issued_count" readonly="1"/>
+                            <field name="pdc_bounced_count" readonly="1"/>
+                            <field name="pdc_total_under_collection" readonly="1"/>
+                            <field name="pdc_total_due_soon" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

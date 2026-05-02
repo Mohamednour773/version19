@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form View ─────────────────────────────────────────────────────── -->
+    <record id="view_pdc_print_check_wizard_form" model="ir.ui.view">
+        <field name="name">pdc.print.check.wizard.form</field>
+        <field name="model">pdc.print.check.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Print Check">
+                <field name="multi_bank" invisible="1"/>
+                <group>
+                    <group string="Checks to Print">
+                        <field name="check_ids" widget="many2many_tags"
+                               options="{'no_create': True}" nolabel="1"/>
+                        <field name="check_count" string="Checks" readonly="1"/>
+                        <field name="bank_count" string="Banks" readonly="1"/>
+                    </group>
+                    <group string="Print Options">
+                        <field name="layout_id"
+                               options="{'no_create': True}"
+                               domain="[('active', '=', True)]"/>
+                        <field name="mark_as_printed"/>
+                    </group>
+                </group>
+
+                <!-- Multi-bank notice -->
+                <div class="alert alert-info" role="alert"
+                     invisible="not multi_bank">
+                    <i class="fa fa-info-circle"/>
+                    The selected checks belong to
+                    <strong><field name="bank_count" readonly="1" nolabel="1"/></strong>
+                    different banks. When no layout is selected, each check will use its
+                    bank's default layout.
+                </div>
+
+                <!-- Mark-as-printed notice -->
+                <div class="alert alert-warning" role="alert"
+                     invisible="not mark_as_printed or check_count == 0">
+                    <i class="fa fa-print"/>
+                    After the PDF is generated,
+                    <strong><field name="check_count" readonly="1" nolabel="1"/></strong>
+                    check(s) will be advanced to <strong>Printed</strong> state.
+                    Ensure the printer is ready before clicking "Print".
+                </div>
+
+                <footer>
+                    <button name="action_print" string="Print" type="object"
+                            class="btn-primary" invisible="check_count == 0"/>
+                    <button special="cancel" string="Cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Window Action ─────────────────────────────────────────────────── -->
+    <record id="action_pdc_print_check_wizard" model="ir.actions.act_window">
+        <field name="name">Print Check</field>
+        <field name="res_model">pdc.print.check.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

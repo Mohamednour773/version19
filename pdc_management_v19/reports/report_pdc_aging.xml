@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PDC AGING REPORT
+         Wizard → PDF + Excel export.
+         Groups outstanding checks by partner and distributes amounts into
+         configurable overdue buckets (default: Current / 1–30 / 31–60 /
+         61–90 / 91–120 / >120 days past due date).
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Wizard form view ──────────────────────────────────────────────── -->
+    <record id="view_pdc_aging_wizard_form" model="ir.ui.view">
+        <field name="name">pdc.aging.report.wizard.form</field>
+        <field name="model">pdc.aging.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="PDC Aging Report">
+                <group>
+                    <group string="Report Parameters">
+                        <field name="as_of_date"/>
+                        <field name="check_type"/>
+                        <field name="state_filter"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="currency_id"/>
+                    </group>
+                    <group string="Aging Buckets (days overdue)">
+                        <field name="bucket_1" string="Bucket 1 Up To"/>
+                        <field name="bucket_2" string="Bucket 2 Up To"/>
+                        <field name="bucket_3" string="Bucket 3 Up To"/>
+                        <field name="bucket_4" string="Bucket 4 Up To"/>
+                    </group>
+                </group>
+                <group string="Filter by Partners (optional)">
+                    <field name="partner_ids" nolabel="1"
+                           widget="many2many_tags"
+                           placeholder="Leave empty for all partners…"/>
+                </group>
+                <footer>
+                    <button name="action_print_pdf"
+                            string="Print PDF"
+                            type="object"
+                            class="btn-primary"
+                            data-hotkey="p"/>
+                    <button name="action_print_excel"
+                            string="Export Excel"
+                            type="object"
+                            class="btn-secondary"
+                            data-hotkey="e"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Window action (opens wizard as dialog) ────────────────────────── -->
+    <record id="action_pdc_aging_wizard" model="ir.actions.act_window">
+        <field name="name">PDC Aging Report</field>
+        <field name="res_model">pdc.aging.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_pdc_aging_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ── ir.actions.report (PDF output, triggered from wizard) ─────────── -->
+    <record id="action_report_pdc_aging" model="ir.actions.report">
+        <field name="name">PDC Aging Report</field>
+        <field name="model">pdc.aging.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pdc_management_v19.report_pdc_aging_document</field>
+        <field name="report_file">pdc_management_v19.report_pdc_aging_document</field>
+        <field name="print_report_name">'PDC Aging - ' + str(object.as_of_date)</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ── PDF QWeb template ─────────────────────────────────────────────── -->
+    <template id="report_pdc_aging_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+
+                    <!-- Title -->
+                    <div class="text-center mb-3">
+                        <h3><strong>PDC AGING REPORT</strong></h3>
+                        <p class="text-muted mb-0">
+                            As of <strong><t t-out="wizard.as_of_date"/></strong>
+                            — <t t-out="wizard.company_id.name"/>
+                            <t t-if="wizard.currency_id">
+                                — Currency: <t t-out="wizard.currency_id.name"/>
+                            </t>
+                        </p>
+                        <p class="text-muted" style="font-size:9pt;">
+                            Type: <t t-out="dict(wizard._fields['check_type'].selection).get(wizard.check_type, wizard.check_type)"/>
+                            | Filter: <t t-out="dict(wizard._fields['state_filter'].selection).get(wizard.state_filter, wizard.state_filter)"/>
+                        </p>
+                    </div>
+
+                    <t t-if="not aging_data">
+                        <p class="text-center text-muted">
+                            <em>No checks found for the selected criteria.</em>
+                        </p>
+                    </t>
+
+                    <t t-if="aging_data">
+                        <!-- Bucket header labels -->
+                        <t t-set="bl" t-value="bucket_labels"/>
+
+                        <table class="table table-bordered table-sm" style="font-size:8pt;">
+                            <thead style="background:#1F4E79; color:white;">
+                                <tr>
+                                    <th>Partner</th>
+                                    <th>Reference</th>
+                                    <th>Check No.</th>
+                                    <th>Bank</th>
+                                    <th>Due Date</th>
+                                    <th class="text-end">Amount</th>
+                                    <th class="text-end"><t t-out="bl[0]"/></th>
+                                    <th class="text-end"><t t-out="bl[1]"/></th>
+                                    <th class="text-end"><t t-out="bl[2]"/></th>
+                                    <th class="text-end"><t t-out="bl[3]"/></th>
+                                    <th class="text-end"><t t-out="bl[4]"/></th>
+                                    <th class="text-end"><t t-out="bl[5]"/></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <!-- Totals accumulators -->
+                                <t t-set="g_total" t-value="0"/>
+                                <t t-set="g_cur"   t-value="0"/>
+                                <t t-set="g_b1"    t-value="0"/>
+                                <t t-set="g_b2"    t-value="0"/>
+                                <t t-set="g_b3"    t-value="0"/>
+                                <t t-set="g_b4"    t-value="0"/>
+                                <t t-set="g_b5"    t-value="0"/>
+
+                                <!--
+                                    Grouped by (partner, currency) — never mixes
+                                    EGP + USD in a single total row.
+                                    Grand totals are per-currency at the bottom.
+                                -->
+
+                                <!-- currency-keyed grand total accumulators -->
+                                <t t-set="g_by_cur" t-value="{}"/>
+
+                                <t t-foreach="aging_data" t-as="pd">
+                                    <!-- Partner + currency subtotal row -->
+                                    <tr style="background:#D6E4F0; font-weight:bold;">
+                                        <td colspan="4">
+                                            <t t-out="pd['partner'].name"/>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                <t t-out="pd['currency'].name if pd['currency'] else ''"/>
+                                            </small>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-out="'{:,.2f}'.format(pd['total'])"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-out="'{:,.2f}'.format(pd['current'])"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-out="'{:,.2f}'.format(pd['b1'])"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-out="'{:,.2f}'.format(pd['b2'])"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-out="'{:,.2f}'.format(pd['b3'])"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-out="'{:,.2f}'.format(pd['b4'])"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-out="'{:,.2f}'.format(pd['b5'])"/>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Detail rows per check -->
+                                    <t t-foreach="pd['checks']" t-as="chk">
+                                        <t t-set="days"
+                                           t-value="(wizard.as_of_date - chk.due_date).days if chk.due_date else 0"/>
+                                        <tr>
+                                            <td></td>
+                                            <td><t t-out="chk.name or ''"/></td>
+                                            <td><t t-out="chk.check_number or ''"/></td>
+                                            <td>
+                                                <t t-out="chk.bank_id.name if chk.bank_id else ''"/>
+                                            </td>
+                                            <td>
+                                                <t t-out="chk.due_date.strftime('%d/%m/%Y') if chk.due_date else ''"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <t t-out="'{:,.2f}'.format(chk.amount)"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <t t-out="'{:,.2f}'.format(chk.amount) if days &lt;= 0 else ''"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <t t-out="'{:,.2f}'.format(chk.amount) if (days > 0 and days &lt;= wizard.bucket_1) else ''"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <t t-out="'{:,.2f}'.format(chk.amount) if (days > wizard.bucket_1 and days &lt;= wizard.bucket_2) else ''"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <t t-out="'{:,.2f}'.format(chk.amount) if (days > wizard.bucket_2 and days &lt;= wizard.bucket_3) else ''"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <t t-out="'{:,.2f}'.format(chk.amount) if (days > wizard.bucket_3 and days &lt;= wizard.bucket_4) else ''"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <t t-out="'{:,.2f}'.format(chk.amount) if days > wizard.bucket_4 else ''"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+
+                                <!-- Grand totals — one row per currency (computed in Python) -->
+                                <t t-set="grand_by_cur" t-value="{}"/>
+                                <t t-foreach="aging_data" t-as="pd">
+                                    <t t-set="cname"
+                                       t-value="pd['currency'].name if pd['currency'] else 'N/A'"/>
+                                    <!-- QWeb can't update dicts inline; we emit total rows directly -->
+                                </t>
+                                <!-- Emit one grand-total row per currency from Python-aggregated data -->
+                                <t t-foreach="[
+                                        (cur, sum(d['total'] for d in aging_data if (d['currency'].name if d['currency'] else '') == cur),
+                                              sum(d['current'] for d in aging_data if (d['currency'].name if d['currency'] else '') == cur),
+                                              sum(d['b1'] for d in aging_data if (d['currency'].name if d['currency'] else '') == cur),
+                                              sum(d['b2'] for d in aging_data if (d['currency'].name if d['currency'] else '') == cur),
+                                              sum(d['b3'] for d in aging_data if (d['currency'].name if d['currency'] else '') == cur),
+                                              sum(d['b4'] for d in aging_data if (d['currency'].name if d['currency'] else '') == cur),
+                                              sum(d['b5'] for d in aging_data if (d['currency'].name if d['currency'] else '') == cur))
+                                        for cur in sorted(set((d['currency'].name if d['currency'] else 'N/A') for d in aging_data))
+                                    ]" t-as="gt">
+                                    <tr style="background:#1F4E79; color:white; font-weight:bold;">
+                                        <td colspan="4">
+                                            TOTAL — <t t-out="gt[0]"/>
+                                        </td>
+                                        <td><t t-out="gt[0]"/></td>
+                                        <td class="text-end"><t t-out="'{:,.2f}'.format(gt[1])"/></td>
+                                        <td class="text-end"><t t-out="'{:,.2f}'.format(gt[2])"/></td>
+                                        <td class="text-end"><t t-out="'{:,.2f}'.format(gt[3])"/></td>
+                                        <td class="text-end"><t t-out="'{:,.2f}'.format(gt[4])"/></td>
+                                        <td class="text-end"><t t-out="'{:,.2f}'.format(gt[5])"/></td>
+                                        <td class="text-end"><t t-out="'{:,.2f}'.format(gt[6])"/></td>
+                                        <td class="text-end"><t t-out="'{:,.2f}'.format(gt[7])"/></td>
+                                    </tr>
+                                </t>
+
+                            </tbody>
+                        </table>
+                    </t>
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

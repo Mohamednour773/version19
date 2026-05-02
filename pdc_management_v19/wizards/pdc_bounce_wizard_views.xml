@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form View ─────────────────────────────────────────────────────── -->
+    <record id="view_pdc_bounce_wizard_form" model="ir.ui.view">
+        <field name="name">pdc.bounce.wizard.form</field>
+        <field name="model">pdc.bounce.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Record Check Bounce">
+                <field name="show_charges_account" invisible="1"/>
+                <field name="is_legal_action" invisible="1"/>
+                <group>
+                    <!-- Left column: checks + dates -->
+                    <group string="Bounced Checks">
+                        <field name="check_ids" widget="many2many_tags"
+                               options="{'no_create': True}" nolabel="1"/>
+                        <field name="check_count" string="Checks" readonly="1"/>
+                        <field name="bounce_date"/>
+                    </group>
+
+                    <!-- Right column: reason -->
+                    <group string="Bounce Reason">
+                        <field name="bounce_reason_id" options="{'no_create': True}"/>
+                    </group>
+                </group>
+
+                <!-- Bank charges row -->
+                <group string="Bank Charges">
+                    <group>
+                        <field name="bounce_charges" string="Charges Amount"/>
+                        <field name="bounce_charges_source"/>
+                        <field name="bounce_charges_account_id"
+                               invisible="not show_charges_account"
+                               required="show_charges_account"/>
+                    </group>
+                </group>
+
+                <group string="Notes">
+                    <field name="bounce_notes" nolabel="1"
+                           placeholder="Describe follow-up steps, bank ref number, etc."/>
+                </group>
+
+                <!-- Auto-block option (D1 Option C) -->
+                <group string="Partner Actions">
+                    <field name="check_auto_block"
+                           string="Auto-block partner if bounce threshold reached"/>
+                </group>
+
+                <!-- Legal action warning -->
+                <div class="alert alert-warning" role="alert"
+                     invisible="not is_legal_action">
+                    <i class="fa fa-gavel"/>
+                    <strong>Legal Action Required</strong> — the selected bounce reason
+                    is flagged as potentially requiring legal action. Ensure your legal
+                    team is informed before proceeding.
+                </div>
+
+                <!-- Normal info banner -->
+                <div class="alert alert-danger" role="alert"
+                     invisible="check_count == 0">
+                    <i class="fa fa-exclamation-triangle"/>
+                    This action will reverse the deposit journal entry and mark
+                    <strong><field name="check_count" readonly="1" nolabel="1"/></strong>
+                    check(s) as <strong>Bounced</strong>.
+                    The partner's receivable will be restored.
+                    This cannot be undone without cancelling the check.
+                </div>
+
+                <footer>
+                    <button name="action_bounce" string="Record Bounce" type="object"
+                            class="btn-danger" invisible="check_count == 0"/>
+                    <button special="cancel" string="Cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Window Action ─────────────────────────────────────────────────── -->
+    <record id="action_pdc_bounce_wizard" model="ir.actions.act_window">
+        <field name="name">Record Bounce</field>
+        <field name="res_model">pdc.bounce.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

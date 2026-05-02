@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PDC MAIL TEMPLATES  (5 templates)
+         All use body_html with inline styles for broad email-client compat.
+         noupdate="1" — customizations by users survive module upgrades.
+
+         IMPORTANT: AI-generated content — review subject lines and body copy
+         with a native Arabic-speaking accountant before enabling in production.
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── 1. Due Soon Reminder ─────────────────────────────────────────── -->
+    <record id="mail_template_pdc_due_soon" model="mail.template">
+        <field name="name">PDC: Check Due Soon</field>
+        <field name="model_id" ref="pdc_management_v19.model_pdc_check"/>
+        <field name="subject">PDC Due Soon: {{ object.name }} — Due {{ object.due_date }}</field>
+        <field name="email_to">{{ (object.responsible_id.email or object.create_uid.email) }}</field>
+        <field name="email_from">{{ (user.email or '') }}</field>
+        <field name="auto_delete">True</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 680px; margin: 0 auto; color: #333;">
+    <div style="background-color: #1F4E79; color: #fff; padding: 20px 24px; border-radius: 4px 4px 0 0;">
+        <h2 style="margin: 0; font-size: 18px;">&#9888; PDC Check Due Soon</h2>
+    </div>
+    <div style="padding: 24px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px;">
+        <p>Dear {{ object.responsible_id.name or 'Colleague' }},</p>
+        <p>The following post-dated check is due soon and requires your attention:</p>
+        <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+            <tr style="background: #f5f5f5;">
+                <th style="text-align:left; padding: 8px 12px; border: 1px solid #ddd;">Field</th>
+                <th style="text-align:left; padding: 8px 12px; border: 1px solid #ddd;">Value</th>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Reference</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;"><strong>{{ object.name }}</strong></td>
+            </tr>
+            <tr style="background: #f9f9f9;">
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Check Number</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">{{ object.check_number }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Partner</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">{{ object.partner_id.name }}</td>
+            </tr>
+            <tr style="background: #f9f9f9;">
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Bank</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">{{ object.bank_id.name }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Amount</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd; font-weight: bold; color: #1F4E79;">
+                    {{ '{:,.2f}'.format(object.amount) }} {{ object.currency_id.name }}
+                </td>
+            </tr>
+            <tr style="background: #fff3cd;">
+                <td style="padding: 8px 12px; border: 1px solid #ddd; font-weight: bold;">Due Date</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd; font-weight: bold; color: #856404;">
+                    {{ object.due_date }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Status</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">{{ object.state }}</td>
+            </tr>
+        </table>
+        <p>Please take the necessary action before the due date.</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;"/>
+        <p style="font-size: 12px; color: #888;">
+            This is an automated reminder from the PDC Management system.
+            Company: {{ object.company_id.name }}
+        </p>
+    </div>
+</div>
+        ]]></field>
+    </record>
+
+    <!-- ── 2. Check Bounced Notification ───────────────────────────────── -->
+    <record id="mail_template_pdc_bounced" model="mail.template">
+        <field name="name">PDC: Check Bounced</field>
+        <field name="model_id" ref="pdc_management_v19.model_pdc_check"/>
+        <field name="subject">&#x26A0; Check Bounced: {{ object.name }}</field>
+        <field name="email_to">{{ (object.responsible_id.email or object.create_uid.email) }}</field>
+        <field name="email_from">{{ (user.email or '') }}</field>
+        <field name="auto_delete">True</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 680px; margin: 0 auto; color: #333;">
+    <div style="background-color: #dc3545; color: #fff; padding: 20px 24px; border-radius: 4px 4px 0 0;">
+        <h2 style="margin: 0; font-size: 18px;">&#10008; Check Bounced</h2>
+    </div>
+    <div style="padding: 24px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px;">
+        <p>Dear {{ object.responsible_id.name or 'Colleague' }},</p>
+        <p>The following check has been <strong style="color: #dc3545;">returned / bounced</strong> by the bank:</p>
+        <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+            <tr style="background: #f5f5f5;">
+                <th style="text-align:left; padding: 8px 12px; border: 1px solid #ddd;">Field</th>
+                <th style="text-align:left; padding: 8px 12px; border: 1px solid #ddd;">Value</th>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Reference</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;"><strong>{{ object.name }}</strong></td>
+            </tr>
+            <tr style="background: #f9f9f9;">
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Check Number</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">{{ object.check_number }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Partner</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">{{ object.partner_id.name }}</td>
+            </tr>
+            <tr style="background: #f9f9f9;">
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Amount</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd; font-weight: bold; color: #dc3545;">
+                    {{ '{:,.2f}'.format(object.amount) }} {{ object.currency_id.name }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Bounce Date</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">{{ object.bounce_date or '—' }}</td>
+            </tr>
+            <tr style="background: #f8d7da;">
+                <td style="padding: 8px 12px; border: 1px solid #ddd; font-weight: bold;">Bounce Reason</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd; font-weight: bold; color: #721c24;">
+                    {{ object.bounce_reason_id.name if object.bounce_reason_id else 'Not specified' }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Bank Charges</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">
+                    {{ '{:,.2f}'.format(object.bounce_charges or 0.0) }} {{ object.currency_id.name }}
+                </td>
+            </tr>
+            % if object.bounce_reason_id and object.bounce_reason_id.is_legal_action:
+            <tr style="background: #fff3cd;">
+                <td colspan="2" style="padding: 8px 12px; border: 1px solid #ddd; color: #856404; font-weight: bold;">
+                    &#9888; This bounce reason may require legal action.
+                </td>
+            </tr>
+            % endif
+        </table>
+        <p>Please follow up with the partner and record settlement once resolved.</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;"/>
+        <p style="font-size: 12px; color: #888;">
+            Automated notification — PDC Management | {{ object.company_id.name }}
+        </p>
+    </div>
+</div>
+        ]]></field>
+    </record>
+
+    <!-- ── 3. Check Cleared Confirmation ───────────────────────────────── -->
+    <record id="mail_template_pdc_cleared" model="mail.template">
+        <field name="name">PDC: Check Cleared</field>
+        <field name="model_id" ref="pdc_management_v19.model_pdc_check"/>
+        <field name="subject">&#10003; Check Cleared: {{ object.name }}</field>
+        <field name="email_to">{{ (object.responsible_id.email or object.create_uid.email) }}</field>
+        <field name="email_from">{{ (user.email or '') }}</field>
+        <field name="auto_delete">True</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 680px; margin: 0 auto; color: #333;">
+    <div style="background-color: #198754; color: #fff; padding: 20px 24px; border-radius: 4px 4px 0 0;">
+        <h2 style="margin: 0; font-size: 18px;">&#10004; Check Cleared Successfully</h2>
+    </div>
+    <div style="padding: 24px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px;">
+        <p>Dear {{ object.responsible_id.name or 'Colleague' }},</p>
+        <p>The following check has been <strong style="color: #198754;">cleared</strong> — payment confirmed by the bank:</p>
+        <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+            <tr style="background: #f5f5f5;">
+                <th style="text-align:left; padding: 8px 12px; border: 1px solid #ddd;">Field</th>
+                <th style="text-align:left; padding: 8px 12px; border: 1px solid #ddd;">Value</th>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Reference</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;"><strong>{{ object.name }}</strong></td>
+            </tr>
+            <tr style="background: #f9f9f9;">
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Check Number</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">{{ object.check_number }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Partner</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">{{ object.partner_id.name }}</td>
+            </tr>
+            <tr style="background: #d1e7dd;">
+                <td style="padding: 8px 12px; border: 1px solid #ddd; font-weight: bold;">Amount Collected</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd; font-weight: bold; color: #0a3622;">
+                    {{ '{:,.2f}'.format(object.amount) }} {{ object.currency_id.name }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Clear Date</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">{{ object.clear_date or '—' }}</td>
+            </tr>
+        </table>
+        <p>No further action is required for this check.</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;"/>
+        <p style="font-size: 12px; color: #888;">
+            Automated notification — PDC Management | {{ object.company_id.name }}
+        </p>
+    </div>
+</div>
+        ]]></field>
+    </record>
+
+    <!-- ── 4. Check Book Low Stock Alert ───────────────────────────────── -->
+    <record id="mail_template_pdc_book_low" model="mail.template">
+        <field name="name">PDC: Check Book Low Stock</field>
+        <field name="model_id" ref="pdc_management_v19.model_pdc_check_book"/>
+        <field name="subject">&#9888; Low Check Book Stock: {{ object.name }}</field>
+        <field name="email_to">{{ (user.email or '') }}</field>
+        <field name="email_from">{{ (user.email or '') }}</field>
+        <field name="auto_delete">True</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 680px; margin: 0 auto; color: #333;">
+    <div style="background-color: #fd7e14; color: #fff; padding: 20px 24px; border-radius: 4px 4px 0 0;">
+        <h2 style="margin: 0; font-size: 18px;">&#9888; Check Book Running Low</h2>
+    </div>
+    <div style="padding: 24px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px;">
+        <p>This is an automated alert — a check book is running low on available checks.</p>
+        <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+            <tr style="background: #f5f5f5;">
+                <th style="text-align:left; padding: 8px 12px; border: 1px solid #ddd;">Field</th>
+                <th style="text-align:left; padding: 8px 12px; border: 1px solid #ddd;">Value</th>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Check Book</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;"><strong>{{ object.name }}</strong></td>
+            </tr>
+            <tr style="background: #f9f9f9;">
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Bank Journal</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">{{ object.journal_id.name }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Number Range</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">
+                    {{ object.start_number }} – {{ object.end_number }}
+                </td>
+            </tr>
+            <tr style="background: #fff3cd;">
+                <td style="padding: 8px 12px; border: 1px solid #ddd; font-weight: bold;">Available Checks</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd; font-weight: bold; color: #856404;">
+                    {{ object.available_checks }} (threshold: {{ object.low_stock_threshold }})
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Used Checks</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">
+                    {{ object.used_checks }} of {{ object.total_checks }}
+                </td>
+            </tr>
+        </table>
+        <p>Please request a new check book from your bank before this one is depleted.</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;"/>
+        <p style="font-size: 12px; color: #888;">
+            Automated alert — PDC Management | {{ object.company_id.name }}
+        </p>
+    </div>
+</div>
+        ]]></field>
+    </record>
+
+    <!-- ── 5. Partner PDC-Blocked Notification ─────────────────────────── -->
+    <record id="mail_template_pdc_partner_blocked" model="mail.template">
+        <field name="name">PDC: Partner Auto-Blocked</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="subject">PDC Block: Partner {{ object.name }} has been flagged</field>
+        <field name="email_to">{{ (user.email or '') }}</field>
+        <field name="email_from">{{ (user.email or '') }}</field>
+        <field name="auto_delete">True</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 680px; margin: 0 auto; color: #333;">
+    <div style="background-color: #6c757d; color: #fff; padding: 20px 24px; border-radius: 4px 4px 0 0;">
+        <h2 style="margin: 0; font-size: 18px;">&#128274; Partner PDC-Blocked</h2>
+    </div>
+    <div style="padding: 24px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px;">
+        <p>The following partner has been automatically <strong>PDC-blocked</strong> due to
+        exceeding the company's bounced-check threshold:</p>
+        <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+            <tr style="background: #f5f5f5;">
+                <th style="text-align:left; padding: 8px 12px; border: 1px solid #ddd;">Field</th>
+                <th style="text-align:left; padding: 8px 12px; border: 1px solid #ddd;">Value</th>
+            </tr>
+            <tr>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Partner</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;"><strong>{{ object.name }}</strong></td>
+            </tr>
+            <tr style="background: #f9f9f9;">
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">Reference</td>
+                <td style="padding: 8px 12px; border: 1px solid #ddd;">{{ object.ref or '—' }}</td>
+            </tr>
+        </table>
+        <p>A PDC-blocked partner will display a warning on all future check creation and
+        related transactions. Review their bounced checks and take appropriate action before
+        removing the block.</p>
+        <p>To remove the block: open the partner record → PDC tab → uncheck "PDC Blocked".</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;"/>
+        <p style="font-size: 12px; color: #888;">
+            Automated notification — PDC Management
+        </p>
+    </div>
+</div>
+        ]]></field>
+    </record>
+
+</odoo>

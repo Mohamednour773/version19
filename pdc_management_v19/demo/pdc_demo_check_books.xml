@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         PDC Demo Check Books
+         3 check books in different states to illustrate the lifecycle.
+         Uses the generic "Bank" journal that Odoo creates for all companies.
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Active book — mixed used / available checks (range 1000–1050) -->
+    <record id="pdc_demo_check_book_1" model="pdc.check.book">
+        <field name="name">PDC-BOOK/DEMO/001</field>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="start_number">1000</field>
+        <field name="end_number">1050</field>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=6)).strftime('%Y-%m-%d')"/>
+        <field name="state">active</field>
+        <field name="low_stock_threshold">5</field>
+        <field name="notes">Demo check book — active, partially used. Received from bank 6 months ago.</field>
+    </record>
+
+    <!-- Active book — newly created, all available (range 2000–2050) -->
+    <record id="pdc_demo_check_book_2" model="pdc.check.book">
+        <field name="name">PDC-BOOK/DEMO/002</field>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="start_number">2000</field>
+        <field name="end_number">2050</field>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(days=15)).strftime('%Y-%m-%d')"/>
+        <field name="state">active</field>
+        <field name="low_stock_threshold">5</field>
+        <field name="notes">Demo check book — newly activated, mostly available.</field>
+    </record>
+
+    <!-- Archived / depleted book (range 500–550) -->
+    <record id="pdc_demo_check_book_3" model="pdc.check.book">
+        <field name="name">PDC-BOOK/DEMO/000</field>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="start_number">500</field>
+        <field name="end_number">550</field>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(years=1)).strftime('%Y-%m-%d')"/>
+        <field name="state">archived</field>
+        <field name="low_stock_threshold">5</field>
+        <field name="notes">Demo check book — archived (depleted). Shows the full lifecycle of a check book.</field>
+    </record>
+
+</odoo>

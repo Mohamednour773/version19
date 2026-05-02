@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         PDC Demo Partners
+         8 partners that tell a complete sales-demo story.
+         All use the "PDC Demo —" prefix to avoid confusion with real data.
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Customers ─────────────────────────────────────────────────────── -->
+
+    <!-- Healthy: all checks cleared, no issues -->
+    <record id="res_partner_pdc_healthy" model="res.partner">
+        <field name="name">PDC Demo — Healthy Customer</field>
+        <field name="customer_rank">1</field>
+        <field name="country_id" ref="base.eg"/>
+        <field name="city">Cairo</field>
+        <field name="phone">+20 2 1234 5678</field>
+        <field name="email">healthy@pdc-demo.example</field>
+        <field name="comment">Demo customer — all PDC checks have cleared without issues. Ideal for showing the happy-path workflow.</field>
+    </record>
+
+    <!-- One bounce, settled — partial history -->
+    <record id="res_partner_pdc_one_bounce" model="res.partner">
+        <field name="name">PDC Demo — Customer with One Bounce</field>
+        <field name="customer_rank">1</field>
+        <field name="country_id" ref="base.eg"/>
+        <field name="city">Alexandria</field>
+        <field name="phone">+20 3 9876 5432</field>
+        <field name="email">bounce@pdc-demo.example</field>
+        <field name="comment">Demo customer — had one bounced check that was later settled. Shows bounce → settlement workflow.</field>
+    </record>
+
+    <!-- Mixed history: some cleared, some under collection, one bounced -->
+    <record id="res_partner_pdc_mixed" model="res.partner">
+        <field name="name">PDC Demo — Customer with Mixed History</field>
+        <field name="customer_rank">1</field>
+        <field name="country_id" ref="base.eg"/>
+        <field name="city">Giza</field>
+        <field name="phone">+20 2 5555 0001</field>
+        <field name="email">mixed@pdc-demo.example</field>
+        <field name="comment">Demo customer — mix of cleared, active, and bounced checks. Great for aging report demo.</field>
+    </record>
+
+    <!-- Blocked: 3 bounces, auto-blocked -->
+    <record id="res_partner_pdc_blocked" model="res.partner">
+        <field name="name">PDC Demo — Blocked Customer</field>
+        <field name="customer_rank">1</field>
+        <field name="country_id" ref="base.eg"/>
+        <field name="city">Cairo</field>
+        <field name="phone">+20 2 5555 0002</field>
+        <field name="email">blocked@pdc-demo.example</field>
+        <field name="pdc_blocked">True</field>
+        <field name="pdc_blocked_reason">Automatic block after 3 bounced checks (demo data)</field>
+        <field name="comment">Demo customer — blocked after repeated bounces. Shows the auto-block feature.</field>
+    </record>
+
+    <!-- New customer — first check, draft -->
+    <record id="res_partner_pdc_new" model="res.partner">
+        <field name="name">PDC Demo — New Customer</field>
+        <field name="customer_rank">1</field>
+        <field name="country_id" ref="base.sa"/>
+        <field name="city">Riyadh</field>
+        <field name="phone">+966 11 234 5678</field>
+        <field name="email">new@pdc-demo.example</field>
+        <field name="comment">Demo customer — first-time PDC, check in draft state.</field>
+    </record>
+
+    <!-- ── Suppliers ──────────────────────────────────────────────────────── -->
+
+    <!-- Regular supplier: multiple issued checks -->
+    <record id="res_partner_pdc_supplier_regular" model="res.partner">
+        <field name="name">PDC Demo — Regular Supplier</field>
+        <field name="supplier_rank">1</field>
+        <field name="country_id" ref="base.eg"/>
+        <field name="city">Cairo</field>
+        <field name="phone">+20 2 6666 0001</field>
+        <field name="email">supplier@pdc-demo.example</field>
+        <field name="comment">Demo supplier — receives multiple issued PDC checks. Shows issued-check workflow.</field>
+    </record>
+
+    <!-- Guarantee supplier -->
+    <record id="res_partner_pdc_supplier_guarantee" model="res.partner">
+        <field name="name">PDC Demo — Guarantee Supplier</field>
+        <field name="supplier_rank">1</field>
+        <field name="country_id" ref="base.sa"/>
+        <field name="city">Jeddah</field>
+        <field name="phone">+966 12 765 4321</field>
+        <field name="email">guarantee@pdc-demo.example</field>
+        <field name="comment">Demo supplier — holds guarantee checks. Shows guarantee check lifecycle.</field>
+    </record>
+
+    <!-- Supplier with cancelled check -->
+    <record id="res_partner_pdc_supplier_cancelled" model="res.partner">
+        <field name="name">PDC Demo — Cancelled Check Supplier</field>
+        <field name="supplier_rank">1</field>
+        <field name="country_id" ref="base.eg"/>
+        <field name="city">Cairo</field>
+        <field name="phone">+20 2 7777 0001</field>
+        <field name="email">cancelled@pdc-demo.example</field>
+        <field name="comment">Demo supplier — has a cancelled issued check. Shows cancellation + reversal workflow.</field>
+    </record>
+
+</odoo>

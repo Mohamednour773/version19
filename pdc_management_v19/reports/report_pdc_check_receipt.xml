@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PDC CHECK RECEIPT VOUCHER
+         Printed when a post-dated check is received from a customer.
+         Accessible via the Print menu on pdc.check form / list view.
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Report action ─────────────────────────────────────────────────── -->
+    <record id="action_report_pdc_check_receipt" model="ir.actions.report">
+        <field name="name">PDC Check Receipt Voucher</field>
+        <field name="model">pdc.check</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pdc_management_v19.report_pdc_check_receipt_document</field>
+        <field name="report_file">pdc_management_v19.report_pdc_check_receipt_document</field>
+        <field name="print_report_name">'PDC Receipt - ' + (object.name or '')</field>
+        <field name="binding_model_id" ref="model_pdc_check"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ── QWeb template ─────────────────────────────────────────────────── -->
+    <template id="report_pdc_check_receipt_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="check">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- ── Document Title ──────────────────────────── -->
+                        <div class="text-center mb-4">
+                            <h3 class="mb-0">
+                                <strong>PDC CHECK RECEIPT VOUCHER</strong>
+                            </h3>
+                            <h4 class="text-muted mt-1" style="font-family: 'Simplified Arabic', Arial, sans-serif; direction: rtl;">
+                                إيصال استلام شيك آجل
+                            </h4>
+                        </div>
+
+                        <hr/>
+
+                        <!-- ── Header Row ──────────────────────────────── -->
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <table class="table table-borderless table-sm mb-0">
+                                    <tr>
+                                        <td class="fw-bold" style="width:40%;">Receipt No.:</td>
+                                        <td><t t-out="check.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Date Received:</td>
+                                        <td>
+                                            <t t-out="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-borderless table-sm mb-0">
+                                    <tr>
+                                        <td class="fw-bold" style="width:40%;">Responsible:</td>
+                                        <td><t t-out="check.responsible_id.name or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Status:</td>
+                                        <td>
+                                            <t t-out="dict(check._fields['state'].selection).get(check.state, check.state)"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ── Received From ───────────────────────────── -->
+                        <div class="mb-3 p-2" style="background:#f8f9fa; border-left:4px solid #1F4E79;">
+                            <strong>RECEIVED FROM:</strong>
+                            <span class="ms-2 fs-5">
+                                <t t-out="check.partner_id.name or ''"/>
+                            </span>
+                            <t t-if="check.drawer_name and check.drawer_name != check.partner_id.name">
+                                <br/>
+                                <small class="text-muted ms-4">
+                                    Drawer / Signatory: <t t-out="check.drawer_name"/>
+                                </small>
+                            </t>
+                        </div>
+
+                        <!-- ── Check Details ───────────────────────────── -->
+                        <h5 class="mt-3 mb-2" style="color:#1F4E79;">CHECK DETAILS</h5>
+                        <table class="table table-bordered table-sm">
+                            <colgroup>
+                                <col style="width:35%;"/>
+                                <col style="width:65%;"/>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold bg-light">Check Number</td>
+                                    <td class="fs-5"><t t-out="check.check_number or ''"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold bg-light">Drawee Bank</td>
+                                    <td><t t-out="check.bank_id.name if check.bank_id else ''"/></td>
+                                </tr>
+                                <t t-if="check.branch">
+                                    <tr>
+                                        <td class="fw-bold bg-light">Branch</td>
+                                        <td><t t-out="check.branch"/></td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td class="fw-bold bg-light">Issue Date</td>
+                                    <td>
+                                        <t t-out="check.issue_date.strftime('%d/%m/%Y') if check.issue_date else ''"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold bg-light">Due Date (Maturity)</td>
+                                    <td class="fw-bold text-primary">
+                                        <t t-out="check.due_date.strftime('%d/%m/%Y') if check.due_date else ''"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold bg-light">Amount (Figures)</td>
+                                    <td class="fw-bold fs-5">
+                                        <t t-out="check.currency_id.symbol or check.currency_id.name or ''"/>
+                                        <t t-out="'{:,.2f}'.format(check.amount)"/>
+                                    </td>
+                                </tr>
+                                <t t-if="check.amount_in_words">
+                                    <tr>
+                                        <td class="fw-bold bg-light">Amount in Words (EN)</td>
+                                        <td><t t-out="check.amount_in_words"/></td>
+                                    </tr>
+                                </t>
+                                <t t-if="check.amount_in_words_ar">
+                                    <tr>
+                                        <td class="fw-bold bg-light">Amount in Words (AR)</td>
+                                        <td style="direction:rtl; font-family:'Simplified Arabic',Arial,sans-serif; text-align:right;">
+                                            <t t-out="check.amount_in_words_ar"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-if="check.journal_id">
+                                    <tr>
+                                        <td class="fw-bold bg-light">Deposited Into</td>
+                                        <td><t t-out="check.journal_id.name"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- ── Invoices ────────────────────────────────── -->
+                        <t t-if="check.invoice_ids">
+                            <h6 class="mt-3 mb-1">Related Invoices</h6>
+                            <ul class="list-inline">
+                                <t t-foreach="check.invoice_ids" t-as="inv">
+                                    <li class="list-inline-item me-3">
+                                        <small>
+                                            <t t-out="inv.name or inv.ref or ''"/>
+                                            (<t t-out="'{:,.2f}'.format(inv.amount_total)"/>
+                                            <t t-out="inv.currency_id.name or ''"/>)
+                                        </small>
+                                    </li>
+                                </t>
+                            </ul>
+                        </t>
+
+                        <!-- ── Notes ──────────────────────────────────────── -->
+                        <t t-if="check.narration">
+                            <div class="mt-3 p-2 border rounded">
+                                <strong>Notes:</strong>
+                                <p class="mb-0 mt-1"><t t-out="check.narration"/></p>
+                            </div>
+                        </t>
+
+                        <!-- ── Signature Block ─────────────────────────── -->
+                        <div class="row mt-5">
+                            <div class="col-5 text-center">
+                                <div style="border-top:1px solid #333; padding-top:6px; margin-top:40px;">
+                                    <p class="mb-0 fw-bold">Received By</p>
+                                    <small class="text-muted">
+                                        <t t-out="check.responsible_id.name or ''"/>
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-2"/>
+                            <div class="col-5 text-center">
+                                <div style="border-top:1px solid #333; padding-top:6px; margin-top:40px;">
+                                    <p class="mb-0 fw-bold">Authorized Signature</p>
+                                    <small class="text-muted">&amp;nbsp;</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── Footer note ────────────────────────────── -->
+                        <p class="text-center text-muted mt-4" style="font-size:9pt;">
+                            <em>
+                                This is a computer-generated receipt for
+                                <t t-out="check.company_id.name"/>.
+                                Check reference: <t t-out="check.name"/>.
+                            </em>
+                        </p>
+
+                    </div><!-- /page -->
+                </t><!-- /external_layout -->
+            </t><!-- /foreach -->
+        </t><!-- /html_container -->
+    </template>
+
+</odoo>

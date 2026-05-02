@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form View ─────────────────────────────────────────────────────── -->
+    <record id="view_pdc_cancel_wizard_form" model="ir.ui.view">
+        <field name="name">pdc.cancel.wizard.form</field>
+        <field name="model">pdc.cancel.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Cancel Checks">
+                <field name="has_under_collection" invisible="1"/>
+                <group>
+                    <group string="Checks to Cancel">
+                        <field name="check_ids" widget="many2many_tags"
+                               options="{'no_create': True}" nolabel="1"/>
+                        <field name="check_count" string="Selected" readonly="1"/>
+                        <field name="entry_count" string="Posted Journal Entries"
+                               readonly="1"
+                               invisible="entry_count == 0"/>
+                    </group>
+                    <group string="Reason">
+                        <field name="cancel_reason" nolabel="1"
+                               placeholder="Required — state why these checks are being cancelled..."/>
+                    </group>
+                </group>
+
+                <!-- Under-collection confirmation -->
+                <div class="alert alert-warning" role="alert"
+                     invisible="not has_under_collection">
+                    <i class="fa fa-exclamation-triangle"/>
+                    <strong>Under-Collection Warning</strong><br/>
+                    One or more checks are currently in <strong>"Under Collection"</strong> state.
+                    Cancellation will <strong>reverse the deposit journal entry</strong>.
+                    You must physically recall the check(s) from your bank before confirming.
+                    <div class="mt-2">
+                        <field name="confirm_under_collection"/>
+                        <label for="confirm_under_collection" class="ms-1"/>
+                    </div>
+                </div>
+
+                <!-- Posted entries info -->
+                <div class="alert alert-info" role="alert"
+                     invisible="entry_count == 0">
+                    <i class="fa fa-info-circle"/>
+                    <strong><field name="entry_count" readonly="1" nolabel="1"/></strong>
+                    posted journal entr(ies) will be reversed by this cancellation.
+                    Reversal entries are created automatically and linked to the check
+                    for a complete audit trail.
+                </div>
+
+                <footer>
+                    <button name="action_cancel" string="Cancel Checks" type="object"
+                            class="btn-danger" invisible="check_count == 0"/>
+                    <button special="cancel" string="Close" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Window Action ─────────────────────────────────────────────────── -->
+    <record id="action_pdc_cancel_wizard" model="ir.actions.act_window">
+        <field name="name">Cancel Checks</field>
+        <field name="res_model">pdc.cancel.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

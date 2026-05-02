@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PDC UNDER COLLECTION REPORT
+         Snapshot of all checks currently in state='under_collection'.
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Wizard form view ──────────────────────────────────────────────── -->
+    <record id="view_pdc_under_collection_wizard_form" model="ir.ui.view">
+        <field name="name">pdc.list.report.wizard.under_collection.form</field>
+        <field name="model">pdc.list.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Checks Under Collection">
+                <group>
+                    <group>
+                        <field name="report_type" invisible="1"/>
+                        <field name="as_of_date"/>
+                        <field name="check_type_filter"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <group string="Filter by Partners (optional)">
+                        <field name="partner_ids"
+                               nolabel="1"
+                               widget="many2many_tags"
+                               placeholder="Leave empty for all partners…"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_print"
+                            string="Print PDF"
+                            type="object"
+                            class="btn-primary"
+                            data-hotkey="p"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Window action ─────────────────────────────────────────────────── -->
+    <record id="action_pdc_under_collection_wizard" model="ir.actions.act_window">
+        <field name="name">Under Collection Report</field>
+        <field name="res_model">pdc.list.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_pdc_under_collection_wizard_form"/>
+        <field name="target">new</field>
+        <field name="context">{'default_report_type': 'under_collection'}</field>
+    </record>
+
+    <!-- ── ir.actions.report ─────────────────────────────────────────────── -->
+    <record id="action_report_pdc_under_collection" model="ir.actions.report">
+        <field name="name">Checks Under Collection</field>
+        <field name="model">pdc.list.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pdc_management_v19.report_pdc_under_collection_document</field>
+        <field name="report_file">pdc_management_v19.report_pdc_under_collection_document</field>
+        <field name="print_report_name">'Under Collection ' + str(object.as_of_date)</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ── QWeb template ─────────────────────────────────────────────────── -->
+    <template id="report_pdc_under_collection_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+
+                    <div class="text-center mb-3">
+                        <h3><strong>CHECKS UNDER COLLECTION</strong></h3>
+                        <p class="text-muted mb-0">
+                            As of <strong><t t-out="wizard.as_of_date"/></strong>
+                            — <t t-out="wizard.company_id.name"/>
+                        </p>
+                    </div>
+
+                    <t t-if="not checks">
+                        <p class="text-center text-muted">
+                            <em>No checks currently under collection.</em>
+                        </p>
+                    </t>
+
+                    <t t-if="checks">
+                        <!-- Summary -->
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <div class="card text-center">
+                                    <div class="card-body py-2">
+                                        <h5 class="card-title mb-0">
+                                            <t t-out="len(checks)"/>
+                                        </h5>
+                                        <small class="text-muted">Total Checks</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card text-center">
+                                    <div class="card-body py-2">
+                                        <h5 class="card-title mb-0">
+                                            <t t-out="'{:,.2f}'.format(sum(c.amount for c in checks))"/>
+                                        </h5>
+                                        <small class="text-muted">Total Amount</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card text-center">
+                                    <div class="card-body py-2">
+                                        <h5 class="card-title mb-0">
+                                            <t t-out="len(set(c.partner_id.id for c in checks))"/>
+                                        </h5>
+                                        <small class="text-muted">Partners</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table table-bordered table-sm table-hover" style="font-size:8.5pt;">
+                            <thead style="background:#1F4E79; color:white;">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Reference</th>
+                                    <th>Check No.</th>
+                                    <th>Partner</th>
+                                    <th>Bank</th>
+                                    <th>Deposit Date</th>
+                                    <th>Due Date</th>
+                                    <th>Days to Due</th>
+                                    <th>Deposit Bank</th>
+                                    <th class="text-end">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="idx" t-value="0"/>
+                                <t t-foreach="checks" t-as="chk">
+                                    <t t-set="idx" t-value="idx + 1"/>
+                                    <t t-set="days"
+                                       t-value="(chk.due_date - wizard.as_of_date).days if chk.due_date else 0"/>
+                                    <tr t-att-class="'table-warning' if (days is not None and 0 &lt;= days &lt;= 7) else (
+                                                    'table-danger' if (days is not None and days &lt; 0) else '')">
+                                        <td><t t-out="idx"/></td>
+                                        <td><t t-out="chk.name or ''"/></td>
+                                        <td><t t-out="chk.check_number or ''"/></td>
+                                        <td><t t-out="chk.partner_id.name if chk.partner_id else ''"/></td>
+                                        <td><t t-out="chk.bank_id.name if chk.bank_id else ''"/></td>
+                                        <td>
+                                            <t t-out="chk.deposit_date.strftime('%d/%m/%Y') if chk.deposit_date else '—'"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="chk.due_date.strftime('%d/%m/%Y') if chk.due_date else ''"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <t t-out="days if days is not None else '—'"/>
+                                        </td>
+                                        <td>
+                                            <t t-out="chk.deposit_journal_id.name if chk.deposit_journal_id else '—'"/>
+                                        </td>
+                                        <td class="text-end fw-bold">
+                                            <t t-out="'{:,.2f}'.format(chk.amount)"/>
+                                            <small class="text-muted ms-1">
+                                                <t t-out="chk.currency_id.name if chk.currency_id else ''"/>
+                                            </small>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tfoot>
+                                <tr style="background:#D6E4F0; font-weight:bold;">
+                                    <td colspan="9" class="text-end">Total:</td>
+                                    <td class="text-end">
+                                        <t t-out="'{:,.2f}'.format(sum(c.amount for c in checks))"/>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <p style="font-size:8pt;" class="text-muted mt-1">
+                            <span class="badge" style="background:#ffc107; color:#000;">&#9632;</span>
+                            Due within 7 days
+                            <span class="ms-3 badge bg-danger">&#9632;</span>
+                            Past due date
+                        </p>
+                    </t>
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

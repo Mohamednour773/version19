@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── List View (read-only audit log) ───────────────────────────────── -->
+    <record id="view_pdc_check_operation_list" model="ir.ui.view">
+        <field name="name">pdc.check.operation.list</field>
+        <field name="model">pdc.check.operation</field>
+        <field name="arch" type="xml">
+            <list string="Check Operations" create="0" edit="0" delete="0">
+                <field name="name"/>
+                <field name="operation_date"/>
+                <field name="check_id"/>
+                <field name="operation_type" widget="badge"
+                       decoration-success="operation_type in ('clear','pay','settle')"
+                       decoration-danger="operation_type in ('bounce','cancel')"
+                       decoration-info="operation_type in ('register','activate_guarantee')"
+                       decoration-warning="operation_type in ('deposit','deliver')"/>
+                <field name="from_state"/>
+                <field name="to_state"/>
+                <field name="amount"/>
+                <field name="currency_id" optional="show"/>
+                <field name="user_id"/>
+                <field name="journal_id" optional="show"/>
+                <field name="move_id" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form View (read-only) ─────────────────────────────────────────── -->
+    <record id="view_pdc_check_operation_form" model="ir.ui.view">
+        <field name="name">pdc.check.operation.form</field>
+        <field name="model">pdc.check.operation</field>
+        <field name="arch" type="xml">
+            <form string="Check Operation" create="0" edit="0">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Operation Details">
+                            <field name="operation_type"/>
+                            <field name="operation_date"/>
+                            <field name="user_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Check">
+                            <field name="check_id"/>
+                            <field name="amount"/>
+                            <field name="currency_id"/>
+                            <field name="journal_id"/>
+                            <field name="move_id"/>
+                        </group>
+                    </group>
+                    <group string="State Change">
+                        <group>
+                            <field name="from_state"/>
+                        </group>
+                        <group>
+                            <field name="to_state"/>
+                        </group>
+                    </group>
+                    <group string="Notes" invisible="not notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Search View ───────────────────────────────────────────────────── -->
+    <record id="view_pdc_check_operation_search" model="ir.ui.view">
+        <field name="name">pdc.check.operation.search</field>
+        <field name="model">pdc.check.operation</field>
+        <field name="arch" type="xml">
+            <search string="Search Operations">
+                <field name="name" string="Reference"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ────────────────────────────────────────────────────────── -->
+    <record id="action_pdc_check_operation" model="ir.actions.act_window">
+        <field name="name">Check Operations Log</field>
+        <field name="res_model">pdc.check.operation</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No operations recorded yet.
+            </p>
+            <p>
+                Every state change and action on PDC checks is logged here
+                as an immutable audit trail.
+            </p>
+        </field>
+    </record>
+
+</odoo>

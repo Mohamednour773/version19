@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PDC CRON JOBS (3 daily jobs)
+         All created with active=True but operators can disable per company.
+         noupdate="1" — operator-configured intervals survive module upgrades.
+
+         Cron 1 — Due-date reminders          runs @ 06:00 UTC daily
+         Cron 2 — Overdue-collection detect   runs @ 07:00 UTC daily
+         Cron 3 — Check book low-stock alert  runs @ 08:00 UTC daily
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── 1. Due-Date Reminders ─────────────────────────────────────────── -->
+    <record id="ir_cron_pdc_due_reminders" model="ir.cron">
+        <field name="name">PDC: Send Due-Date Reminders</field>
+        <field name="model_id" ref="pdc_management_v19.model_pdc_check"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_send_due_reminders()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+        <field name="priority">5</field>
+        <!-- nextcall set to tomorrow at 06:00 UTC — adjust per timezone in Settings -->
+        <field name="nextcall" eval="(datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d 06:00:00')"/>
+        <field name="user_id" ref="base.user_admin"/>
+    </record>
+
+    <!-- ── 2. Overdue-Collection Detection ──────────────────────────────── -->
+    <record id="ir_cron_pdc_overdue_collection" model="ir.cron">
+        <field name="name">PDC: Detect Overdue Under-Collection Checks</field>
+        <field name="model_id" ref="pdc_management_v19.model_pdc_check"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_detect_overdue_under_collection()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+        <field name="priority">5</field>
+        <field name="nextcall" eval="(datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d 07:00:00')"/>
+        <field name="user_id" ref="base.user_admin"/>
+    </record>
+
+    <!-- ── 3. Check Book Low-Stock Alert ────────────────────────────────── -->
+    <record id="ir_cron_pdc_book_low_stock" model="ir.cron">
+        <field name="name">PDC: Check Book Low-Stock Alert</field>
+        <field name="model_id" ref="pdc_management_v19.model_pdc_check_book"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_book_low_stock()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+        <field name="priority">5</field>
+        <field name="nextcall" eval="(datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d 08:00:00')"/>
+        <field name="user_id" ref="base.user_admin"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PDC MANAGEMENT — MENU STRUCTURE  (matches spec section 11)
+
+         PDC Management  (root, seq=85)
+         ├── Dashboard          (placeholder — Phase 5 dashboard action)
+         ├── Checks
+         │   ├── All Checks
+         │   ├── Received Checks
+         │   ├── Issued Checks
+         │   ├── Guarantee Checks
+         │   ├── Under Collection
+         │   ├── Due Soon
+         │   ├── Bounced
+         │   └── My Checks
+         ├── Check Books
+         ├── Operations Log
+         ├── Reports            (placeholder — Phase 4 fills this)
+         └── Configuration
+             ├── Banks
+             ├── Bank Print Layouts
+             ├── Bounce Reasons
+             └── Settings       (opens res.config.settings / PDC section)
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Root ──────────────────────────────────────────────────────────── -->
+    <menuitem id="menu_pdc_root"
+              name="PDC Management"
+              sequence="85"
+              web_icon="pdc_management,static/description/icon.png"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+
+    <record id="action_pdc_dashboard" model="ir.actions.act_window">
+        <field name="name">PDC Dashboard</field>
+        <field name="res_model">pdc.check</field>
+        <field name="view_mode">graph,pivot,list,kanban,form</field>
+        <field name="context">{'search_default_active_checks': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No checks to analyze yet.</p>
+            <p>Create PDC checks to see dashboard analysis by date, state, type, and amount.</p>
+        </field>
+    </record>
+    <!-- ── Dashboard ───────────────────────────────────────────────────── -->
+    <menuitem id="menu_pdc_dashboard"
+              name="Dashboard"
+              parent="menu_pdc_root"
+              sequence="5"
+              action="action_pdc_dashboard"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <!-- ── Checks submenu ────────────────────────────────────────────────── -->
+    <menuitem id="menu_pdc_checks"
+              name="Checks"
+              parent="menu_pdc_root"
+              sequence="10"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_check_all"
+              name="All Checks"
+              parent="menu_pdc_checks"
+              sequence="10"
+              action="action_pdc_check"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_check_received"
+              name="Received Checks"
+              parent="menu_pdc_checks"
+              sequence="20"
+              action="action_pdc_check_received"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_check_issued"
+              name="Issued Checks"
+              parent="menu_pdc_checks"
+              sequence="30"
+              action="action_pdc_check_issued"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_check_guarantee"
+              name="Guarantee Checks"
+              parent="menu_pdc_checks"
+              sequence="40"
+              action="action_pdc_check_guarantee"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_check_under_collection"
+              name="Under Collection"
+              parent="menu_pdc_checks"
+              sequence="50"
+              action="action_pdc_check_under_collection"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_check_due_soon"
+              name="Due Soon"
+              parent="menu_pdc_checks"
+              sequence="60"
+              action="action_pdc_check_due_soon"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_check_overdue"
+              name="Overdue"
+              parent="menu_pdc_checks"
+              sequence="65"
+              action="action_pdc_check_overdue"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_check_bounced"
+              name="Bounced"
+              parent="menu_pdc_checks"
+              sequence="70"
+              action="action_pdc_check_bounced"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_check_my"
+              name="My Checks"
+              parent="menu_pdc_checks"
+              sequence="80"
+              action="action_pdc_check_my"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <!-- ── Check Books ────────────────────────────────────────────────────── -->
+    <menuitem id="menu_pdc_check_books"
+              name="Check Books"
+              parent="menu_pdc_root"
+              sequence="20"
+              action="action_pdc_check_book"
+              groups="pdc_management_v19.group_pdc_manager"/>
+
+    <!-- ── Operations Log ────────────────────────────────────────────────── -->
+    <menuitem id="menu_pdc_operations_log"
+              name="Operations Log"
+              parent="menu_pdc_root"
+              sequence="30"
+              action="action_pdc_check_operation"
+              groups="pdc_management_v19.group_pdc_accountant"/>
+
+    <!-- ── Reports ──────────────────────────────────────────────────────── -->
+    <menuitem id="menu_pdc_reports"
+              name="Reports"
+              parent="menu_pdc_root"
+              sequence="40"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_report_aging"
+              name="Aging Report"
+              parent="menu_pdc_reports"
+              sequence="10"
+              action="pdc_management_v19.action_pdc_aging_wizard"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_report_partner_statement"
+              name="Partner Statement"
+              parent="menu_pdc_reports"
+              sequence="20"
+              action="pdc_management_v19.action_pdc_partner_statement_wizard"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_report_under_collection"
+              name="Under Collection"
+              parent="menu_pdc_reports"
+              sequence="30"
+              action="pdc_management_v19.action_pdc_under_collection_wizard"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_report_due_soon"
+              name="Due Soon"
+              parent="menu_pdc_reports"
+              sequence="40"
+              action="pdc_management_v19.action_pdc_due_soon_wizard"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <menuitem id="menu_pdc_report_bounced"
+              name="Bounced Checks"
+              parent="menu_pdc_reports"
+              sequence="50"
+              action="pdc_management_v19.action_pdc_bounced_wizard"
+              groups="pdc_management_v19.group_pdc_user"/>
+
+    <!-- ── Configuration ─────────────────────────────────────────────────── -->
+    <menuitem id="menu_pdc_config"
+              name="Configuration"
+              parent="menu_pdc_root"
+              sequence="90"
+              groups="pdc_management_v19.group_pdc_manager"/>
+
+    <menuitem id="menu_pdc_banks"
+              name="Banks"
+              parent="menu_pdc_config"
+              sequence="10"
+              action="action_pdc_bank"
+              groups="pdc_management_v19.group_pdc_manager"/>
+
+    <menuitem id="menu_pdc_bank_layouts"
+              name="Bank Print Layouts"
+              parent="menu_pdc_config"
+              sequence="20"
+              action="action_pdc_bank_layout"
+              groups="pdc_management_v19.group_pdc_manager"/>
+
+    <menuitem id="menu_pdc_bounce_reasons"
+              name="Bounce Reasons"
+              parent="menu_pdc_config"
+              sequence="30"
+              action="action_pdc_bounce_reason"
+              groups="pdc_management_v19.group_pdc_manager"/>
+
+    <menuitem id="menu_pdc_settings"
+              name="Settings"
+              parent="menu_pdc_config"
+              sequence="40"
+              action="base_setup.action_general_configuration"
+              groups="pdc_management_v19.group_pdc_manager"/>
+
+</odoo>

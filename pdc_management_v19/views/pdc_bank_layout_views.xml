@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── List View ─────────────────────────────────────────────────────── -->
+    <record id="view_pdc_bank_layout_list" model="ir.ui.view">
+        <field name="name">pdc.bank.layout.list</field>
+        <field name="model">pdc.bank.layout</field>
+        <field name="arch" type="xml">
+            <list string="Check Print Layouts">
+                <field name="name"/>
+                <field name="bank_id"/>
+                <field name="paper_format"/>
+                <field name="orientation"/>
+                <field name="is_default"/>
+                <field name="use_arabic"/>
+                <field name="active" optional="show"/>
+                <button name="action_test_print" string="Test Print"
+                        type="object" icon="fa-print"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form View ─────────────────────────────────────────────────────── -->
+    <record id="view_pdc_bank_layout_form" model="ir.ui.view">
+        <field name="name">pdc.bank.layout.form</field>
+        <field name="model">pdc.bank.layout</field>
+        <field name="arch" type="xml">
+            <form string="Check Print Layout">
+                <header>
+                    <button name="action_test_print" string="Test Print"
+                            type="object" icon="fa-print"
+                            class="btn-secondary"/>
+                    <button name="action_duplicate" string="Duplicate Layout"
+                            type="object" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Layout Name (e.g. CIB Standard 2024)"/></h1>
+                    </div>
+
+                    <!-- Layout Info -->
+                    <group string="Layout Information">
+                        <group>
+                            <field name="bank_id"/>
+                            <field name="is_default"/>
+                            <field name="active"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Paper">
+                            <field name="paper_format"/>
+                            <field name="orientation"/>
+                            <field name="paper_width"
+                                   invisible="paper_format != 'custom'"
+                                   string="Width (mm)"/>
+                            <field name="paper_height"
+                                   invisible="paper_format != 'custom'"
+                                   string="Height (mm)"/>
+                        </group>
+                    </group>
+
+                    <!-- Typography -->
+                    <group string="Typography">
+                        <group>
+                            <field name="font_family"/>
+                            <field name="font_size"/>
+                        </group>
+                        <group>
+                            <field name="use_arabic"/>
+                            <field name="date_format"/>
+                        </group>
+                    </group>
+
+                    <!-- Field Coordinates -->
+                    <notebook>
+                        <page string="Field Coordinates (mm)" name="coordinates">
+                            <p class="text-muted mb-3">
+                                All coordinates are measured in millimetres from the
+                                top-left corner of the paper. X = horizontal (right),
+                                Y = vertical (down). Print a test page to verify alignment.
+                            </p>
+                            <group>
+                                <group string="Date">
+                                    <field name="date_x" string="X"/>
+                                    <field name="date_y" string="Y"/>
+                                </group>
+                                <group string="Payee">
+                                    <field name="payee_x" string="X"/>
+                                    <field name="payee_y" string="Y"/>
+                                </group>
+                                <group string="Amount in Words">
+                                    <field name="amount_words_x" string="X"/>
+                                    <field name="amount_words_y" string="Y"/>
+                                    <field name="amount_words_max_width" string="Max Width"/>
+                                </group>
+                                <group string="Amount in Numbers">
+                                    <field name="amount_numbers_x" string="X"/>
+                                    <field name="amount_numbers_y" string="Y"/>
+                                </group>
+                                <group string="City / Place">
+                                    <field name="city_x" string="X"/>
+                                    <field name="city_y" string="Y"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Search View ───────────────────────────────────────────────────── -->
+    <record id="view_pdc_bank_layout_search" model="ir.ui.view">
+        <field name="name">pdc.bank.layout.search</field>
+        <field name="model">pdc.bank.layout</field>
+        <field name="arch" type="xml">
+            <search string="Search Layouts">
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ────────────────────────────────────────────────────────── -->
+    <record id="action_pdc_bank_layout" model="ir.actions.act_window">
+        <field name="name">Check Print Layouts</field>
+        <field name="res_model">pdc.bank.layout</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No print layouts configured yet.
+            </p>
+            <p>
+                Create a layout for each bank to define the exact position of fields
+                (date, payee, amount) on the bank's pre-printed check paper.
+            </p>
+        </field>
+    </record>
+
+</odoo>

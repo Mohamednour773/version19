@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         DEFAULT BOUNCE REASONS
+         Based on standard banking bounce codes used across Egypt, Saudi Arabia,
+         and the broader GCC / MENA region.
+         noupdate="1" — users may rename / add reasons; upgrades must not reset.
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- 1. Insufficient Funds — the most common bounce reason globally -->
+    <record id="bounce_reason_nsf" model="pdc.bounce.reason">
+        <field name="name">Insufficient Funds (NSF)</field>
+        <field name="code">NSF</field>
+        <field name="sequence">10</field>
+        <field name="is_legal_action">False</field>
+        <field name="active">True</field>
+        <field name="description">
+The drawer's account did not have sufficient cleared funds to honour the check
+at the time of presentation. The most common bounce reason in all markets.
+        </field>
+    </record>
+
+    <!-- 2. Account Closed -->
+    <record id="bounce_reason_account_closed" model="pdc.bounce.reason">
+        <field name="name">Account Closed</field>
+        <field name="code">CLOSED</field>
+        <field name="sequence">20</field>
+        <field name="is_legal_action">True</field>
+        <field name="active">True</field>
+        <field name="description">
+The drawer's bank account has been closed. Legal action is typically required
+to recover the funds, as this may indicate intent to defraud.
+        </field>
+    </record>
+
+    <!-- 3. Stop Payment Order -->
+    <record id="bounce_reason_stop_payment" model="pdc.bounce.reason">
+        <field name="name">Stop Payment Order</field>
+        <field name="code">STOP_PMT</field>
+        <field name="sequence">30</field>
+        <field name="is_legal_action">False</field>
+        <field name="active">True</field>
+        <field name="description">
+The drawer instructed their bank to refuse payment on this specific check.
+May indicate a dispute over the underlying transaction. Requires follow-up
+with the drawer before taking legal action.
+        </field>
+    </record>
+
+    <!-- 4. Check Presented Before Due Date -->
+    <record id="bounce_reason_post_dated" model="pdc.bounce.reason">
+        <field name="name">Presented Before Due Date</field>
+        <field name="code">POST_DATED</field>
+        <field name="sequence">40</field>
+        <field name="is_legal_action">False</field>
+        <field name="active">True</field>
+        <field name="description">
+The check was presented to the bank before its printed due date. The bank
+refused to honour it. Re-present on or after the due date.
+        </field>
+    </record>
+
+    <!-- 5. Signature Does Not Match -->
+    <record id="bounce_reason_sig_mismatch" model="pdc.bounce.reason">
+        <field name="name">Signature Does Not Match</field>
+        <field name="code">SIG_MISMATCH</field>
+        <field name="sequence">50</field>
+        <field name="is_legal_action">False</field>
+        <field name="active">True</field>
+        <field name="description">
+The signature on the check does not match the specimen signature held by the
+drawer's bank. Contact the drawer to issue a replacement check.
+        </field>
+    </record>
+
+    <!-- 6. Amount Mismatch (words vs. figures) -->
+    <record id="bounce_reason_amount_mismatch" model="pdc.bounce.reason">
+        <field name="name">Amount in Words / Figures Mismatch</field>
+        <field name="code">AMT_MISMATCH</field>
+        <field name="sequence">60</field>
+        <field name="is_legal_action">False</field>
+        <field name="active">True</field>
+        <field name="description">
+The amount written in words and the numeric amount do not agree. Banks in most
+MENA jurisdictions refuse such checks by law. A corrected replacement check
+must be obtained from the drawer.
+        </field>
+    </record>
+
+    <!-- 7. Account Frozen / Legally Blocked -->
+    <record id="bounce_reason_frozen" model="pdc.bounce.reason">
+        <field name="name">Account Frozen / Legally Blocked</field>
+        <field name="code">FROZEN</field>
+        <field name="sequence">70</field>
+        <field name="is_legal_action">True</field>
+        <field name="active">True</field>
+        <field name="description">
+The drawer's account has been frozen by a court order, tax authority, or
+regulatory body. The creditor should seek legal counsel for recovery.
+        </field>
+    </record>
+
+    <!-- 8. Technical / Bank Error -->
+    <record id="bounce_reason_bank_error" model="pdc.bounce.reason">
+        <field name="name">Technical / Bank Error</field>
+        <field name="code">BANK_ERR</field>
+        <field name="sequence">80</field>
+        <field name="is_legal_action">False</field>
+        <field name="active">True</field>
+        <field name="description">
+The check was returned due to a technical error at the presenting bank or
+clearing system (e.g., unreadable MICR line, damaged check). Re-present the
+original or obtain a replacement check from the drawer.
+        </field>
+    </record>
+
+</odoo>

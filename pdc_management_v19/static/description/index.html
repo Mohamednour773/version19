@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post-Dated Checks Management for Odoo 17</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, sans-serif; line-height: 1.6; color: #2C2C2A; background: #fff; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, #042C53 0%, #185FA5 100%);
+    color: white;
+    padding: 80px 20px;
+    text-align: center;
+}
+.hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+.hero p { font-size: 20px; max-width: 700px; margin: 0 auto 12px; opacity: 0.95; }
+.hero .arabic { font-size: 18px; opacity: 0.85; direction: rtl; }
+
+/* Stats */
+.stats {
+    background: #f8f9fa;
+    padding: 40px 20px;
+    border-bottom: 1px solid #e5e5e5;
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    text-align: center;
+}
+.stat-number { font-size: 42px; font-weight: 700; color: #185FA5; }
+.stat-label { font-size: 14px; color: #666; margin-top: 4px; }
+
+/* Sections */
+.section { padding: 60px 20px; }
+.section h2 {
+    font-size: 32px;
+    margin-bottom: 16px;
+    color: #042C53;
+    text-align: center;
+}
+.section .subtitle {
+    text-align: center;
+    color: #666;
+    max-width: 700px;
+    margin: 0 auto 40px;
+    font-size: 16px;
+}
+
+/* Features Grid */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+.feature-card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 28px;
+    transition: all 0.2s;
+}
+.feature-card:hover {
+    border-color: #185FA5;
+    box-shadow: 0 4px 12px rgba(24,95,165,0.1);
+}
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-bottom: 16px;
+    font-size: 18px;
+}
+.icon-blue { background: #E6F1FB; color: #185FA5; }
+.icon-teal { background: #E1F5EE; color: #0F6E56; }
+.icon-coral { background: #FAECE7; color: #993C1D; }
+.icon-purple { background: #EEEDFE; color: #534AB7; }
+.icon-pink { background: #FBEAF0; color: #993556; }
+.icon-amber { background: #FAEEDA; color: #854F0B; }
+.icon-gray { background: #F1EFE8; color: #444441; }
+.icon-green { background: #EAF3DE; color: #3B6D11; }
+
+.feature-card h3 { font-size: 19px; margin-bottom: 10px; color: #042C53; }
+.feature-card p { color: #555; font-size: 14px; line-height: 1.7; }
+
+/* Workflow */
+.workflow-section { background: #f8f9fa; }
+.workflow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 30px 0;
+}
+.workflow-step {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 14px 22px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+.workflow-step.active-1 { background: #E6F1FB; color: #0C447C; border-color: #B5D4F4; }
+.workflow-step.active-2 { background: #FAEEDA; color: #854F0B; border-color: #FAC775; }
+.workflow-step.active-3 { background: #E1F5EE; color: #0F6E56; border-color: #9FE1CB; }
+.workflow-arrow { color: #999; font-size: 20px; }
+
+/* Banks Grid */
+.banks-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    margin-top: 30px;
+}
+.bank-card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.2s;
+}
+.bank-card:hover {
+    border-color: #185FA5;
+    transform: translateY(-2px);
+}
+.bank-flag { font-size: 24px; margin-bottom: 8px; }
+.bank-country { font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 4px; }
+.bank-name { font-weight: 600; font-size: 15px; color: #042C53; }
+
+/* Pricing */
+.pricing-section { background: #f8f9fa; }
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 950px;
+    margin: 0 auto;
+}
+.price-card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+    position: relative;
+}
+.price-card.featured {
+    border: 2px solid #185FA5;
+    transform: scale(1.05);
+}
+.price-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #185FA5;
+    color: white;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.price-tier { font-size: 14px; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.price-amount { font-size: 48px; font-weight: 700; color: #042C53; }
+.price-period { font-size: 14px; color: #888; margin-bottom: 20px; }
+.price-features { text-align: left; margin: 20px 0; }
+.price-features li {
+    list-style: none;
+    padding: 6px 0;
+    color: #555;
+    font-size: 14px;
+}
+.price-features li::before {
+    content: "✓";
+    color: #0F6E56;
+    font-weight: 700;
+    margin-right: 8px;
+}
+
+/* CTA */
+.cta-section {
+    background: linear-gradient(135deg, #042C53 0%, #185FA5 100%);
+    color: white;
+    text-align: center;
+    padding: 60px 20px;
+}
+.cta-section h2 { color: white; margin-bottom: 16px; }
+.cta-section p { font-size: 18px; opacity: 0.95; margin-bottom: 30px; }
+.cta-button {
+    display: inline-block;
+    background: white;
+    color: #185FA5;
+    padding: 16px 40px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    transition: transform 0.2s;
+}
+.cta-button:hover { transform: translateY(-2px); }
+
+/* Footer */
+.footer {
+    background: #2C2C2A;
+    color: #aaa;
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .hero h1 { font-size: 32px; }
+    .features-grid, .banks-grid, .stats-grid, .pricing-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .price-card.featured { transform: scale(1); }
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+    <div class="container">
+        <div class="hero-badge">Odoo 17 • Accounting Module • OPL-1</div>
+        <h1>Post-Dated Checks Management</h1>
+        <p>Complete PDC lifecycle for Egypt, Saudi Arabia & GCC markets</p>
+        <p class="arabic">إدارة الشيكات الآجلة باحترافية — حل متكامل للمحاسبين والشركات</p>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+    <div class="container">
+        <div class="stats-grid">
+            <div>
+                <div class="stat-number">8</div>
+                <div class="stat-label">Professional Reports</div>
+            </div>
+            <div>
+                <div class="stat-number">6</div>
+                <div class="stat-label">Default Bank Layouts</div>
+            </div>
+            <div>
+                <div class="stat-number">13</div>
+                <div class="stat-label">Automated Workflows</div>
+            </div>
+            <div>
+                <div class="stat-number">2</div>
+                <div class="stat-label">Languages (AR/EN)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Why -->
+<div class="section">
+    <div class="container">
+        <h2>Why this module?</h2>
+        <p class="subtitle">In Egypt, Saudi Arabia, and the GCC, post-dated checks remain the backbone of B2B transactions. This module brings every step — from receipt and deposit to clearance, bouncing, settlement, and printing on actual bank check paper — into a single, audit-ready workflow.</p>
+    </div>
+</div>
+
+<!-- Features -->
+<div class="section" style="background: #f8f9fa;">
+    <div class="container">
+        <h2>Core Capabilities</h2>
+        <p class="subtitle">Everything your accounting team needs to handle PDCs professionally</p>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon icon-blue">01</div>
+                <h3>Complete Check Lifecycle</h3>
+                <p>Received, issued, and guarantee checks with full state tracking from draft through clearance, bouncing, settlement, and cancellation.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon icon-teal">02</div>
+                <h3>Automated Accounting</h3>
+                <p>Every workflow step posts the correct journal entries automatically. Cancellations reverse cleanly without breaking audit trails.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon icon-coral">03</div>
+                <h3>Bank Check Printing</h3>
+                <p>Print directly on bank check paper using configurable coordinates per layout. Includes 6 default banks for EG and SA. Add custom layouts without coding.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon icon-purple">04</div>
+                <h3>Bilingual Reports</h3>
+                <p>Aging report, partner statement, due soon, under collection, bounced — all in Arabic and English with proper RTL support.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon icon-pink">05</div>
+                <h3>Bounce Management</h3>
+                <p>Track reasons, bank charges, and settlements. Auto-block partners after configurable bounce threshold. Multi-source charges accounting.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon icon-amber">06</div>
+                <h3>Smart Reminders</h3>
+                <p>Three-tier email reminders before due date. Daily cron jobs for overdue detection and check-book low-stock alerts.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon icon-gray">07</div>
+                <h3>Audit Trail</h3>
+                <p>Immutable operations log records every state change with user, timestamp, and journal entry references. Compliance-ready.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon icon-green">08</div>
+                <h3>Multi-Currency</h3>
+                <p>Handle EGP, SAR, USD, and any currency. Amount-in-words generation in Arabic and English. Hijri date support for Saudi market.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Workflow -->
+<div class="section workflow-section">
+    <div class="container">
+        <h2>Workflow at a Glance</h2>
+        <p class="subtitle">Received check journey — fully automated with proper accounting at each step</p>
+        
+        <div class="workflow">
+            <div class="workflow-step">Draft</div>
+            <span class="workflow-arrow">→</span>
+            <div class="workflow-step active-1">Registered</div>
+            <span class="workflow-arrow">→</span>
+            <div class="workflow-step active-2">Under Collection</div>
+            <span class="workflow-arrow">→</span>
+            <div class="workflow-step active-3">Cleared</div>
+        </div>
+        
+        <p style="text-align: center; color: #666; margin-top: 20px; font-size: 14px;">
+            Each transition automatically posts a balanced journal entry.<br>
+            Bouncing reroutes to a settlement workflow with charge accounting.
+        </p>
+    </div>
+</div>
+
+<!-- Banks -->
+<div class="section">
+    <div class="container">
+        <h2>Built-in Bank Layouts</h2>
+        <p class="subtitle">6 ready-to-use layouts. Add unlimited custom layouts via the configuration UI — no code required.</p>
+        
+        <div class="banks-grid">
+            <div class="bank-card">
+                <div class="bank-flag">🇪🇬</div>
+                <div class="bank-country">Egypt</div>
+                <div class="bank-name">NBE</div>
+            </div>
+            <div class="bank-card">
+                <div class="bank-flag">🇪🇬</div>
+                <div class="bank-country">Egypt</div>
+                <div class="bank-name">CIB</div>
+            </div>
+            <div class="bank-card">
+                <div class="bank-flag">🇪🇬</div>
+                <div class="bank-country">Egypt</div>
+                <div class="bank-name">QNB Al Ahli</div>
+            </div>
+            <div class="bank-card">
+                <div class="bank-flag">🇸🇦</div>
+                <div class="bank-country">Saudi Arabia</div>
+                <div class="bank-name">Al Rajhi</div>
+            </div>
+            <div class="bank-card">
+                <div class="bank-flag">🇸🇦</div>
+                <div class="bank-country">Saudi Arabia</div>
+                <div class="bank-name">SNB</div>
+            </div>
+            <div class="bank-card">
+                <div class="bank-flag">🇸🇦</div>
+                <div class="bank-country">Saudi Arabia</div>
+                <div class="bank-name">Riyad Bank</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pricing -->
+<div class="section pricing-section">
+    <div class="container">
+        <h2>Simple, Transparent Pricing</h2>
+        <p class="subtitle">Choose the plan that fits your business</p>
+        
+        <div class="pricing-grid">
+            <div class="price-card">
+                <div class="price-tier">Apps Store</div>
+                <div class="price-amount">$49.90</div>
+                <div class="price-period">per user / month</div>
+                <ul class="price-features">
+                    <li>15-day free trial</li>
+                    <li>Self-service installation</li>
+                    <li>All features included</li>
+                    <li>Auto-updates</li>
+                    <li>Standard support</li>
+                </ul>
+            </div>
+            
+            <div class="price-card featured">
+                <div class="price-badge">MOST POPULAR</div>
+                <div class="price-tier">Direct License</div>
+                <div class="price-amount">$1,500</div>
+                <div class="price-period">lifetime, up to 20 users</div>
+                <ul class="price-features">
+                    <li>One-time payment</li>
+                    <li>Implementation included</li>
+                    <li>6 months free support</li>
+                    <li>Custom branded reports</li>
+                    <li>Training session</li>
+                </ul>
+            </div>
+            
+            <div class="price-card">
+                <div class="price-tier">Enterprise</div>
+                <div class="price-amount">Custom</div>
+                <div class="price-period">multi-company, custom needs</div>
+                <ul class="price-features">
+                    <li>Dedicated implementation</li>
+                    <li>Custom bank layouts</li>
+                    <li>API integration work</li>
+                    <li>Priority support</li>
+                    <li>Annual maintenance</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+    <div class="container">
+        <h2>Ready to streamline your PDC management?</h2>
+        <p>Start your 15-day free trial today. No credit card required.</p>
+        <a href="#" class="cta-button">Install Free Trial</a>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    <div class="container">
+        Compatible with Odoo 17 Community & Enterprise • OPL-1 License<br>
+        Made for Egypt, Saudi Arabia & GCC markets — © 2026
+    </div>
+</div>
+
+</body>
+</html>

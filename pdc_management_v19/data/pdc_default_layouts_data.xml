@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         DEFAULT BANK LAYOUTS FOR CHECK PRINTING
+         ══════════════════════════════════════════════════════════════════════
+
+         Coordinate system:
+           Origin (0,0) = top-left of the check paper.
+           X increases to the right, Y increases downward.
+           All values in mm.
+
+         These are representative starting-point coordinates.
+         Because physical check dimensions vary by batch, users MUST use
+         the "Test Print" feature (PDC Management → Config → Bank Print Layouts
+         → action_test_print) to calibrate their actual check stock.
+
+         Approach: print a calibration sheet on plain A4, overlay with the
+         actual check, mark the desired field positions, then update X/Y values.
+
+         ── Egyptian banks ──────────────────────────────────────────────────
+         Egyptian standard business checks are typically 220 mm × 96 mm,
+         printed landscape, with pre-printed Arabic field labels.
+
+         ── Saudi banks ─────────────────────────────────────────────────────
+         Saudi standard business checks follow SAMA layout guidelines:
+         220 mm × 100 mm landscape. Fields appear in both Arabic (right) and
+         English (left). The layouts below target the Arabic field zones.
+
+         Sources: bank specimen checks published by each bank + community
+         measurements. Treat as a calibration starting point, not exact.
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         BANKS (created only if they do not already exist — noupdate="1")
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Egypt -->
+    <record id="bank_nbe" model="pdc.bank">
+        <field name="name">National Bank of Egypt (NBE)</field>
+        <field name="name_ar">البنك الأهلي المصري</field>
+        <field name="code">NBE</field>
+        <field name="swift_code">NBEGEGCX</field>
+        <field name="country_id" ref="base.eg"/>
+        <field name="active">True</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="bank_cib" model="pdc.bank">
+        <field name="name">Commercial International Bank (CIB)</field>
+        <field name="name_ar">البنك التجاري الدولي</field>
+        <field name="code">CIB</field>
+        <field name="swift_code">CIBEEGCX</field>
+        <field name="country_id" ref="base.eg"/>
+        <field name="active">True</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="bank_qnb_ahli" model="pdc.bank">
+        <field name="name">QNB Al Ahli Bank</field>
+        <field name="name_ar">بنك قطر الوطني الأهلي</field>
+        <field name="code">QNBEG</field>
+        <field name="swift_code">QNBAEGCX</field>
+        <field name="country_id" ref="base.eg"/>
+        <field name="active">True</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <!-- Saudi Arabia -->
+    <record id="bank_alrajhi" model="pdc.bank">
+        <field name="name">Al Rajhi Bank</field>
+        <field name="name_ar">مصرف الراجحي</field>
+        <field name="code">RAJHI</field>
+        <field name="swift_code">RJHISARI</field>
+        <field name="country_id" ref="base.sa"/>
+        <field name="active">True</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <record id="bank_snb" model="pdc.bank">
+        <field name="name">Saudi National Bank (SNB)</field>
+        <field name="name_ar">البنك الأهلي السعودي</field>
+        <field name="code">SNB</field>
+        <field name="swift_code">NCBKSAJE</field>
+        <field name="country_id" ref="base.sa"/>
+        <field name="active">True</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="bank_riyad" model="pdc.bank">
+        <field name="name">Riyad Bank</field>
+        <field name="name_ar">بنك الرياض</field>
+        <field name="code">RIYAD</field>
+        <field name="swift_code">RIBLSARI</field>
+        <field name="country_id" ref="base.sa"/>
+        <field name="active">True</field>
+        <field name="sequence">60</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PRINT LAYOUTS
+         Paper: all Egyptian checks 220 × 96 mm landscape
+                all Saudi checks  220 × 100 mm landscape
+         Origin: top-left corner of check paper
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── NBE — National Bank of Egypt ─────────────────────────────────── -->
+    <!-- COORDINATES UNVERIFIED — Test on actual bank check paper before production use -->
+    <!--
+        NBE check field zones (measured from specimen):
+          Date area   : right side, ~165 mm from left, ~22 mm from top
+          Payee line  : ~45 mm from left, ~38 mm from top
+          Amount words: ~40 mm from left, ~52 mm from top  (max ~130 mm wide)
+          Amount figs : box at ~168 mm from left, ~52 mm from top
+          City line   : ~45 mm from left, ~22 mm from top
+    -->
+    <record id="layout_nbe_default" model="pdc.bank.layout">
+        <field name="name">NBE — Standard Business Check</field>
+        <field name="bank_id" ref="bank_nbe"/>
+        <field name="is_default">True</field>
+        <field name="active">True</field>
+        <field name="paper_format">custom</field>
+        <field name="paper_width">220.0</field>
+        <field name="paper_height">96.0</field>
+        <field name="orientation">landscape</field>
+        <field name="date_x">165.0</field>
+        <field name="date_y">22.0</field>
+        <field name="date_format">DD/MM/YYYY</field>
+        <field name="payee_x">45.0</field>
+        <field name="payee_y">38.0</field>
+        <field name="amount_words_x">40.0</field>
+        <field name="amount_words_y">52.0</field>
+        <field name="amount_words_max_width">128.0</field>
+        <field name="amount_numbers_x">168.0</field>
+        <field name="amount_numbers_y">52.0</field>
+        <field name="city_x">45.0</field>
+        <field name="city_y">22.0</field>
+        <field name="font_size">11</field>
+        <field name="font_family">Arial</field>
+        <field name="use_arabic">False</field>
+    </record>
+
+    <!-- Arabic variant for NBE (right-to-left, slightly different x anchors) -->
+    <!-- COORDINATES UNVERIFIED — Test on actual bank check paper before production use -->
+    <record id="layout_nbe_ar" model="pdc.bank.layout">
+        <field name="name">NBE — Standard Business Check (Arabic)</field>
+        <field name="bank_id" ref="bank_nbe"/>
+        <field name="is_default">False</field>
+        <field name="active">True</field>
+        <field name="paper_format">custom</field>
+        <field name="paper_width">220.0</field>
+        <field name="paper_height">96.0</field>
+        <field name="orientation">landscape</field>
+        <field name="date_x">22.0</field>
+        <field name="date_y">22.0</field>
+        <field name="date_format">DD/MM/YYYY</field>
+        <field name="payee_x">22.0</field>
+        <field name="payee_y">38.0</field>
+        <field name="amount_words_x">22.0</field>
+        <field name="amount_words_y">52.0</field>
+        <field name="amount_words_max_width">128.0</field>
+        <field name="amount_numbers_x">22.0</field>
+        <field name="amount_numbers_y">64.0</field>
+        <field name="city_x">150.0</field>
+        <field name="city_y">22.0</field>
+        <field name="font_size">12</field>
+        <field name="font_family">Simplified Arabic</field>
+        <field name="use_arabic">True</field>
+    </record>
+
+    <!-- ── CIB — Commercial International Bank ───────────────────────────── -->
+    <!-- COORDINATES UNVERIFIED — Test on actual bank check paper before production use -->
+    <!--
+        CIB check field zones (measured from specimen):
+          Date area   : far right box, ~175 mm from left, ~22 mm from top
+          Payee line  : ~35 mm from left, ~40 mm from top
+          Amount words: ~35 mm from left, ~55 mm from top  (max ~135 mm wide)
+          Amount figs : box at ~178 mm from left, ~40 mm from top
+          City line   : ~35 mm from left, ~22 mm from top
+    -->
+    <record id="layout_cib_default" model="pdc.bank.layout">
+        <field name="name">CIB — Standard Business Check</field>
+        <field name="bank_id" ref="bank_cib"/>
+        <field name="is_default">True</field>
+        <field name="active">True</field>
+        <field name="paper_format">custom</field>
+        <field name="paper_width">222.0</field>
+        <field name="paper_height">96.0</field>
+        <field name="orientation">landscape</field>
+        <field name="date_x">175.0</field>
+        <field name="date_y">22.0</field>
+        <field name="date_format">DD/MM/YYYY</field>
+        <field name="payee_x">35.0</field>
+        <field name="payee_y">40.0</field>
+        <field name="amount_words_x">35.0</field>
+        <field name="amount_words_y">55.0</field>
+        <field name="amount_words_max_width">135.0</field>
+        <field name="amount_numbers_x">178.0</field>
+        <field name="amount_numbers_y">40.0</field>
+        <field name="city_x">35.0</field>
+        <field name="city_y">22.0</field>
+        <field name="font_size">11</field>
+        <field name="font_family">Arial</field>
+        <field name="use_arabic">False</field>
+    </record>
+
+    <!-- ── QNB Al Ahli ────────────────────────────────────────────────────── -->
+    <!-- COORDINATES UNVERIFIED — Test on actual bank check paper before production use -->
+    <record id="layout_qnb_default" model="pdc.bank.layout">
+        <field name="name">QNB Al Ahli — Standard Business Check</field>
+        <field name="bank_id" ref="bank_qnb_ahli"/>
+        <field name="is_default">True</field>
+        <field name="active">True</field>
+        <field name="paper_format">custom</field>
+        <field name="paper_width">215.0</field>
+        <field name="paper_height">95.0</field>
+        <field name="orientation">landscape</field>
+        <field name="date_x">162.0</field>
+        <field name="date_y">24.0</field>
+        <field name="date_format">DD/MM/YYYY</field>
+        <field name="payee_x">40.0</field>
+        <field name="payee_y">40.0</field>
+        <field name="amount_words_x">35.0</field>
+        <field name="amount_words_y">55.0</field>
+        <field name="amount_words_max_width">130.0</field>
+        <field name="amount_numbers_x">168.0</field>
+        <field name="amount_numbers_y">55.0</field>
+        <field name="city_x">35.0</field>
+        <field name="city_y">24.0</field>
+        <field name="font_size">11</field>
+        <field name="font_family">Arial</field>
+        <field name="use_arabic">False</field>
+    </record>
+
+    <!-- ── Al Rajhi Bank ──────────────────────────────────────────────────── -->
+    <!-- COORDINATES UNVERIFIED — Test on actual bank check paper before production use -->
+    <!--
+        Al Rajhi SAMA-compliant check layout (measured from specimen):
+          The check has bilingual zones. These coordinates target the
+          English/left zone for LTR printing. Use use_arabic=True layout
+          for Arabic right-side zone.
+          Date   : ~155 mm from left, ~23 mm from top
+          Payee  : ~45 mm from left, ~38 mm from top
+          Words  : ~40 mm from left, ~52 mm from top  (max ~120 mm)
+          Figures: ~168 mm from left, ~38 mm from top
+          City   : ~40 mm from left, ~23 mm from top
+    -->
+    <record id="layout_alrajhi_default" model="pdc.bank.layout">
+        <field name="name">Al Rajhi Bank — Standard Business Check</field>
+        <field name="bank_id" ref="bank_alrajhi"/>
+        <field name="is_default">True</field>
+        <field name="active">True</field>
+        <field name="paper_format">custom</field>
+        <field name="paper_width">220.0</field>
+        <field name="paper_height">100.0</field>
+        <field name="orientation">landscape</field>
+        <field name="date_x">155.0</field>
+        <field name="date_y">23.0</field>
+        <field name="date_format">YYYY/MM/DD</field>
+        <field name="payee_x">45.0</field>
+        <field name="payee_y">38.0</field>
+        <field name="amount_words_x">40.0</field>
+        <field name="amount_words_y">52.0</field>
+        <field name="amount_words_max_width">120.0</field>
+        <field name="amount_numbers_x">168.0</field>
+        <field name="amount_numbers_y">38.0</field>
+        <field name="city_x">40.0</field>
+        <field name="city_y">23.0</field>
+        <field name="font_size">11</field>
+        <field name="font_family">Arial</field>
+        <field name="use_arabic">False</field>
+    </record>
+
+    <!-- Al Rajhi — Arabic layout (right-side Arabic zone) -->
+    <!-- COORDINATES UNVERIFIED — Test on actual bank check paper before production use -->
+    <record id="layout_alrajhi_ar" model="pdc.bank.layout">
+        <field name="name">Al Rajhi Bank — Standard Business Check (Arabic)</field>
+        <field name="bank_id" ref="bank_alrajhi"/>
+        <field name="is_default">False</field>
+        <field name="active">True</field>
+        <field name="paper_format">custom</field>
+        <field name="paper_width">220.0</field>
+        <field name="paper_height">100.0</field>
+        <field name="orientation">landscape</field>
+        <field name="date_x">20.0</field>
+        <field name="date_y">23.0</field>
+        <field name="date_format">YYYY/MM/DD</field>
+        <field name="payee_x">20.0</field>
+        <field name="payee_y">38.0</field>
+        <field name="amount_words_x">20.0</field>
+        <field name="amount_words_y">52.0</field>
+        <field name="amount_words_max_width">120.0</field>
+        <field name="amount_numbers_x">20.0</field>
+        <field name="amount_numbers_y">65.0</field>
+        <field name="city_x">155.0</field>
+        <field name="city_y">23.0</field>
+        <field name="font_size">12</field>
+        <field name="font_family">Simplified Arabic</field>
+        <field name="use_arabic">True</field>
+    </record>
+
+    <!-- ── Saudi National Bank (SNB) ─────────────────────────────────────── -->
+    <!-- COORDINATES UNVERIFIED — Test on actual bank check paper before production use -->
+    <record id="layout_snb_default" model="pdc.bank.layout">
+        <field name="name">Saudi National Bank (SNB) — Standard Business Check</field>
+        <field name="bank_id" ref="bank_snb"/>
+        <field name="is_default">True</field>
+        <field name="active">True</field>
+        <field name="paper_format">custom</field>
+        <field name="paper_width">220.0</field>
+        <field name="paper_height">100.0</field>
+        <field name="orientation">landscape</field>
+        <field name="date_x">158.0</field>
+        <field name="date_y">23.0</field>
+        <field name="date_format">YYYY/MM/DD</field>
+        <field name="payee_x">42.0</field>
+        <field name="payee_y">40.0</field>
+        <field name="amount_words_x">38.0</field>
+        <field name="amount_words_y">55.0</field>
+        <field name="amount_words_max_width">122.0</field>
+        <field name="amount_numbers_x">168.0</field>
+        <field name="amount_numbers_y">55.0</field>
+        <field name="city_x">38.0</field>
+        <field name="city_y">23.0</field>
+        <field name="font_size">11</field>
+        <field name="font_family">Arial</field>
+        <field name="use_arabic">False</field>
+    </record>
+
+    <!-- ── Riyad Bank ─────────────────────────────────────────────────────── -->
+    <!-- COORDINATES UNVERIFIED — Test on actual bank check paper before production use -->
+    <record id="layout_riyad_default" model="pdc.bank.layout">
+        <field name="name">Riyad Bank — Standard Business Check</field>
+        <field name="bank_id" ref="bank_riyad"/>
+        <field name="is_default">True</field>
+        <field name="active">True</field>
+        <field name="paper_format">custom</field>
+        <field name="paper_width">215.0</field>
+        <field name="paper_height">100.0</field>
+        <field name="orientation">landscape</field>
+        <field name="date_x">158.0</field>
+        <field name="date_y">24.0</field>
+        <field name="date_format">DD/MM/YYYY</field>
+        <field name="payee_x">40.0</field>
+        <field name="payee_y">38.0</field>
+        <field name="amount_words_x">35.0</field>
+        <field name="amount_words_y">52.0</field>
+        <field name="amount_words_max_width">126.0</field>
+        <field name="amount_numbers_x">165.0</field>
+        <field name="amount_numbers_y">52.0</field>
+        <field name="city_x">35.0</field>
+        <field name="city_y">24.0</field>
+        <field name="font_size">11</field>
+        <field name="font_family">Arial</field>
+        <field name="use_arabic">False</field>
+    </record>
+
+</odoo>

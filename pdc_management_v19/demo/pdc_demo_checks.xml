@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         PDC Demo Checks — 20 checks in various states
+         Tells a complete story for sales demos:
+
+         RECEIVED (10):
+           2 draft       — newly entered, waiting review
+           2 registered  — waiting to deposit
+           2 under_collection — deposited, waiting clearance
+           2 cleared     — completed, historical
+           1 bounced     — unsettled, needs action
+           1 settled     — was bounced, now resolved
+
+         ISSUED (8):
+           2 registered  — waiting to print
+           2 printed     — printed, waiting delivery
+           2 delivered   — delivered to supplier, waiting payment
+           1 paid        — historical
+           1 cancelled   — reversed, with reason
+
+         GUARANTEE (2):
+           1 guarantee_received, registered  — active guarantee
+           1 received + was_guarantee=True   — activated guarantee
+
+         State is written directly so demo looks good in views even when
+         the journal entries are not configured.
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         RECEIVED CHECKS
+         ════════════════════════════════════════════════════════════════════ -->
+
+    <!-- 1. Draft — new customer first check -->
+    <record id="pdc_demo_rcv_draft_1" model="pdc.check">
+        <field name="name">PDC/RCV/DEMO/001</field>
+        <field name="check_type">received</field>
+        <field name="state">draft</field>
+        <field name="check_number">CHK-4501</field>
+        <field name="bank_id" ref="bank_nbe"/>
+        <field name="partner_id" ref="res_partner_pdc_new"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">5000.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(days=2)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() + relativedelta(days=30)).strftime('%Y-%m-%d')"/>
+        <field name="branch">Nasr City Branch</field>
+        <field name="narration">First check from new customer — pending registration review.</field>
+    </record>
+
+    <!-- 2. Draft — mixed customer, another pending check -->
+    <record id="pdc_demo_rcv_draft_2" model="pdc.check">
+        <field name="name">PDC/RCV/DEMO/002</field>
+        <field name="check_type">received</field>
+        <field name="state">draft</field>
+        <field name="check_number">CHK-8812</field>
+        <field name="bank_id" ref="bank_cib"/>
+        <field name="partner_id" ref="res_partner_pdc_mixed"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">12500.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(days=1)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() + relativedelta(days=45)).strftime('%Y-%m-%d')"/>
+        <field name="branch">Downtown Branch</field>
+    </record>
+
+    <!-- 3. Registered — waiting to deposit, due soon -->
+    <record id="pdc_demo_rcv_reg_1" model="pdc.check">
+        <field name="name">PDC/RCV/DEMO/003</field>
+        <field name="check_type">received</field>
+        <field name="state">registered</field>
+        <field name="check_number">CHK-3301</field>
+        <field name="bank_id" ref="bank_nbe"/>
+        <field name="partner_id" ref="res_partner_pdc_healthy"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">25000.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=1)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() + relativedelta(days=7)).strftime('%Y-%m-%d')"/>
+        <field name="branch">Heliopolis Branch</field>
+        <field name="narration">Due in 7 days — ready to deposit.</field>
+    </record>
+
+    <!-- 4. Registered — USD check (multi-currency showcase) -->
+    <record id="pdc_demo_rcv_reg_2" model="pdc.check">
+        <field name="name">PDC/RCV/DEMO/004</field>
+        <field name="check_type">received</field>
+        <field name="state">registered</field>
+        <field name="check_number">CHK-9901</field>
+        <field name="bank_id" ref="bank_qnb_ahli"/>
+        <field name="partner_id" ref="res_partner_pdc_mixed"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">3500.00</field>
+        <field name="currency_id" ref="base.USD"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(days=20)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() + relativedelta(days=20)).strftime('%Y-%m-%d')"/>
+        <field name="branch">Smart Village Branch</field>
+        <field name="narration">USD check — demonstrates multi-currency support.</field>
+    </record>
+
+    <!-- 5. Under Collection — deposited, waiting bank confirmation -->
+    <record id="pdc_demo_rcv_uc_1" model="pdc.check">
+        <field name="name">PDC/RCV/DEMO/005</field>
+        <field name="check_type">received</field>
+        <field name="state">under_collection</field>
+        <field name="check_number">CHK-2201</field>
+        <field name="bank_id" ref="bank_nbe"/>
+        <field name="partner_id" ref="res_partner_pdc_healthy"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">50000.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=2)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() - relativedelta(days=3)).strftime('%Y-%m-%d')"/>
+        <field name="branch">Zamalek Branch</field>
+        <field name="narration">Deposited 3 days ago. Awaiting bank confirmation.</field>
+    </record>
+
+    <!-- 6. Under Collection — overdue, still awaiting -->
+    <record id="pdc_demo_rcv_uc_2" model="pdc.check">
+        <field name="name">PDC/RCV/DEMO/006</field>
+        <field name="check_type">received</field>
+        <field name="state">under_collection</field>
+        <field name="check_number">CHK-7701</field>
+        <field name="bank_id" ref="bank_cib"/>
+        <field name="partner_id" ref="res_partner_pdc_one_bounce"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">18000.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=3)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() - relativedelta(days=10)).strftime('%Y-%m-%d')"/>
+        <field name="branch">Maadi Branch</field>
+        <field name="narration">Overdue by 10 days — triggers overdue cron alert.</field>
+    </record>
+
+    <!-- 7. Cleared — completed, 2 months ago -->
+    <record id="pdc_demo_rcv_cleared_1" model="pdc.check">
+        <field name="name">PDC/RCV/DEMO/007</field>
+        <field name="check_type">received</field>
+        <field name="state">cleared</field>
+        <field name="check_number">CHK-1101</field>
+        <field name="bank_id" ref="bank_nbe"/>
+        <field name="partner_id" ref="res_partner_pdc_healthy"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">35000.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=5)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() - relativedelta(months=2)).strftime('%Y-%m-%d')"/>
+        <field name="branch">Heliopolis Branch</field>
+        <field name="narration">Cleared 2 months ago. Historical record.</field>
+    </record>
+
+    <!-- 8. Cleared — completed, 4 months ago (appears in aging buckets) -->
+    <record id="pdc_demo_rcv_cleared_2" model="pdc.check">
+        <field name="name">PDC/RCV/DEMO/008</field>
+        <field name="check_type">received</field>
+        <field name="state">cleared</field>
+        <field name="check_number">CHK-1102</field>
+        <field name="bank_id" ref="bank_cib"/>
+        <field name="partner_id" ref="res_partner_pdc_mixed"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">8750.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=7)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() - relativedelta(months=4)).strftime('%Y-%m-%d')"/>
+        <field name="branch">Downtown Branch</field>
+    </record>
+
+    <!-- 9. Bounced — unsettled, needs action (blocked customer) -->
+    <record id="pdc_demo_rcv_bounced_1" model="pdc.check">
+        <field name="name">PDC/RCV/DEMO/009</field>
+        <field name="check_type">received</field>
+        <field name="state">bounced</field>
+        <field name="check_number">CHK-6601</field>
+        <field name="bank_id" ref="bank_nbe"/>
+        <field name="partner_id" ref="res_partner_pdc_blocked"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">22000.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=2)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() - relativedelta(days=25)).strftime('%Y-%m-%d')"/>
+        <field name="branch">Giza Branch</field>
+        <field name="bounce_reason_id" ref="bounce_reason_nsf"/>
+        <field name="bounce_charges">150.00</field>
+        <field name="narration">Third bounce from this customer — triggered auto-block. Awaiting settlement.</field>
+    </record>
+
+    <!-- 10. Settled — was bounced, customer paid + charges -->
+    <record id="pdc_demo_rcv_settled_1" model="pdc.check">
+        <field name="name">PDC/RCV/DEMO/010</field>
+        <field name="check_type">received</field>
+        <field name="state">settled</field>
+        <field name="check_number">CHK-5501</field>
+        <field name="bank_id" ref="bank_cib"/>
+        <field name="partner_id" ref="res_partner_pdc_one_bounce"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">9500.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=4)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() - relativedelta(months=3)).strftime('%Y-%m-%d')"/>
+        <field name="branch">Alexandria Branch</field>
+        <field name="bounce_reason_id" ref="bounce_reason_nsf"/>
+        <field name="bounce_charges">100.00</field>
+        <field name="narration">Bounced then settled — complete bounce lifecycle example.</field>
+    </record>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         ISSUED CHECKS
+         ════════════════════════════════════════════════════════════════════ -->
+
+    <!-- 11. Registered — waiting to print -->
+    <record id="pdc_demo_iss_reg_1" model="pdc.check">
+        <field name="name">PDC/ISS/DEMO/001</field>
+        <field name="check_type">issued</field>
+        <field name="state">registered</field>
+        <field name="check_number">1001</field>
+        <field name="check_book_id" ref="pdc_demo_check_book_1"/>
+        <field name="bank_id" ref="bank_nbe"/>
+        <field name="partner_id" ref="res_partner_pdc_supplier_regular"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">15000.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(days=3)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() + relativedelta(days=30)).strftime('%Y-%m-%d')"/>
+        <field name="payee_name">PDC Demo — Regular Supplier</field>
+        <field name="narration">Ready to print — use Print Check action to test the print layout.</field>
+    </record>
+
+    <!-- 12. Registered — waiting to print, SAR currency -->
+    <record id="pdc_demo_iss_reg_2" model="pdc.check">
+        <field name="name">PDC/ISS/DEMO/002</field>
+        <field name="check_type">issued</field>
+        <field name="state">registered</field>
+        <field name="check_number">1002</field>
+        <field name="check_book_id" ref="pdc_demo_check_book_1"/>
+        <field name="bank_id" ref="bank_alrajhi"/>
+        <field name="partner_id" ref="res_partner_pdc_supplier_regular"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">8500.00</field>
+        <field name="currency_id" ref="base.SAR"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(days=1)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() + relativedelta(days=60)).strftime('%Y-%m-%d')"/>
+        <field name="payee_name">PDC Demo — Regular Supplier</field>
+        <field name="narration">SAR check — Al Rajhi Bank. Tests Arabic layout printing.</field>
+    </record>
+
+    <!-- 13. Printed — ready to deliver -->
+    <record id="pdc_demo_iss_printed_1" model="pdc.check">
+        <field name="name">PDC/ISS/DEMO/003</field>
+        <field name="check_type">issued</field>
+        <field name="state">printed</field>
+        <field name="check_number">1003</field>
+        <field name="check_book_id" ref="pdc_demo_check_book_1"/>
+        <field name="bank_id" ref="bank_nbe"/>
+        <field name="partner_id" ref="res_partner_pdc_supplier_regular"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">33000.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(days=7)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() + relativedelta(days=23)).strftime('%Y-%m-%d')"/>
+        <field name="payee_name">PDC Demo — Regular Supplier</field>
+        <field name="narration">Printed, waiting to hand over to supplier.</field>
+    </record>
+
+    <!-- 14. Printed — another bank -->
+    <record id="pdc_demo_iss_printed_2" model="pdc.check">
+        <field name="name">PDC/ISS/DEMO/004</field>
+        <field name="check_type">issued</field>
+        <field name="state">printed</field>
+        <field name="check_number">1004</field>
+        <field name="check_book_id" ref="pdc_demo_check_book_1"/>
+        <field name="bank_id" ref="bank_cib"/>
+        <field name="partner_id" ref="res_partner_pdc_supplier_regular"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">7200.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(days=5)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() + relativedelta(days=55)).strftime('%Y-%m-%d')"/>
+        <field name="payee_name">PDC Demo — Regular Supplier</field>
+    </record>
+
+    <!-- 15. Delivered — in transit, due in 2 weeks -->
+    <record id="pdc_demo_iss_del_1" model="pdc.check">
+        <field name="name">PDC/ISS/DEMO/005</field>
+        <field name="check_type">issued</field>
+        <field name="state">delivered</field>
+        <field name="check_number">1005</field>
+        <field name="check_book_id" ref="pdc_demo_check_book_1"/>
+        <field name="bank_id" ref="bank_nbe"/>
+        <field name="partner_id" ref="res_partner_pdc_supplier_regular"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">45000.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=1)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() + relativedelta(days=14)).strftime('%Y-%m-%d')"/>
+        <field name="payee_name">PDC Demo — Regular Supplier</field>
+        <field name="narration">Delivered to supplier — will cash in 2 weeks.</field>
+    </record>
+
+    <!-- 16. Delivered — guarantee supplier -->
+    <record id="pdc_demo_iss_del_2" model="pdc.check">
+        <field name="name">PDC/ISS/DEMO/006</field>
+        <field name="check_type">issued</field>
+        <field name="state">delivered</field>
+        <field name="check_number">1006</field>
+        <field name="check_book_id" ref="pdc_demo_check_book_1"/>
+        <field name="bank_id" ref="bank_snb"/>
+        <field name="partner_id" ref="res_partner_pdc_supplier_guarantee"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">20000.00</field>
+        <field name="currency_id" ref="base.SAR"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=2)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() + relativedelta(days=5)).strftime('%Y-%m-%d')"/>
+        <field name="payee_name">PDC Demo — Guarantee Supplier</field>
+        <field name="narration">SNB check — SAR currency. Due in 5 days.</field>
+    </record>
+
+    <!-- 17. Paid — historical -->
+    <record id="pdc_demo_iss_paid_1" model="pdc.check">
+        <field name="name">PDC/ISS/DEMO/007</field>
+        <field name="check_type">issued</field>
+        <field name="state">paid</field>
+        <field name="check_number">1007</field>
+        <field name="check_book_id" ref="pdc_demo_check_book_1"/>
+        <field name="bank_id" ref="bank_nbe"/>
+        <field name="partner_id" ref="res_partner_pdc_supplier_regular"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">28500.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=4)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() - relativedelta(months=2)).strftime('%Y-%m-%d')"/>
+        <field name="payee_name">PDC Demo — Regular Supplier</field>
+        <field name="narration">Paid — bank cashed the check. Complete issued lifecycle example.</field>
+    </record>
+
+    <!-- 18. Cancelled — with reversal reason -->
+    <record id="pdc_demo_iss_cancelled_1" model="pdc.check">
+        <field name="name">PDC/ISS/DEMO/008</field>
+        <field name="check_type">issued</field>
+        <field name="state">cancelled</field>
+        <field name="check_number">1008</field>
+        <field name="check_book_id" ref="pdc_demo_check_book_1"/>
+        <field name="bank_id" ref="bank_cib"/>
+        <field name="partner_id" ref="res_partner_pdc_supplier_cancelled"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">6000.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=3)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() - relativedelta(months=1)).strftime('%Y-%m-%d')"/>
+        <field name="payee_name">PDC Demo — Cancelled Check Supplier</field>
+        <field name="narration">Contract cancelled by mutual agreement — check voided and returned.</field>
+        <field name="narration">Cancelled issued check — shows cancellation + reversal workflow.</field>
+    </record>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         GUARANTEE CHECKS
+         ════════════════════════════════════════════════════════════════════ -->
+
+    <!-- 19. Active guarantee — still registered, waiting return or activation -->
+    <record id="pdc_demo_guar_active_1" model="pdc.check">
+        <field name="name">PDC/GRN/DEMO/001</field>
+        <field name="check_type">guarantee_received</field>
+        <field name="state">registered</field>
+        <field name="check_number">GRN-0101</field>
+        <field name="bank_id" ref="bank_alrajhi"/>
+        <field name="partner_id" ref="res_partner_pdc_supplier_guarantee"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">100000.00</field>
+        <field name="currency_id" ref="base.SAR"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=3)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() + relativedelta(months=9)).strftime('%Y-%m-%d')"/>
+        <field name="branch">Al Rajhi - Riyadh Main Branch</field>
+        <field name="narration">Performance guarantee for a construction contract. Expires in 9 months. Held off-balance-sheet.</field>
+    </record>
+
+    <!-- 20. Activated guarantee — was guarantee, now regular received check -->
+    <record id="pdc_demo_guar_activated_1" model="pdc.check">
+        <field name="name">PDC/RCV/DEMO/011</field>
+        <field name="check_type">received</field>
+        <field name="state">registered</field>
+        <field name="check_number">GRN-0055</field>
+        <field name="bank_id" ref="bank_nbe"/>
+        <field name="partner_id" ref="res_partner_pdc_mixed"/>
+        <field name="journal_id" ref="account.bank_journal"/>
+        <field name="amount">40000.00</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="issue_date" eval="(datetime.date.today() - relativedelta(months=6)).strftime('%Y-%m-%d')"/>
+        <field name="due_date" eval="(datetime.date.today() + relativedelta(days=10)).strftime('%Y-%m-%d')"/>
+        <field name="was_guarantee">True</field>
+        <field name="branch">NBE - Cairo Main Branch</field>
+        <field name="narration">Originally a guarantee check — activated when supplier defaulted. Now treated as a regular received check ready to deposit.</field>
+    </record>
+
+</odoo>
