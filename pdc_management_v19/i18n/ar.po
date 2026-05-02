@@ -2,10 +2,6 @@
 # Copyright (C) 2024 Mostafa
 # This file is distributed under the same license as the pdc_management_v19 package.
 #
-# NOTE: Translations to be added after module installation.
-# Use Settings → Translations → Export Translation to generate a proper .pot file,
-# then translate and import.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
@@ -20,3 +16,446 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
+#. module: pdc_management_v19
+msgid "Post-Dated Checks Management"
+msgstr "إدارة الشيكات الآجلة"
+
+#. module: pdc_management_v19
+msgid "Complete PDC management for received and issued checks (Odoo 19)"
+msgstr "إدارة شاملة للشيكات الآجلة المستلمة والصادرة (أودو 19)"
+
+#. module: pdc_management_v19
+msgid "PDC Management"
+msgstr "إدارة الشيكات الآجلة"
+
+#. module: pdc_management_v19
+msgid "Dashboard"
+msgstr "لوحة التحكم"
+
+#. module: pdc_management_v19
+msgid "Checks"
+msgstr "الشيكات"
+
+#. module: pdc_management_v19
+msgid "All Checks"
+msgstr "كل الشيكات"
+
+#. module: pdc_management_v19
+msgid "Received Checks"
+msgstr "الشيكات المستلمة"
+
+#. module: pdc_management_v19
+msgid "Issued Checks"
+msgstr "الشيكات الصادرة"
+
+#. module: pdc_management_v19
+msgid "Guarantee Checks"
+msgstr "شيكات الضمان"
+
+#. module: pdc_management_v19
+msgid "Under Collection"
+msgstr "تحت التحصيل"
+
+#. module: pdc_management_v19
+msgid "Due Soon"
+msgstr "مستحق قريباً"
+
+#. module: pdc_management_v19
+msgid "Overdue"
+msgstr "متأخر السداد"
+
+#. module: pdc_management_v19
+msgid "Bounced"
+msgstr "مرتد"
+
+#. module: pdc_management_v19
+msgid "My Checks"
+msgstr "شيكاتي"
+
+#. module: pdc_management_v19
+msgid "Check Books"
+msgstr "دفاتر الشيكات"
+
+#. module: pdc_management_v19
+msgid "Operations Log"
+msgstr "سجل العمليات"
+
+#. module: pdc_management_v19
+msgid "Reports"
+msgstr "التقارير"
+
+#. module: pdc_management_v19
+msgid "Aging Report"
+msgstr "تقرير الأعمار"
+
+#. module: pdc_management_v19
+msgid "Partner Statement"
+msgstr "كشف حساب الشريك"
+
+#. module: pdc_management_v19
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: pdc_management_v19
+msgid "Banks"
+msgstr "البنوك"
+
+#. module: pdc_management_v19
+msgid "Bank Print Layouts"
+msgstr "تخطيطات الطباعة البنكية"
+
+#. module: pdc_management_v19
+msgid "Bounce Reasons"
+msgstr "أسباب الارتداد"
+
+#. module: pdc_management_v19
+msgid "Settings"
+msgstr "الإعدادات"
+
+#. module: pdc_management_v19
+msgid "PDC Dashboard"
+msgstr "لوحة تحكم الشيكات الآجلة"
+
+#. module: pdc_management_v19
+msgid "Real-time overview"
+msgstr "نظرة فورية"
+
+#. module: pdc_management_v19
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: pdc_management_v19
+msgid "Key Performance Indicators"
+msgstr "المؤشرات الرئيسية"
+
+#. module: pdc_management_v19
+msgid "Analytics"
+msgstr "التحليلات"
+
+#. module: pdc_management_v19
+msgid "Quick Actions"
+msgstr "إجراءات سريعة"
+
+#. module: pdc_management_v19
+msgid "Total Under Collection"
+msgstr "إجمالي تحت التحصيل"
+
+#. module: pdc_management_v19
+msgid "Due This Week"
+msgstr "مستحق هذا الأسبوع"
+
+#. module: pdc_management_v19
+msgid "Bounced This Month"
+msgstr "مرتد هذا الشهر"
+
+#. module: pdc_management_v19
+msgid "Cleared This Month"
+msgstr "تم تحصيله هذا الشهر"
+
+#. module: pdc_management_v19
+msgid "checks in transit"
+msgstr "شيكات تحت التحصيل"
+
+#. module: pdc_management_v19
+msgid "checks due ≤ 7 days"
+msgstr "شيكات مستحقة خلال 7 أيام"
+
+#. module: pdc_management_v19
+msgid "checks returned"
+msgstr "شيكات مرتدة"
+
+#. module: pdc_management_v19
+msgid "checks settled"
+msgstr "شيكات تم تحصيلها"
+
+#. module: pdc_management_v19
+msgid "View All"
+msgstr "عرض الكل"
+
+#. module: pdc_management_v19
+msgid "Cash Inflow Forecast"
+msgstr "التدفق النقدي المتوقع"
+
+#. module: pdc_management_v19
+msgid "Expected Inflow (30 days)"
+msgstr "التدفق الداخل المتوقع (30 يوم)"
+
+#. module: pdc_management_v19
+msgid "Expected Inflow (60 days)"
+msgstr "التدفق الداخل المتوقع (60 يوم)"
+
+#. module: pdc_management_v19
+msgid "Expected Inflow (90 days)"
+msgstr "التدفق الداخل المتوقع (90 يوم)"
+
+#. module: pdc_management_v19
+msgid "30 days"
+msgstr "30 يوم"
+
+#. module: pdc_management_v19
+msgid "60 days"
+msgstr "60 يوم"
+
+#. module: pdc_management_v19
+msgid "90 days"
+msgstr "90 يوم"
+
+#. module: pdc_management_v19
+msgid "Cash Outflow (30 days)"
+msgstr "التدفق الخارج (30 يوم)"
+
+#. module: pdc_management_v19
+msgid "Expected Outflow (30 days)"
+msgstr "التدفق الخارج المتوقع (30 يوم)"
+
+#. module: pdc_management_v19
+msgid "Issued checks coming due"
+msgstr "شيكات صادرة قاربت على الاستحقاق"
+
+#. module: pdc_management_v19
+msgid "Bounce Rate %"
+msgstr "نسبة الارتداد %"
+
+#. module: pdc_management_v19
+msgid "Bounce Rate — 12 months"
+msgstr "نسبة الارتداد — 12 شهر"
+
+#. module: pdc_management_v19
+msgid "12 months"
+msgstr "12 شهر"
+
+#. module: pdc_management_v19
+msgid "Lower is better"
+msgstr "الأقل أفضل"
+
+#. module: pdc_management_v19
+msgid "Overdue Checks"
+msgstr "شيكات متأخرة"
+
+#. module: pdc_management_v19
+msgid "Review Now"
+msgstr "مراجعة الآن"
+
+#. module: pdc_management_v19
+msgid "Checks by State"
+msgstr "الشيكات حسب الحالة"
+
+#. module: pdc_management_v19
+msgid "Top 5 Partners — Outstanding Amount"
+msgstr "أفضل 5 عملاء — المبلغ القائم"
+
+#. module: pdc_management_v19
+msgid "Top 5 Partners"
+msgstr "أفضل 5 عملاء"
+
+#. module: pdc_management_v19
+msgid "Monthly Cash Flow — Last 6 Months"
+msgstr "التدفق النقدي الشهري — آخر 6 أشهر"
+
+#. module: pdc_management_v19
+msgid "Monthly Cash Flow"
+msgstr "التدفق النقدي الشهري"
+
+#. module: pdc_management_v19
+msgid "Bounce Reasons — 12 Months"
+msgstr "أسباب الارتداد — 12 شهر"
+
+#. module: pdc_management_v19
+msgid "Bounce Reasons"
+msgstr "أسباب الارتداد"
+
+#. module: pdc_management_v19
+msgid "Register New Check"
+msgstr "تسجيل شيك جديد"
+
+#. module: pdc_management_v19
+msgid "No checks yet"
+msgstr "لا توجد شيكات بعد"
+
+#. module: pdc_management_v19
+msgid "Welcome to PDC Management! Start by registering your first post-dated check to see the dashboard come to life with KPIs and analytics."
+msgstr "مرحباً بك في إدارة الشيكات الآجلة! ابدأ بتسجيل أول شيك آجل لديك لترى لوحة التحكم تتحرك بالمؤشرات والتحليلات."
+
+#. module: pdc_management_v19
+msgid "Register Your First Check"
+msgstr "تسجيل أول شيك"
+
+#. module: pdc_management_v19
+msgid "No data available"
+msgstr "لا توجد بيانات"
+
+#. module: pdc_management_v19
+msgid "No cash flow data yet — complete a deposit & clear cycle to populate this chart"
+msgstr "لا توجد بيانات تدفق نقدي بعد — أكمل دورة الإيداع والتحصيل لعرض هذا الرسم البياني"
+
+#. module: pdc_management_v19
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: pdc_management_v19
+msgid "Registered"
+msgstr "مسجل"
+
+#. module: pdc_management_v19
+msgid "Cleared"
+msgstr "تم تحصيله"
+
+#. module: pdc_management_v19
+msgid "Settled"
+msgstr "مسوّى"
+
+#. module: pdc_management_v19
+msgid "Printed"
+msgstr "مطبوع"
+
+#. module: pdc_management_v19
+msgid "Delivered"
+msgstr "مسلّم"
+
+#. module: pdc_management_v19
+msgid "Paid"
+msgstr "مدفوع"
+
+#. module: pdc_management_v19
+msgid "Cancelled"
+msgstr "ملغى"
+
+#. module: pdc_management_v19
+msgid "Returned"
+msgstr "مُعاد"
+
+#. module: pdc_management_v19
+msgid "Check Number"
+msgstr "رقم الشيك"
+
+#. module: pdc_management_v19
+msgid "Check Type"
+msgstr "نوع الشيك"
+
+#. module: pdc_management_v19
+msgid "Due Date"
+msgstr "تاريخ الاستحقاق"
+
+#. module: pdc_management_v19
+msgid "Issue Date"
+msgstr "تاريخ الإصدار"
+
+#. module: pdc_management_v19
+msgid "Amount"
+msgstr "المبلغ"
+
+#. module: pdc_management_v19
+msgid "Partner"
+msgstr "الشريك"
+
+#. module: pdc_management_v19
+msgid "Bank"
+msgstr "البنك"
+
+#. module: pdc_management_v19
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: pdc_management_v19
+msgid "Drawer Name"
+msgstr "اسم الساحب"
+
+#. module: pdc_management_v19
+msgid "Responsible"
+msgstr "المسؤول"
+
+#. module: pdc_management_v19
+msgid "Narration"
+msgstr "ملاحظات"
+
+#. module: pdc_management_v19
+msgid "Bounce Date"
+msgstr "تاريخ الارتداد"
+
+#. module: pdc_management_v19
+msgid "Bounce Reason"
+msgstr "سبب الارتداد"
+
+#. module: pdc_management_v19
+msgid "Clear Date"
+msgstr "تاريخ التحصيل"
+
+#. module: pdc_management_v19
+msgid "Amount in Words"
+msgstr "المبلغ كتابةً"
+
+#. module: pdc_management_v19
+msgid "Amount in Words (AR)"
+msgstr "المبلغ كتابةً (عربي)"
+
+#. module: pdc_management_v19
+msgid "Received"
+msgstr "مستلم"
+
+#. module: pdc_management_v19
+msgid "Issued"
+msgstr "صادر"
+
+#. module: pdc_management_v19
+msgid "Guarantee"
+msgstr "ضمان"
+
+#. module: pdc_management_v19
+msgid "Register"
+msgstr "تسجيل"
+
+#. module: pdc_management_v19
+msgid "Deposit"
+msgstr "إيداع"
+
+#. module: pdc_management_v19
+msgid "Clear"
+msgstr "تحصيل"
+
+#. module: pdc_management_v19
+msgid "Bounce"
+msgstr "ارتداد"
+
+#. module: pdc_management_v19
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: pdc_management_v19
+msgid "Print"
+msgstr "طباعة"
+
+#. module: pdc_management_v19
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: pdc_management_v19
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: pdc_management_v19
+msgid "PDC Check Receipt Voucher"
+msgstr "إيصال استلام شيك آجل"
+
+#. module: pdc_management_v19
+msgid "PDC Check Delivery Voucher"
+msgstr "إيصال تسليم شيك آجل"
+
+#. module: pdc_management_v19
+msgid "PDC Checks Report"
+msgstr "تقرير الشيكات الآجلة"
+
+#. module: pdc_management_v19
+msgid "PDC Aging Report"
+msgstr "تقرير أعمار الشيكات الآجلة"
+
+#. module: pdc_management_v19
+msgid "PDC User"
+msgstr "مستخدم الشيكات الآجلة"
+
+#. module: pdc_management_v19
+msgid "PDC Accountant"
+msgstr "محاسب الشيكات الآجلة"
+
+#. module: pdc_management_v19
+msgid "PDC Manager"
+msgstr "مدير الشيكات الآجلة"

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         PDC Dashboard Chart Widget Templates  (Phase 5.3)
+
+         Each template follows the same pattern:
+           • Empty state  — shown when state.hasData is false
+           • Canvas wrapper — shown when state.hasData is true
+                              height on the *container* div is required by
+                              Chart.js for correct responsive sizing;
+                              the <canvas> itself fills that container.
+    ═══════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── 1. Doughnut: Checks by State ─────────────────────────────── -->
+    <t t-name="pdc_management_v19.PDCPieChart">
+        <div class="pdc-chart-wrap">
+            <!-- Empty state -->
+            <div t-if="!state.hasData"
+                 class="pdc-chart-empty"
+                 title="No checks exist in the system yet">
+                <i class="fa fa-pie-chart pdc-chart-empty-icon"/>
+                <span class="pdc-chart-empty-text">No data available</span>
+            </div>
+            <!-- Chart canvas -->
+            <div t-else=""
+                 style="position:relative; height:240px; min-height:200px;">
+                <canvas t-ref="canvas"
+                        aria-label="Check state distribution chart"
+                        role="img"/>
+            </div>
+        </div>
+    </t>
+
+    <!-- ── 2. Horizontal Bar: Top Partners / Bounce Reasons ──────────── -->
+    <t t-name="pdc_management_v19.PDCBarChart">
+        <div class="pdc-chart-wrap">
+            <div t-if="!state.hasData"
+                 class="pdc-chart-empty"
+                 title="No data to display">
+                <i class="fa fa-bar-chart pdc-chart-empty-icon"/>
+                <span class="pdc-chart-empty-text">No data available</span>
+            </div>
+            <div t-else=""
+                 style="position:relative; height:220px; min-height:160px;">
+                <canvas t-ref="canvas"
+                        aria-label="Bar chart"
+                        role="img"/>
+            </div>
+        </div>
+    </t>
+
+    <!-- ── 3. Line: Monthly Cash Flow ───────────────────────────────── -->
+    <t t-name="pdc_management_v19.PDCLineChart">
+        <div class="pdc-chart-wrap">
+            <div t-if="!state.hasData"
+                 class="pdc-chart-empty"
+                 title="Complete a Deposit → Clear cycle to see cash flow data">
+                <i class="fa fa-area-chart pdc-chart-empty-icon"/>
+                <span class="pdc-chart-empty-text">
+                    No cash flow data yet —
+                    complete a deposit &amp; clear cycle to populate this chart
+                </span>
+            </div>
+            <div t-else=""
+                 style="position:relative; height:260px; min-height:200px;">
+                <canvas t-ref="canvas"
+                        aria-label="Monthly cash flow line chart"
+                        role="img"/>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -21,3 +21,4 @@ access_pdc_clear_wizard_user,pdc.clear.wizard user,model_pdc_clear_wizard,pdc_ma
 access_pdc_bounce_wizard_user,pdc.bounce.wizard user,model_pdc_bounce_wizard,pdc_management_v19.group_pdc_user,1,1,1,1
 access_pdc_cancel_wizard_manager,pdc.cancel.wizard manager,model_pdc_cancel_wizard,pdc_management_v19.group_pdc_manager,1,1,1,1
 access_pdc_print_check_wizard_user,pdc.print.check.wizard user,model_pdc_print_check_wizard,pdc_management_v19.group_pdc_user,1,1,1,1
+access_pdc_dashboard_user,pdc.dashboard user,model_pdc_dashboard,pdc_management_v19.group_pdc_user,1,1,1,1

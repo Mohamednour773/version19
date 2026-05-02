@@ -33,22 +33,13 @@
               groups="pdc_management_v19.group_pdc_user"/>
 
 
-    <record id="action_pdc_dashboard" model="ir.actions.act_window">
-        <field name="name">PDC Dashboard</field>
-        <field name="res_model">pdc.check</field>
-        <field name="view_mode">graph,pivot,list,kanban,form</field>
-        <field name="context">{'search_default_active_checks': 1}</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">No checks to analyze yet.</p>
-            <p>Create PDC checks to see dashboard analysis by date, state, type, and amount.</p>
-        </field>
-    </record>
+    <!-- action_pdc_dashboard is defined in views/pdc_dashboard_views.xml -->
     <!-- ── Dashboard ───────────────────────────────────────────────────── -->
     <menuitem id="menu_pdc_dashboard"
               name="Dashboard"
               parent="menu_pdc_root"
               sequence="5"
-              action="action_pdc_dashboard"
+              action="pdc_management_v19.action_pdc_dashboard"
               groups="pdc_management_v19.group_pdc_user"/>
 
     <!-- ── Checks submenu ────────────────────────────────────────────────── -->

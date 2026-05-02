@@ -1,0 +1,26 @@
+// PDC Dashboard chart widget styles  (Phase 5.3)
+
+.pdc-chart-wrap {
+    width: 100%;
+}
+
+.pdc-chart-empty {
+    display:         flex;
+    flex-direction:  column;
+    align-items:     center;
+    justify-content: center;
+    min-height:      160px;
+    color:           #bbb;
+    gap:             8px;
+
+    .pdc-chart-empty-icon {
+        font-size: 2rem;
+    }
+
+    .pdc-chart-empty-text {
+        font-size:  12px;
+        text-align: center;
+        max-width:  220px;
+        line-height: 1.4;
+    }
+}

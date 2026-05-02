@@ -1,6 +1,6 @@
 # Post-Dated Checks Management
 
-**Version:** 17.0.1.0.0  
+**Version:** 19.0.2.0.0  
 **License:** OPL-1  
 **Author:** Mostafa  
 
@@ -37,6 +37,52 @@ After installation:
 3. Configure print layouts for your banks
 4. Set company PDC settings (alert days, auto-block thresholds)
 5. Assign users to PDC groups
+
+## Dashboard (Phase 5)
+
+The **PDC Dashboard** is the main landing page under *PDC Management → Dashboard*.
+
+### What it shows
+
+| Section | Contents |
+|---|---|
+| **Primary KPIs** | Under Collection total · Due This Week · Bounced This Month · Cleared This Month — each with amount (company currency) and count |
+| **Secondary KPIs** | Cash Inflow Forecast (30 / 60 / 90 days) · Cash Outflow (30 days) · Bounce Rate % · Overdue check count |
+| **Analytics** | Doughnut: checks by state · Horizontal bar: top 5 partners by outstanding · Line chart: monthly inflow vs outflow (last 6 months) · Bar: top bounce reasons |
+| **Quick Actions** | Register New Check · Aging Report · Overdue Checks · Under Collection · Due This Week |
+
+### How to interpret KPIs
+
+- **Under Collection** — received checks deposited at the bank but not yet cleared; these are receivables in transit.
+- **Due This Week** — active checks (registered or under collection) whose due date falls within 7 days; use this to prepare daily collection runs.
+- **Bounced This Month** — failed clearances this calendar month; investigate via *View All* to follow up with customers.
+- **Cleared This Month** — successfully collected cash this month; matches the accounting entries generated on the Clear workflow step.
+- **Cash Inflow Forecast** — cumulative received checks with future due dates; amounts are converted to company currency at today's FX rate.
+- **Cash Outflow (30 days)** — issued checks in any active state (registered / printed / delivered) due within 30 days; represents committed future payments.
+- **Bounce Rate %** — bounced ÷ (cleared + bounced + paid) over the last 12 months. Below 2 % is typically acceptable; above 5 % warrants a credit policy review.
+- **Overdue Checks** — active checks whose due date has passed without being deposited; action required.
+
+### Quick actions
+
+| Button | What it opens |
+|---|---|
+| Register New Check | Blank `pdc.check` form |
+| Aging Report | Aging report wizard (by partner × age bucket) |
+| Overdue Checks | Filtered list of overdue active checks |
+| Under Collection | Filtered list of checks under collection |
+| Due This Week | Filtered list of checks due ≤ 7 days |
+
+### Multi-currency
+
+All monetary amounts displayed on the dashboard are converted to the **company currency** at the rate in effect on the day the dashboard is opened (Option A conversion). This is suitable for management reporting but is not used for bookkeeping entries, which use the rate at the time of the transaction.
+
+### Technical notes
+
+- The dashboard uses a `pdc.dashboard` TransientModel. Each click on the menu (or the **Refresh** button) creates a fresh transient record with recomputed KPIs.
+- Charts are rendered client-side using **Chart.js** (bundled with Odoo 19) via three Owl 3.0 field widgets registered as `pdc_pie_chart`, `pdc_bar_chart`, `pdc_line_chart`.
+- Month labels in the cash-flow chart are localised via **babel** using the logged-in user's language setting, so Arabic users see Arabic month names in the correct order.
+
+---
 
 ## Performance Notes
 

@@ -23,3 +23,5 @@ from . import pdc_bounce_wizard
 from . import pdc_cancel_wizard
 from . import pdc_print_check_wizard
 from . import pdc_cron_methods
+# ── Phase 5 Dashboard ─────────────────────────────────────────────────────
+from . import pdc_dashboard

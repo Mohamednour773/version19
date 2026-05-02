@@ -77,6 +77,9 @@ Comprehensive check management module designed for MENA region:
         'reports/report_pdc_due_soon.xml',
         'reports/report_pdc_bounced.xml',
 
+        # ── Phase 5 Dashboard ─────────────────────────────────────────────
+        'views/pdc_dashboard_views.xml',
+
         # ── Menus — always last ───────────────────────────────────────────
         'views/pdc_menus.xml',
     ],
@@ -88,7 +91,10 @@ Comprehensive check management module designed for MENA region:
     ],
     'assets': {
         'web.assets_backend': [
-            # Phase 2: 'pdc_management_v19/static/src/scss/pdc_styles.scss',
+            # Phase 5.3: Dashboard chart widgets
+            'pdc_management_v19/static/src/scss/pdc_dashboard.scss',
+            'pdc_management_v19/static/src/xml/pdc_dashboard_widgets.xml',
+            'pdc_management_v19/static/src/js/pdc_dashboard_widgets.js',
         ],
     },
     'images': ['static/description/banner.png'],

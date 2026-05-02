@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PDC DASHBOARD  —  Form view + action
+         Phase 5.2.1: Polish, empty state, visual hierarchy, Refresh button
+
+         Chart widgets (pdc_pie_chart / pdc_bar_chart / pdc_line_chart) are
+         registered in Phase 5.3. Until then those <field> elements render
+         as blank via Odoo's default Json fallback — no JS error.
+
+         Fields used in invisible expressions MUST be declared in the view
+         (even with invisible="1") so the web client fetches their values.
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <record id="view_pdc_dashboard" model="ir.ui.view">
+        <field name="name">pdc.dashboard.form</field>
+        <field name="model">pdc.dashboard</field>
+        <field name="arch" type="xml">
+
+            <form string="PDC Dashboard" create="false">
+
+                <!-- ── Invisible controller fields ──────────────────────── -->
+                <!-- monetary widget requires currency_id in the view -->
+                <field name="currency_id"    invisible="1"/>
+                <field name="company_id"     invisible="1"/>
+                <!-- drives empty-state vs full-dashboard toggle -->
+                <field name="has_any_checks" invisible="1"/>
+                <!-- drives analytics section visibility -->
+                <field name="has_chart_data" invisible="1"/>
+
+                <sheet>
+
+                    <!-- ══ HEADER ══════════════════════════════════════════ -->
+                    <div class="row align-items-center mb-2">
+                        <div class="col">
+                            <h2 class="mb-0 fw-bold">
+                                <i class="fa fa-tachometer me-2" style="color:#875A7B;"/>
+                                PDC Dashboard
+                            </h2>
+                            <p class="text-muted mb-0" style="font-size:13px;">
+                                Real-time overview ·
+                                <field name="company_name" nolabel="1"
+                                       class="fw-semibold text-dark"/>
+                            </p>
+                        </div>
+                        <div class="col-auto">
+                            <button name="action_refresh"
+                                    type="object"
+                                    string="Refresh"
+                                    icon="fa-refresh"
+                                    class="btn btn-outline-secondary btn-sm"/>
+                        </div>
+                    </div>
+                    <hr class="mt-1 mb-4"/>
+
+                    <!-- ══ EMPTY STATE ══════════════════════════════════════ -->
+                    <!-- Shown only when the company has no checks at all -->
+                    <div invisible="has_any_checks">
+                        <div class="text-center py-5">
+                            <i class="fa fa-file-text-o fa-4x mb-3"
+                               style="color:#ccc;"/>
+                            <h3 class="text-muted mb-2">No checks yet</h3>
+                            <p class="text-muted mb-4" style="max-width:420px; margin:0 auto;">
+                                Welcome to PDC Management! Start by registering
+                                your first post-dated check to see the dashboard
+                                come to life with KPIs and analytics.
+                            </p>
+                            <button name="action_register_check"
+                                    type="object"
+                                    string="Register Your First Check"
+                                    icon="fa-plus"
+                                    class="btn btn-primary btn-lg"/>
+                        </div>
+                    </div>
+
+                    <!-- ══ FULL DASHBOARD (has checks) ═════════════════════ -->
+                    <div invisible="not has_any_checks">
+
+                        <!-- ── Primary KPI Cards ─────────────────────────── -->
+                        <h6 class="text-uppercase fw-bold mb-3"
+                            style="font-size:10px; letter-spacing:1.5px; color:#aaa;">
+                            Key Performance Indicators
+                        </h6>
+
+                        <div class="row g-3 mb-3">
+
+                            <!-- Card 1 · Under Collection -->
+                            <div class="col-12 col-sm-6 col-xl-3">
+                                <div class="d-flex flex-column p-3 rounded-3 h-100"
+                                     style="min-height:150px; background:#E8F4FD;
+                                            border-left:4px solid #1976D2;">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <span class="text-uppercase fw-semibold"
+                                              style="font-size:10px; letter-spacing:.8px;
+                                                     color:#1976D2;">
+                                            Under Collection
+                                        </span>
+                                        <i class="fa fa-university fa-lg"
+                                           style="color:#1976D2; opacity:.4;"/>
+                                    </div>
+                                    <div class="mt-2 mb-1"
+                                         style="font-size:1.75rem; font-weight:700;
+                                                color:#1565C0; line-height:1.1;">
+                                        <field name="total_under_collection" nolabel="1"/>
+                                    </div>
+                                    <div class="text-muted small mb-auto">
+                                        <field name="under_collection_count" nolabel="1"/>
+                                        <span> checks in transit</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button name="action_view_under_collection"
+                                                type="object"
+                                                string="View All"
+                                                class="btn btn-outline-primary btn-sm px-3"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 2 · Due This Week -->
+                            <div class="col-12 col-sm-6 col-xl-3">
+                                <div class="d-flex flex-column p-3 rounded-3 h-100"
+                                     style="min-height:150px; background:#FFF8E1;
+                                            border-left:4px solid #F57C00;">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <span class="text-uppercase fw-semibold"
+                                              style="font-size:10px; letter-spacing:.8px;
+                                                     color:#F57C00;">
+                                            Due This Week
+                                        </span>
+                                        <i class="fa fa-calendar fa-lg"
+                                           style="color:#F57C00; opacity:.4;"/>
+                                    </div>
+                                    <div class="mt-2 mb-1"
+                                         style="font-size:1.75rem; font-weight:700;
+                                                color:#E65100; line-height:1.1;">
+                                        <field name="due_this_week_amount" nolabel="1"/>
+                                    </div>
+                                    <div class="text-muted small mb-auto">
+                                        <field name="due_this_week_count" nolabel="1"/>
+                                        <span> checks due ≤ 7 days</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button name="action_view_due_soon"
+                                                type="object"
+                                                string="View All"
+                                                class="btn btn-sm px-3"
+                                                style="color:#E65100; border-color:#E65100;"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 3 · Bounced This Month -->
+                            <div class="col-12 col-sm-6 col-xl-3">
+                                <div class="d-flex flex-column p-3 rounded-3 h-100"
+                                     style="min-height:150px; background:#FEECEC;
+                                            border-left:4px solid #D32F2F;">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <span class="text-uppercase fw-semibold"
+                                              style="font-size:10px; letter-spacing:.8px;
+                                                     color:#D32F2F;">
+                                            Bounced This Month
+                                        </span>
+                                        <i class="fa fa-times-circle fa-lg"
+                                           style="color:#D32F2F; opacity:.4;"/>
+                                    </div>
+                                    <div class="mt-2 mb-1"
+                                         style="font-size:1.75rem; font-weight:700;
+                                                color:#B71C1C; line-height:1.1;">
+                                        <field name="bounced_this_month_amount" nolabel="1"/>
+                                    </div>
+                                    <div class="text-muted small mb-auto">
+                                        <field name="bounced_this_month_count" nolabel="1"/>
+                                        <span> checks returned</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button name="action_view_bounced"
+                                                type="object"
+                                                string="View All"
+                                                class="btn btn-outline-danger btn-sm px-3"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 4 · Cleared This Month -->
+                            <div class="col-12 col-sm-6 col-xl-3">
+                                <div class="d-flex flex-column p-3 rounded-3 h-100"
+                                     style="min-height:150px; background:#E8F5E9;
+                                            border-left:4px solid #2E7D32;">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <span class="text-uppercase fw-semibold"
+                                              style="font-size:10px; letter-spacing:.8px;
+                                                     color:#2E7D32;">
+                                            Cleared This Month
+                                        </span>
+                                        <i class="fa fa-check-circle fa-lg"
+                                           style="color:#2E7D32; opacity:.4;"/>
+                                    </div>
+                                    <div class="mt-2 mb-1"
+                                         style="font-size:1.75rem; font-weight:700;
+                                                color:#1B5E20; line-height:1.1;">
+                                        <field name="cleared_this_month_amount" nolabel="1"/>
+                                    </div>
+                                    <div class="text-muted small mb-auto">
+                                        <field name="cleared_this_month_count" nolabel="1"/>
+                                        <span> checks settled</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div><!-- /primary KPIs -->
+
+                        <!-- ── Secondary KPI Row ─────────────────────────── -->
+                        <div class="row g-3 mb-4">
+
+                            <!-- Cash Inflow Forecast -->
+                            <div class="col-12 col-md-6 col-xl-3">
+                                <div class="p-3 rounded-3 border bg-white h-100"
+                                     style="min-height:130px;">
+                                    <div class="small fw-semibold text-uppercase mb-2"
+                                         style="font-size:10px; letter-spacing:.8px; color:#aaa;">
+                                        <i class="fa fa-arrow-circle-down text-success me-1"/>
+                                        Cash Inflow Forecast
+                                    </div>
+                                    <table class="table table-borderless table-sm mb-0">
+                                        <tr>
+                                            <td class="text-muted ps-0 py-1"
+                                                style="font-size:12px;">30 days</td>
+                                            <td class="fw-semibold text-end pe-0 py-1">
+                                                <field name="cash_inflow_30d" nolabel="1"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-muted ps-0 py-1"
+                                                style="font-size:12px;">60 days</td>
+                                            <td class="fw-semibold text-end pe-0 py-1">
+                                                <field name="cash_inflow_60d" nolabel="1"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-muted ps-0 py-1"
+                                                style="font-size:12px;">90 days</td>
+                                            <td class="fw-semibold text-end pe-0 py-1">
+                                                <field name="cash_inflow_90d" nolabel="1"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Cash Outflow (30d) -->
+                            <div class="col-12 col-md-6 col-xl-3">
+                                <div class="p-3 rounded-3 border bg-white h-100"
+                                     style="min-height:130px;">
+                                    <div class="small fw-semibold text-uppercase mb-2"
+                                         style="font-size:10px; letter-spacing:.8px; color:#aaa;">
+                                        <i class="fa fa-arrow-circle-up text-danger me-1"/>
+                                        Cash Outflow (30 days)
+                                    </div>
+                                    <div style="font-size:1.5rem; font-weight:700; color:#333;">
+                                        <field name="cash_outflow_30d" nolabel="1"/>
+                                    </div>
+                                    <div class="text-muted mt-1" style="font-size:12px;">
+                                        Issued checks coming due
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bounce Rate -->
+                            <div class="col-12 col-md-6 col-xl-3">
+                                <div class="p-3 rounded-3 border bg-white h-100"
+                                     style="min-height:130px;">
+                                    <div class="small fw-semibold text-uppercase mb-2"
+                                         style="font-size:10px; letter-spacing:.8px; color:#aaa;">
+                                        <i class="fa fa-percent text-warning me-1"/>
+                                        Bounce Rate — 12 months
+                                    </div>
+                                    <div style="font-size:1.5rem; font-weight:700; color:#333;">
+                                        <field name="bounce_rate_percent" nolabel="1"/>
+                                        <span class="text-muted fw-normal ms-1"
+                                              style="font-size:1rem;">%</span>
+                                    </div>
+                                    <div class="text-muted mt-1" style="font-size:12px;">
+                                        Lower is better
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Overdue Checks -->
+                            <div class="col-12 col-md-6 col-xl-3">
+                                <div class="d-flex flex-column p-3 rounded-3 h-100"
+                                     style="min-height:130px; background:#FFF3E0;
+                                            border:1px solid #FFCC80;">
+                                    <div class="small fw-semibold text-uppercase mb-2"
+                                         style="font-size:10px; letter-spacing:.8px; color:#aaa;">
+                                        <i class="fa fa-clock-o text-danger me-1"/>
+                                        Overdue Checks
+                                    </div>
+                                    <div class="mb-auto"
+                                         style="font-size:2.5rem; font-weight:700;
+                                                color:#B71C1C; line-height:1;">
+                                        <field name="overdue_count" nolabel="1"/>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button name="action_view_overdue"
+                                                type="object"
+                                                string="Review Now"
+                                                icon="fa-search"
+                                                class="btn btn-outline-danger btn-sm px-3"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div><!-- /secondary KPIs -->
+
+                        <!-- ── Analytics section (only when there is data) ── -->
+                        <div invisible="not has_chart_data">
+
+                            <h6 class="text-uppercase fw-bold mb-3"
+                                style="font-size:10px; letter-spacing:1.5px; color:#aaa;">
+                                Analytics
+                            </h6>
+
+                            <div class="row g-3 mb-3">
+
+                                <!-- Pie: Checks by State -->
+                                <div class="col-12 col-lg-5">
+                                    <div class="p-3 rounded-3 border bg-white h-100">
+                                        <h6 class="fw-semibold mb-3"
+                                            style="color:#555; font-size:13px;">
+                                            <i class="fa fa-pie-chart me-1"/>
+                                            Checks by State
+                                        </h6>
+                                        <field name="state_distribution_data"
+                                               widget="pdc_pie_chart"
+                                               nolabel="1"/>
+                                    </div>
+                                </div>
+
+                                <!-- Bar: Top 5 Partners -->
+                                <div class="col-12 col-lg-7">
+                                    <div class="p-3 rounded-3 border bg-white h-100">
+                                        <h6 class="fw-semibold mb-3"
+                                            style="color:#555; font-size:13px;">
+                                            <i class="fa fa-bar-chart me-1"/>
+                                            Top 5 Partners — Outstanding Amount
+                                        </h6>
+                                        <field name="top_partners_data"
+                                               widget="pdc_bar_chart"
+                                               nolabel="1"/>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row g-3 mb-4">
+
+                                <!-- Line: Monthly Cash Flow -->
+                                <div class="col-12 col-lg-8">
+                                    <div class="p-3 rounded-3 border bg-white h-100">
+                                        <h6 class="fw-semibold mb-3"
+                                            style="color:#555; font-size:13px;">
+                                            <i class="fa fa-area-chart me-1"/>
+                                            Monthly Cash Flow — Last 6 Months
+                                        </h6>
+                                        <field name="monthly_cash_flow_data"
+                                               widget="pdc_line_chart"
+                                               nolabel="1"/>
+                                    </div>
+                                </div>
+
+                                <!-- Bar: Bounce Reasons -->
+                                <div class="col-12 col-lg-4">
+                                    <div class="p-3 rounded-3 border bg-white h-100">
+                                        <h6 class="fw-semibold mb-3"
+                                            style="color:#555; font-size:13px;">
+                                            <i class="fa fa-exclamation-circle me-1"/>
+                                            Bounce Reasons — 12 Months
+                                        </h6>
+                                        <field name="bounce_reasons_data"
+                                               widget="pdc_bar_chart"
+                                               nolabel="1"/>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div><!-- /analytics -->
+
+                        <!-- ── Quick Actions ─────────────────────────────── -->
+                        <h6 class="text-uppercase fw-bold mb-3"
+                            style="font-size:10px; letter-spacing:1.5px; color:#aaa;">
+                            Quick Actions
+                        </h6>
+                        <div class="d-flex flex-wrap gap-2 pb-3">
+                            <button name="action_register_check"
+                                    type="object"
+                                    string="Register New Check"
+                                    icon="fa-plus"
+                                    class="btn btn-primary"/>
+                            <button name="action_aging_report"
+                                    type="object"
+                                    string="Aging Report"
+                                    icon="fa-table"
+                                    class="btn btn-outline-secondary"/>
+                            <button name="action_view_overdue"
+                                    type="object"
+                                    string="Overdue Checks"
+                                    icon="fa-clock-o"
+                                    class="btn btn-outline-danger"/>
+                            <button name="action_view_under_collection"
+                                    type="object"
+                                    string="Under Collection"
+                                    icon="fa-university"
+                                    class="btn btn-outline-primary"/>
+                            <button name="action_view_due_soon"
+                                    type="object"
+                                    string="Due This Week"
+                                    icon="fa-calendar"
+                                    class="btn btn-outline-warning"/>
+                        </div>
+
+                    </div><!-- /full dashboard -->
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Dashboard Window Action ──────────────────────────────────────── -->
+    <record id="action_pdc_dashboard" model="ir.actions.act_window">
+        <field name="name">PDC Dashboard</field>
+        <field name="res_model">pdc.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_pdc_dashboard"/>
+        <field name="target">current</field>
+    </record>
+
+</odoo>
