@@ -1,0 +1,8 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"access_right_group_manager","access.right.group manager","model_access_right_group","access_right_management.group_access_right_management_manager",1,1,1,1
+"access_right_group_field_line_manager","access.right.group.field.line manager","model_access_right_group_field_line","access_right_management.group_access_right_management_manager",1,1,1,1
+"access_right_group_menu_line_manager","access.right.group.menu.line manager","model_access_right_group_menu_line","access_right_management.group_access_right_management_manager",1,1,1,1
+"access_right_group_model_line_manager","access.right.group.model.line manager","model_access_right_group_model_line","access_right_management.group_access_right_management_manager",1,1,1,1
+"access_right_group_model_page_manager","access.right.group.model.page manager","model_access_right_group_model_page","access_right_management.group_access_right_management_manager",1,1,1,1
+"access_right_group_button_line_manager","access.right.group.button.line manager","model_access_right_group_button_line","access_right_management.group_access_right_management_manager",1,1,1,1
+"access_right_group_condition_line_manager","access.right.group.condition.line manager","model_access_right_group_condition_line","access_right_management.group_access_right_management_manager",1,1,1,1

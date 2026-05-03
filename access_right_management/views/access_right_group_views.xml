@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_access_right_group_tree" model="ir.ui.view">
+        <field name="name">access.right.group.tree</field>
+        <field name="model">access.right.group</field>
+        <field name="arch" type="xml">
+            <list string="Access Right Groups">
+                <field name="name"/>
+                <field name="active"/>
+                <field name="user_ids" widget="many2many_tags"/>
+                <field name="is_responsible"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_access_right_group_form" model="ir.ui.view">
+        <field name="name">access.right.group.form</field>
+        <field name="model">access.right.group</field>
+        <field name="arch" type="xml">
+            <form string="Access Right Group">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="is_responsible"/>
+                        </group>
+                    </group>
+                    <field name="note" placeholder="Internal notes..."/>
+                    <notebook>
+                        <page string="Users">
+                            <field name="user_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="login"/>
+                                    <field name="company_id"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Field Restrictions">
+                            <field name="field_rule_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="model_id"/>
+                                    <field name="field_id" domain="[('model_id', '=', model_id)]"/>
+                                    <field name="hide_field"/>
+                                    <field name="required_field"/>
+                                    <field name="readonly_field"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Hide Menu">
+                            <field name="hidden_menu_line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="menu_id"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Model Restrictions">
+                            <field name="model_rule_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="model_id"/>
+                                    <field name="allow_read"/>
+                                    <field name="allow_write"/>
+                                    <field name="allow_create"/>
+                                    <field name="allow_unlink"/>
+                                </list>
+                                <form string="Model Restriction">
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="model_id"/>
+                                                <field name="allow_read"/>
+                                                <field name="allow_write"/>
+                                            </group>
+                                            <group>
+                                                <field name="allow_create"/>
+                                                <field name="allow_unlink"/>
+                                            </group>
+                                        </group>
+                                        <group string="Hidden Notebook Pages">
+                                            <field name="page_rule_ids">
+                                                <list editable="bottom">
+                                                    <field name="sequence" widget="handle"/>
+                                                    <field name="view_id"/>
+                                                    <field name="page_name"/>
+                                                    <field name="page_string"/>
+                                                </list>
+                                            </field>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+
+                        <page string="Button Permissions">
+                            <field name="button_rule_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="model_id"/>
+                                    <field name="view_id"/>
+                                    <field name="button_type"/>
+                                    <field name="button_name"/>
+                                    <field name="button_label"/>
+                                    <field name="hide_button"/>
+                                </list>
+                                <form string="Button Restriction">
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="model_id"/>
+                                                <field name="view_id"/>
+                                                <field name="button_type"/>
+                                            </group>
+                                            <group>
+                                                <field name="button_name"/>
+                                                <field name="button_label"/>
+                                                <field name="hide_button"/>
+                                            </group>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+
+                        <page string="Warehouse Restriction">
+                            <group>
+                                <field name="warehouse_ids" widget="many2many_tags"/>
+                                <field name="location_ids" widget="many2many_tags"/>
+                                <field name="picking_type_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+
+                        <page string="Product Restriction">
+                            <group>
+                                <field name="product_ids" widget="many2many_tags"/>
+                                <field name="product_tmpl_ids" widget="many2many_tags"/>
+                                <field name="product_categ_ids" widget="many2many_tags"/>
+                                <field name="product_tag_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+
+                        <page string="Contact &amp; Partner Restriction">
+                            <group>
+                                <group>
+                                    <field name="partner_salesperson_id"/>
+                                    <field name="partner_type"/>
+                                </group>
+                                <group>
+                                    <field name="partner_ids" widget="many2many_tags"/>
+                                    <field name="partner_category_ids" widget="many2many_tags"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Journal Restriction">
+                            <field name="journal_ids" widget="many2many_tags"/>
+                        </page>
+
+                        <page string="Account Restriction">
+                            <field name="blocked_account_ids" widget="many2many_tags"/>
+                        </page>
+
+                        <page string="Special Permissions">
+                            <group>
+                                <group>
+                                    <field name="is_responsible"/>
+                                </group>
+                                <group>
+                                    <field name="no_quick_create"/>
+                                    <field name="no_hyperlink"/>
+                                    <field name="hide_bom"/>
+                                    <field name="readonly_bom"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Conditional Access Rules">
+                            <field name="conditional_rule_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="model_id"/>
+                                    <field name="domain_force" placeholder="[('state', '=', 'done')]"/>
+                                </list>
+                                <form string="Conditional Access Rule">
+                                    <sheet>
+                                        <group>
+                                            <field name="model_id"/>
+                                            <field name="domain_force" placeholder="[('state', '=', 'done')]"/>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_access_right_group" model="ir.actions.act_window">
+        <field name="name">Access Right Management</field>
+        <field name="res_model">access.right.group</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_access_right_management_root"
+              name="Access Right Management"
+              parent="base.menu_administration"
+              groups="access_right_management.group_access_right_management_manager"
+              sequence="90"/>
+
+    <menuitem id="menu_access_right_group"
+              name="Permission Groups"
+              parent="menu_access_right_management_root"
+              action="action_access_right_group"
+              groups="access_right_management.group_access_right_management_manager"
+              sequence="10"/>
+</odoo>
