@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_stock_request_tree" model="ir.ui.view">
+        <field name="name">stock.request.list</field>
+        <field name="model">stock.request</field>
+        <field name="arch" type="xml">
+            <list decoration-info="state == 'confirmed'" decoration-warning="state in ('in_progress', 'partial')" decoration-success="state == 'done'" decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="request_location_id"/>
+                <field name="source_warehouse_id"/>
+                <field name="destination_warehouse_id"/>
+                <field name="scheduled_date"/>
+                <field name="route_id" optional="show"/>
+                <field name="source_document" optional="show"/>
+                <field name="state" widget="badge"/>
+                <field name="return_state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stock_request_search" model="ir.ui.view">
+        <field name="name">stock.request.search</field>
+        <field name="model">stock.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="request_location_id"/>
+                <field name="source_document"/>
+                <field name="route_id"/>
+                <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_confirmed" string="Confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter name="filter_partial" string="Partial" domain="[('state', '=', 'partial')]"/>
+                <filter name="filter_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter name="filter_done" string="Done" domain="[('state', '=', 'done')]"/>
+                <filter name="filter_pending_return" string="Pending Return" domain="[('has_pending_return', '=', True)]"/>
+                <separator/>
+                <filter name="group_by_branch" string="Group by Branch" context="{'group_by': 'request_location_id'}"/>
+                <filter name="group_by_state" string="Group by Status" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_stock_request_form" model="ir.ui.view">
+        <field name="name">stock.request.form</field>
+        <field name="model">stock.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object" class="oe_highlight" invisible="state != 'draft'" groups="inter_branch_stock_request.group_stock_request_user"/>
+                    <button name="action_open_return_wizard" string="Create Return" type="object" invisible="not has_pending_return" groups="inter_branch_stock_request.group_stock_request_user"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state in ('done', 'cancel')" groups="inter_branch_stock_request.group_stock_request_manager"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft" type="object" invisible="state != 'cancel'" groups="inter_branch_stock_request.group_stock_request_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,partial,in_progress,done,cancel"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_pickings" type="object" class="oe_stat_button" icon="fa-exchange" invisible="picking_count == 0">
+                            <field name="picking_count" widget="statinfo" string="Pickings"/>
+                        </button>
+                        <button name="action_view_returns" type="object" class="oe_stat_button" icon="fa-undo" invisible="return_picking_count == 0">
+                            <field name="return_picking_count" widget="statinfo" string="Returns"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'"/>
+                            <field name="request_location_id" readonly="state != 'draft'"/>
+                            <field name="scheduled_date" readonly="state != 'draft'"/>
+                            <field name="route_id" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="sale_order_id" readonly="state != 'draft'"/>
+                            <field name="source_document" readonly="state != 'draft'"/>
+                            <field name="source_warehouse_id" readonly="1"/>
+                            <field name="destination_warehouse_id" readonly="1"/>
+                            <field name="return_state" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lines">
+                            <field name="line_ids" readonly="state not in ('draft')">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="product_uom_id"/>
+                                    <field name="qty_requested"/>
+                                    <field name="qty_done" readonly="1"/>
+                                    <field name="qty_received" readonly="1"/>
+                                    <field name="qty_returned" readonly="1" optional="show"/>
+                                    <field name="available_return_qty" readonly="1" optional="show"/>
+                                    <field name="route_id" readonly="1" optional="show" invisible="not show_route_info"/>
+                                    <field name="show_route_info" column_invisible="1"/>
+                                    <field name="note" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Operations">
+                            <field name="picking_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="picking_type_id"/>
+                                    <field name="stock_request_kind"/>
+                                    <field name="scheduled_date"/>
+                                    <field name="state"/>
+                                    <field name="origin"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stock_request" model="ir.actions.act_window">
+        <field name="name">Stock Requests</field>
+        <field name="res_model">stock.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_stock_request_tree"/>
+        <field name="search_view_id" ref="view_stock_request_search"/>
+        <field name="context">{}</field>
+    </record>
+
+    <record id="action_stock_request_list_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_stock_request_tree"/>
+        <field name="act_window_id" ref="action_stock_request"/>
+    </record>
+
+    <record id="action_stock_request_form_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_stock_request_form"/>
+        <field name="act_window_id" ref="action_stock_request"/>
+    </record>
+</odoo>

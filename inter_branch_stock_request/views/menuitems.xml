@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_stock_request_root"
+        name="Stock Requests"
+        parent="stock.menu_stock_warehouse_mgmt"
+        sequence="45"
+        groups="inter_branch_stock_request.group_stock_request_user"
+    />
+
+    <menuitem
+        id="menu_stock_request"
+        name="Inter-Branch Requests"
+        parent="inter_branch_stock_request.menu_stock_request_root"
+        action="inter_branch_stock_request.action_stock_request"
+        sequence="10"
+        groups="inter_branch_stock_request.group_stock_request_user"
+    />
+</odoo>

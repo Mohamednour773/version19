@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_picking_form_inherit_stock_request" model="ir.ui.view">
+        <field name="name">stock.picking.form.stock.request</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="inside">
+                <group string="Stock Request" invisible="not stock_request_id">
+                    <field name="stock_request_id" readonly="1"/>
+                    <field name="stock_request_kind" readonly="1"/>
+                    <field name="counterpart_picking_id" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
