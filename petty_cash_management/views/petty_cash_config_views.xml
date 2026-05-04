@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_petty_cash_config_settings" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.petty.cash</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="90"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="Petty Cash" name="petty_cash_management">
+                    
+                    <block title="Accounting Defaults" name="accounting_defaults">
+                        <setting string="Default Journal" help="Configure default journal for petty cash operations.">
+                            <field name="petty_journal_id"/>
+                        </setting>
+                        <setting string="Petty Cash Account" help="Default account for petty cash funds.">
+                            <field name="petty_cash_account_id"/>
+                        </setting>
+                        <setting string="Custody Account" help="Default account for employee custodies.">
+                            <field name="custody_account_id"/>
+                        </setting>
+                    </block>
+
+                    <block title="Approval and Validation" name="approval_validation">
+                        <setting string="Approval Mode" help="Choose between single or double approval workflow.">
+                            <field name="approval_mode" widget="radio"/>
+                        </setting>
+                        <setting string="Validation Rules" help="Settlement and balance rules.">
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <label for="require_settlement_receipt" class="o_light_label"/>
+                                    <field name="require_settlement_receipt"/>
+                                </div>
+                                <div class="mt8">
+                                    <label for="allow_exceed_fund_balance" class="o_light_label"/>
+                                    <field name="allow_exceed_fund_balance"/>
+                                </div>
+                                <div class="mt8">
+                                    <label for="max_days_without_settlement" class="o_light_label"/>
+                                    <field name="max_days_without_settlement" style="width: 50px;"/> <span>Days</span>
+                                </div>
+                                <div class="mt8">
+                                    <label for="auto_replenishment_enabled" class="o_light_label"/>
+                                    <field name="auto_replenishment_enabled"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_petty_cash_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'petty_cash_management'}</field>
+    </record>
+
+</odoo>

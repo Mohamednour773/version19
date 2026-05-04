@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── Report Actions ────────────────────────────────────────────────── -->
+
+    <record id="action_report_custody_statement" model="ir.actions.report">
+        <field name="name">Custody Statement | كشف حساب عهدة</field>
+        <field name="model">hr.petty.cash</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">petty_cash_management.report_custody_statement</field>
+        <field name="report_file">petty_cash_management.report_custody_statement</field>
+        <field name="binding_model_id" ref="petty_cash_management.model_hr_petty_cash"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <record id="action_report_settlement_voucher" model="ir.actions.report">
+        <field name="name">Settlement Voucher | سند التسوية</field>
+        <field name="model">petty.cash.settlement</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">petty_cash_management.report_settlement_voucher</field>
+        <field name="report_file">petty_cash_management.report_settlement_voucher</field>
+        <field name="binding_model_id" ref="petty_cash_management.model_petty_cash_settlement"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <record id="action_report_fund_balance" model="ir.actions.report">
+        <field name="name">Fund Balance Report | تقرير رصيد الصندوق</field>
+        <field name="model">petty.cash.fund</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">petty_cash_management.report_fund_balance</field>
+        <field name="report_file">petty_cash_management.report_fund_balance</field>
+        <field name="binding_model_id" ref="petty_cash_management.model_petty_cash_fund"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <record id="action_report_outstanding_custodies" model="ir.actions.report">
+        <field name="name">Outstanding Custodies | العهد غير المسوّاة</field>
+        <field name="model">hr.petty.cash</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">petty_cash_management.report_outstanding_custodies</field>
+        <field name="report_file">petty_cash_management.report_outstanding_custodies</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ─── Outstanding Custodies Menu Action ─────────────────────────────── -->
+    <record id="action_report_outstanding_custodies_menu" model="ir.actions.act_window">
+        <field name="name">Outstanding Custodies Report</field>
+        <field name="res_model">hr.petty.cash</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[('state', '=', 'paid')]</field>
+    </record>
+
+</odoo>

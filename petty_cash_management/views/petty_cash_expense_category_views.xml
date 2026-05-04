@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_petty_cash_expense_category_form" model="ir.ui.view">
+        <field name="name">petty.cash.expense.category.form</field>
+        <field name="model">petty.cash.expense.category</field>
+        <field name="arch" type="xml">
+            <form string="Expense Category">
+                <sheet>
+                    <group>
+                        <group string="Names">
+                            <field name="name_en"/>
+                            <field name="name_ar"/>
+                            <field name="sequence"/>
+                            <field name="color" widget="color_picker"/>
+                        </group>
+                        <group string="Rules">
+                            <field name="account_id"/>
+                            <field name="requires_receipt"/>
+                            <field name="max_amount_per_line"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_petty_cash_expense_category_list" model="ir.ui.view">
+        <field name="name">petty.cash.expense.category.list</field>
+        <field name="model">petty.cash.expense.category</field>
+        <field name="arch" type="xml">
+            <list string="Expense Categories" editable="top">
+                <field name="sequence" widget="handle"/>
+                <field name="name_ar"/>
+                <field name="name_en"/>
+                <field name="account_id"/>
+                <field name="requires_receipt"/>
+                <field name="max_amount_per_line"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_petty_cash_expense_category" model="ir.actions.act_window">
+        <field name="name">Expense Categories | فئات المصاريف</field>
+        <field name="res_model">petty.cash.expense.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

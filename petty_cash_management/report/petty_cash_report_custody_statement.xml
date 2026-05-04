@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_custody_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" dir="rtl" style="font-family: Arial, sans-serif;">
+                        <!-- Header -->
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <h2 style="color: #2c5282;">كشف حساب عهدة موظف</h2>
+                                <h4>Employee Custody Statement</h4>
+                                <hr/>
+                            </div>
+                        </div>
+                        <!-- Employee Info -->
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <table class="table table-sm table-bordered">
+                                    <tr>
+                                        <td class="fw-bold">اسم الموظف</td>
+                                        <td><t t-esc="o.employee_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">المسمى الوظيفي</td>
+                                        <td><t t-esc="o.job_title or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">القسم</td>
+                                        <td><t t-esc="o.department_id.name or ''"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm table-bordered">
+                                    <tr>
+                                        <td class="fw-bold">رقم العهدة</td>
+                                        <td><t t-esc="o.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">الصندوق</td>
+                                        <td><t t-esc="o.petty_fund_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">تاريخ الطلب</td>
+                                        <td><t t-esc="o.requested_date"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">تاريخ الاسترداد المتوقع</td>
+                                        <td><t t-esc="o.expected_return_date or ''"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Reason -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <strong>السبب: </strong><t t-esc="o.reason_ar or o.reason_en or ''"/>
+                            </div>
+                        </div>
+                        <!-- Amounts -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <table class="table table-bordered">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>المبلغ المطلوب</th>
+                                            <th>المبلغ المعتمد</th>
+                                            <th>المبلغ المصروف</th>
+                                            <th>الحالة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><t t-esc="o.currency_id.format(o.requested_amount)"/></td>
+                                            <td><t t-esc="o.currency_id.format(o.approved_amount or 0)"/></td>
+                                            <td><t t-esc="o.currency_id.format(o.paid_amount or 0)"/></td>
+                                            <td><t t-esc="dict(o._fields['state'].selection).get(o.state)"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Settlement Lines (if settled) -->
+                        <t t-if="o.settlement_ids">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <h5>بنود التسوية</h5>
+                                    <t t-foreach="o.settlement_ids" t-as="settlement">
+                                        <table class="table table-sm table-bordered mt-2">
+                                            <thead class="table-secondary">
+                                                <tr>
+                                                    <th>التاريخ</th>
+                                                    <th>الفئة</th>
+                                                    <th>البيان</th>
+                                                    <th>المبلغ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="settlement.settlement_line_ids" t-as="line">
+                                                    <tr>
+                                                        <td><t t-esc="line.expense_date"/></td>
+                                                        <td><t t-esc="line.category_id.name_ar or ''"/></td>
+                                                        <td><t t-esc="line.description_ar or line.description_en or ''"/></td>
+                                                        <td><t t-esc="line.currency_id.format(line.total_amount)"/></td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr class="fw-bold">
+                                                    <td colspan="3" class="text-end">الإجمالي</td>
+                                                    <td><t t-esc="settlement.currency_id.format(settlement.total_spent)"/></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                        <!-- Signatures -->
+                        <div class="row mt-5">
+                            <div class="col-4 text-center">
+                                <div style="border-top: 1px solid #000; padding-top: 5px; margin-top: 50px;">
+                                    <strong>الموظف</strong><br/>
+                                    <t t-esc="o.employee_id.name"/>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div style="border-top: 1px solid #000; padding-top: 5px; margin-top: 50px;">
+                                    <strong>المدير المباشر</strong><br/>
+                                    <t t-esc="o.manager_id.name or ''"/>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div style="border-top: 1px solid #000; padding-top: 5px; margin-top: 50px;">
+                                    <strong>المحاسب</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

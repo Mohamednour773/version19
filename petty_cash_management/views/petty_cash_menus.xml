@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── Root Menu ─────────────────────────────────────────────────────── -->
+    <menuitem id="menu_petty_cash_root"
+        name="Petty Cash | البيتي كاش"
+        sequence="75"
+        web_icon="petty_cash_management,static/description/icon.png"
+        groups="petty_cash_management.group_petty_cash_user"/>
+
+    <!-- ─── Dashboard ────────────────────────────────────────────────────── -->
+    <menuitem id="menu_petty_cash_dashboard"
+        name="Dashboard | لوحة التحكم"
+        parent="menu_petty_cash_root"
+        action="action_petty_cash_dashboard"
+        sequence="10"
+        groups="petty_cash_management.group_petty_cash_manager"/>
+
+    <!-- ─── Custodies ─────────────────────────────────────────────────────── -->
+    <menuitem id="menu_petty_cash_custodies"
+        name="Custodies | العهد"
+        parent="menu_petty_cash_root"
+        sequence="20"
+        groups="petty_cash_management.group_petty_cash_user"/>
+
+    <menuitem id="menu_petty_cash_my_custodies"
+        name="My Custodies | عهودي"
+        parent="menu_petty_cash_custodies"
+        action="action_hr_petty_cash_my"
+        sequence="10"
+        groups="petty_cash_management.group_petty_cash_user"/>
+
+    <menuitem id="menu_petty_cash_pending"
+        name="Pending Approval | في انتظار الموافقة"
+        parent="menu_petty_cash_custodies"
+        action="action_hr_petty_cash_pending"
+        sequence="20"
+        groups="petty_cash_management.group_petty_cash_manager"/>
+
+    <menuitem id="menu_petty_cash_all_custodies"
+        name="All Custodies | جميع العهد"
+        parent="menu_petty_cash_custodies"
+        action="action_hr_petty_cash_all"
+        sequence="30"
+        groups="petty_cash_management.group_petty_cash_manager"/>
+
+    <!-- ─── Settlements ───────────────────────────────────────────────────── -->
+    <menuitem id="menu_petty_cash_settlements"
+        name="Settlements | التسويات"
+        parent="menu_petty_cash_root"
+        action="action_petty_cash_settlement"
+        sequence="30"
+        groups="petty_cash_management.group_petty_cash_user"/>
+
+    <!-- ─── Funds ─────────────────────────────────────────────────────────── -->
+    <menuitem id="menu_petty_cash_funds"
+        name="Funds | الصناديق"
+        parent="menu_petty_cash_root"
+        sequence="40"
+        groups="petty_cash_management.group_petty_cash_accountant"/>
+
+    <menuitem id="menu_petty_cash_fund_list"
+        name="Petty Cash Funds | صناديق البيتي كاش"
+        parent="menu_petty_cash_funds"
+        action="action_petty_cash_fund"
+        sequence="10"/>
+
+    <menuitem id="menu_petty_cash_transfers"
+        name="Fund Transfers | تعبئة الصناديق"
+        parent="menu_petty_cash_funds"
+        action="action_petty_cash_fund_transfer"
+        sequence="20"/>
+
+    <!-- ─── Reports ───────────────────────────────────────────────────────── -->
+    <menuitem id="menu_petty_cash_reports"
+        name="Reports | التقارير"
+        parent="menu_petty_cash_root"
+        sequence="50"
+        groups="petty_cash_management.group_petty_cash_manager"/>
+
+    <menuitem id="menu_report_outstanding"
+        name="Outstanding Custodies | العهد غير المسوّاة"
+        parent="menu_petty_cash_reports"
+        action="action_report_outstanding_custodies"
+        sequence="10"/>
+
+    <!-- ─── Configuration ─────────────────────────────────────────────────── -->
+    <menuitem id="menu_petty_cash_config"
+        name="Configuration | الإعدادات"
+        parent="menu_petty_cash_root"
+        sequence="90"
+        groups="petty_cash_management.group_petty_cash_admin"/>
+
+    <menuitem id="menu_petty_cash_expense_categories"
+        name="Expense Categories | فئات المصاريف"
+        parent="menu_petty_cash_config"
+        action="action_petty_cash_expense_category"
+        sequence="10"/>
+
+</odoo>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_fund_balance">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" dir="rtl" style="font-family: Arial, sans-serif;">
+                        <div class="text-center mb-4">
+                            <h2 style="color: #2c5282;">تقرير رصيد الصندوق</h2>
+                            <h4>Fund Balance Report</h4>
+                            <hr/>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td class="fw-bold">اسم الصندوق</td>
+                                        <td><t t-esc="o.name_ar or o.name"/></td>
+                                        <td class="fw-bold">الكود</td>
+                                        <td><t t-esc="o.code"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">أمين الصندوق</td>
+                                        <td><t t-esc="o.custodian_id.name"/></td>
+                                        <td class="fw-bold">الرصيد الحالي</td>
+                                        <td class="fw-bold text-primary"><t t-esc="o.currency_id.format(o.current_balance)"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">الحد الأقصى</td>
+                                        <td><t t-esc="o.currency_id.format(o.max_balance)"/></td>
+                                        <td class="fw-bold">حد إعادة التعبئة</td>
+                                        <td><t t-esc="o.currency_id.format(o.min_balance)"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

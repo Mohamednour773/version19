@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── Settlement Form ───────────────────────────────────────────────── -->
+    <record id="view_petty_cash_settlement_form" model="ir.ui.view">
+        <field name="name">petty.cash.settlement.form</field>
+        <field name="model">petty.cash.settlement</field>
+        <field name="arch" type="xml">
+            <form string="Expense Settlement | تسوية عهدة">
+                <header>
+                    <button name="action_submit" string="Submit / تقديم"
+                        type="object" class="btn-primary"
+                        invisible="state != 'draft'"/>
+                    <button name="action_review" string="Start Review / بدء المراجعة"
+                        type="object"
+                        invisible="state != 'submitted'"
+                        groups="petty_cash_management.group_petty_cash_manager"/>
+                    <button name="action_approve" string="Approve / اعتماد"
+                        type="object" class="btn-success"
+                        invisible="state != 'under_review'"
+                        groups="petty_cash_management.group_petty_cash_manager"/>
+                    <button name="action_post" string="Post / ترحيل"
+                        type="object" class="btn-primary"
+                        invisible="state != 'approved'"
+                        groups="petty_cash_management.group_petty_cash_accountant"/>
+                    <button name="action_close" string="Close / إغلاق"
+                        type="object"
+                        invisible="state != 'posted'"
+                        groups="petty_cash_management.group_petty_cash_accountant"/>
+                    <button name="action_view_journal_entry" string="Journal Entry"
+                        type="object" class="btn-secondary"
+                        invisible="not move_id"/>
+                    <field name="state" widget="statusbar"
+                        statusbar_visible="draft,submitted,under_review,approved,posted,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Settlement Details">
+                            <field name="custody_id"/>
+                            <field name="employee_id" readonly="1"/>
+                            <field name="petty_fund_id" readonly="1"/>
+                            <field name="settlement_date"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Summary / الملخص">
+                            <field name="total_requested" widget="monetary" readonly="1"/>
+                            <field name="total_spent" widget="monetary" readonly="1"/>
+                            <field name="total_approved" widget="monetary"/>
+                            <field name="remaining_amount" widget="monetary" readonly="1"
+                                decoration-success="remaining_amount > 0"/>
+                            <field name="extra_amount" widget="monetary" readonly="1"
+                                decoration-danger="extra_amount > 0"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Expense Lines / بنود المصاريف">
+                            <field name="settlement_line_ids"
+                                readonly="state in ('approved', 'posted', 'closed')">
+                                <list editable="bottom">
+                                    <field name="expense_date"/>
+                                    <field name="category_id"/>
+                                    <field name="description_ar" placeholder="البيان..."/>
+                                    <field name="description_en" placeholder="Description..."/>
+                                    <field name="expense_account_id"/>
+                                    <field name="analytic_distribution" widget="analytic_distribution"
+                                         optional="show"/>
+                                    <field name="amount" widget="monetary"/>
+                                    <field name="tax_ids" widget="many2many_tags"/>
+                                    <field name="total_amount" widget="monetary" readonly="1"/>
+                                    <field name="receipt_attachment" widget="binary" optional="show"/>
+                                    <field name="bill_id" optional="hide"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                    <group>
+                        <group string="Approval Info" invisible="state == 'draft'">
+                            <field name="reviewed_by" readonly="1"/>
+                            <field name="approved_by" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Settlement List ───────────────────────────────────────────────── -->
+    <record id="view_petty_cash_settlement_list" model="ir.ui.view">
+        <field name="name">petty.cash.settlement.list</field>
+        <field name="model">petty.cash.settlement</field>
+        <field name="arch" type="xml">
+            <list string="Settlements" decoration-success="state == 'posted'"
+                decoration-muted="state == 'closed'">
+                <field name="name"/>
+                <field name="custody_id"/>
+                <field name="employee_id"/>
+                <field name="settlement_date"/>
+                <field name="total_requested" widget="monetary"/>
+                <field name="total_spent" widget="monetary"/>
+                <field name="remaining_amount" widget="monetary"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                    decoration-warning="state == 'submitted' or state == 'under_review'"
+                    decoration-success="state == 'approved' or state == 'posted'"
+                    decoration-muted="state == 'draft' or state == 'closed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── Action ────────────────────────────────────────────────────────── -->
+    <record id="action_petty_cash_settlement" model="ir.actions.act_window">
+        <field name="name">Settlements | التسويات</field>
+        <field name="res_model">petty.cash.settlement</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_petty_cash_settlement_list"/>
+    </record>
+
+</odoo>

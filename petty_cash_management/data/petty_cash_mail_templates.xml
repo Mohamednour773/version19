@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ─── Custody Approved ───────────────────────────────────────────── -->
+        <record id="email_template_custody_approved" model="mail.template">
+            <field name="name">Petty Cash: Custody Approved</field>
+            <field name="model_id" ref="petty_cash_management.model_hr_petty_cash"/>
+            <field name="subject">✅ تمت الموافقة على عهدتك | Custody Approved - {{ object.name }}</field>
+            <field name="email_to">{{ object.employee_id.work_email }}</field>
+            <field name="lang">{{ object.employee_id.lang }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif; direction: rtl;">
+                    <h3>تمت الموافقة على طلب العهدة الخاص بك</h3>
+                    <p>عزيزي/عزيزتي <strong>{{ object.employee_id.name }}</strong>،</p>
+                    <p>يسعدنا إخبارك بأنه تمت الموافقة على طلب العهدة رقم <strong>{{ object.name }}</strong>.</p>
+                    <table style="border-collapse: collapse; width: 100%;">
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>المبلغ المعتمد</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.currency_id.format(object.approved_amount) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>الصندوق</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.petty_fund_id.name }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>تاريخ الاسترداد المتوقع</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.expected_return_date or 'غير محدد' }}</td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 16px;">يرجى الاحتفاظ بجميع الإيصالات لتقديمها عند التسوية.</p>
+                    <p>شكراً،<br/>فريق الحسابات</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <!-- ─── Custody Overdue ────────────────────────────────────────────── -->
+        <record id="email_template_custody_overdue" model="mail.template">
+            <field name="name">Petty Cash: Custody Overdue</field>
+            <field name="model_id" ref="petty_cash_management.model_hr_petty_cash"/>
+            <field name="subject">⚠️ تنبيه: عهدة متأخرة | Overdue Custody - {{ object.name }}</field>
+            <field name="email_to">{{ object.employee_id.work_email }}</field>
+            <field name="email_cc">{{ object.manager_id.work_email or '' }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif; direction: rtl;">
+                    <h3 style="color: #dc3545;">⚠️ تنبيه: عهدة متأخرة</h3>
+                    <p>عزيزي/عزيزتي <strong>{{ object.employee_id.name }}</strong>،</p>
+                    <p>نود تذكيرك بأن العهدة رقم <strong>{{ object.name }}</strong> قد تجاوزت تاريخ الاسترداد المحدد.</p>
+                    <table style="border-collapse: collapse; width: 100%;">
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>رقم العهدة</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.name }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>المبلغ المصروف</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.currency_id.format(object.paid_amount) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>تاريخ الاسترداد المحدد</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd; color: #dc3545;"><strong>{{ object.expected_return_date }}</strong></td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 16px; color: #dc3545;"><strong>يرجى تقديم تسوية العهدة أو رد المبلغ في أقرب وقت ممكن.</strong></p>
+                    <p>شكراً،<br/>فريق الحسابات</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <!-- ─── Settlement Approved ────────────────────────────────────────── -->
+        <record id="email_template_settlement_approved" model="mail.template">
+            <field name="name">Petty Cash: Settlement Approved</field>
+            <field name="model_id" ref="petty_cash_management.model_petty_cash_settlement"/>
+            <field name="subject">✅ تمت الموافقة على التسوية | Settlement Approved - {{ object.name }}</field>
+            <field name="email_to">{{ object.employee_id.work_email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif; direction: rtl;">
+                    <h3>تمت الموافقة على تسويتك</h3>
+                    <p>عزيزي/عزيزتي <strong>{{ object.employee_id.name }}</strong>،</p>
+                    <p>تمت الموافقة على تسوية العهدة رقم <strong>{{ object.name }}</strong> وترحيلها في النظام.</p>
+                    <table style="border-collapse: collapse; width: 100%;">
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>إجمالي المصاريف</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.currency_id.format(object.total_spent) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>المبلغ المتبقي للرد</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.currency_id.format(object.remaining_amount) }}</td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 16px;">شكراً،<br/>فريق الحسابات</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <!-- ─── Fund Low Balance ───────────────────────────────────────────── -->
+        <record id="email_template_fund_low_balance" model="mail.template">
+            <field name="name">Petty Cash: Fund Low Balance</field>
+            <field name="model_id" ref="petty_cash_management.model_petty_cash_fund"/>
+            <field name="subject">⚠️ رصيد الصندوق منخفض | Low Fund Balance - {{ object.name }}</field>
+            <field name="email_to">{{ object.custodian_id.work_email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif; direction: rtl;">
+                    <h3 style="color: #856404;">⚠️ تنبيه: رصيد الصندوق منخفض</h3>
+                    <p>الصندوق <strong>{{ object.name }}</strong> وصل رصيده إلى مستوى منخفض يستوجب إعادة التعبئة.</p>
+                    <table style="border-collapse: collapse; width: 100%;">
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>الرصيد الحالي</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd; color: #dc3545;"><strong>{{ object.currency_id.format(object.current_balance) }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>حد إعادة التعبئة</strong></td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">{{ object.currency_id.format(object.min_balance) }}</td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 16px;">يرجى إنشاء طلب تعبئة للصندوق في أقرب وقت ممكن.</p>
+                    <p>شكراً،<br/>النظام التلقائي</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

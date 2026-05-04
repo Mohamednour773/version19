@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── Custody Form ──────────────────────────────────────────────────── -->
+    <record id="view_hr_petty_cash_form" model="ir.ui.view">
+        <field name="name">hr.petty.cash.form</field>
+        <field name="model">hr.petty.cash</field>
+        <field name="arch" type="xml">
+            <form string="Employee Custody | عهدة موظف">
+                <header>
+                    <button name="action_submit" string="Submit / إرسال"
+                        type="object" class="btn-primary"
+                        invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Approve / موافقة"
+                        type="object" class="btn-success"
+                        invisible="state != 'waiting_approval'"
+                        groups="petty_cash_management.group_petty_cash_manager"/>
+                    <button name="action_refuse" string="Refuse / رفض"
+                        type="object" class="btn-danger"
+                        invisible="state not in ('waiting_approval', 'approved')"
+                        groups="petty_cash_management.group_petty_cash_manager"/>
+                    <button name="action_pay" string="Pay / صرف"
+                        type="object" class="btn-primary"
+                        invisible="state != 'approved'"
+                        groups="petty_cash_management.group_petty_cash_accountant"/>
+                    <button name="action_create_settlement" string="Create Settlement / إنشاء تسوية"
+                        type="object" class="btn-primary"
+                        invisible="state != 'paid'"/>
+                    <button name="action_return_amount" string="Return Amount / رد مبلغ"
+                        type="object"
+                        invisible="state not in ('paid', 'settlement_in_progress')"/>
+                    <button name="action_close" string="Close / إغلاق"
+                        type="object" class="btn-secondary"
+                        invisible="state not in ('settled', 'returned')"
+                        groups="petty_cash_management.group_petty_cash_accountant"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft"
+                        type="object"
+                        invisible="state != 'refused'"
+                        groups="petty_cash_management.group_petty_cash_manager"/>
+                    <field name="state" widget="statusbar"
+                        statusbar_visible="draft,waiting_approval,approved,paid,settled,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_settlements" type="object"
+                            class="oe_stat_button" icon="fa-file-text-o"
+                            invisible="settlement_count == 0">
+                            <field name="settlement_count" widget="statinfo" string="Settlements"/>
+                        </button>
+                        <button name="action_view_journal_entry" type="object"
+                            class="oe_stat_button" icon="fa-book"
+                            invisible="not move_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Journal Entry</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="alert alert-warning" role="alert"
+                        invisible="not is_overdue">
+                        ⚠️ This custody is <strong>OVERDUE</strong>. Expected return: <field name="expected_return_date" readonly="1"/>
+                    </div>
+                    <div class="alert alert-info" role="alert"
+                        invisible="state != 'refused'">
+                        ❌ Refused. Reason: <field name="refuse_reason" readonly="1"/>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Custody Information">
+                            <field name="custody_type" widget="radio"/>
+                            <field name="employee_id"/>
+                            <field name="job_title" readonly="1"/>
+                            <field name="department_id" readonly="1"/>
+                            <field name="petty_fund_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Amounts / المبالغ">
+                            <field name="requested_amount" widget="monetary"/>
+                            <field name="approved_amount" widget="monetary"
+                                invisible="state == 'draft'"/>
+                            <field name="paid_amount" widget="monetary"
+                                invisible="state not in ('paid','settlement_in_progress','settled','returned','closed')"/>
+                            <field name="permanent_amount" widget="monetary"
+                                invisible="custody_type != 'permanent'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Reason / السبب">
+                            <field name="reason_ar" placeholder="السبب بالعربية"/>
+                            <field name="reason_en" placeholder="Reason in English"/>
+                        </group>
+                        <group string="Dates / التواريخ">
+                            <field name="requested_date"/>
+                            <field name="expected_return_date"
+                                invisible="custody_type == 'permanent'"/>
+                            <field name="actual_return_date"
+                                invisible="state not in ('returned','settled','closed')"/>
+                        </group>
+                    </group>
+                    <group string="Analytic | الحسابات التحليلية">
+                        <field name="analytic_distribution" widget="analytic_distribution"
+                            options="{'account_field': 'analytic_account_id'}"/>
+                    </group>
+                    <notebook>
+                        <page string="Notes / ملاحظات">
+                            <field name="notes"/>
+                        </page>
+                        <page string="Attachments / مرفقات">
+                            <field name="attachment_ids" widget="many2many_binary"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Custody List ──────────────────────────────────────────────────── -->
+    <record id="view_hr_petty_cash_list" model="ir.ui.view">
+        <field name="name">hr.petty.cash.list</field>
+        <field name="model">hr.petty.cash</field>
+        <field name="arch" type="xml">
+            <list string="Custodies"
+                decoration-warning="state == 'waiting_approval'"
+                decoration-muted="state == 'closed' or state == 'refused'">
+                <field name="name"/>
+                <field name="custody_type" widget="badge"/>
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="petty_fund_id"/>
+                <field name="requested_amount" widget="monetary"/>
+                <field name="approved_amount" widget="monetary"/>
+                <field name="requested_date"/>
+                <field name="expected_return_date"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="is_overdue" column_invisible="1"/>
+                <field name="state" widget="badge"
+                    decoration-muted="state == 'draft'"
+                    decoration-warning="state == 'waiting_approval'"
+                    decoration-info="state == 'approved'"
+                    decoration-success="state == 'paid' or state == 'settled' or state == 'closed'"
+                    decoration-danger="state == 'refused'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── Custody Search ────────────────────────────────────────────────── -->
+    <record id="view_hr_petty_cash_search" model="ir.ui.view">
+        <field name="name">hr.petty.cash.search</field>
+        <field name="model">hr.petty.cash</field>
+        <field name="arch" type="xml">
+            <search string="Search Custodies">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="petty_fund_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ─── Actions ───────────────────────────────────────────────────────── -->
+    <record id="action_hr_petty_cash_all" model="ir.actions.act_window">
+        <field name="name">All Custodies | جميع العهد</field>
+        <field name="res_model">hr.petty.cash</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_hr_petty_cash_list"/>
+        <field name="search_view_id" ref="view_hr_petty_cash_search"/>
+    </record>
+
+    <record id="action_hr_petty_cash_my" model="ir.actions.act_window">
+        <field name="name">My Custodies | عهودي</field>
+        <field name="res_model">hr.petty.cash</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_hr_petty_cash_list"/>
+        <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+        <field name="search_view_id" ref="view_hr_petty_cash_search"/>
+    </record>
+
+    <record id="action_hr_petty_cash_pending" model="ir.actions.act_window">
+        <field name="name">Pending Approval | في انتظار الموافقة</field>
+        <field name="res_model">hr.petty.cash</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_hr_petty_cash_list"/>
+        <field name="domain">[('state', '=', 'waiting_approval')]</field>
+        <field name="search_view_id" ref="view_hr_petty_cash_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── Refuse Wizard ─────────────────────────────────────────────────── -->
+    <record id="view_petty_cash_refuse_wizard" model="ir.ui.view">
+        <field name="name">petty.cash.refuse.wizard.form</field>
+        <field name="model">petty.cash.refuse.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Refuse Custody / رفض العهدة">
+                <group>
+                    <field name="custody_id" readonly="1"/>
+                    <field name="reason" placeholder="Enter reason for refusal... / أدخل سبب الرفض..."/>
+                </group>
+                <footer>
+                    <button name="action_confirm_refuse" string="Confirm Refusal / تأكيد الرفض"
+                        type="object" class="btn-danger"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Return Wizard ─────────────────────────────────────────────────── -->
+    <record id="view_petty_cash_return_wizard" model="ir.ui.view">
+        <field name="name">petty.cash.return.wizard.form</field>
+        <field name="model">petty.cash.return.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Return Amount / رد المبلغ">
+                <group>
+                    <field name="custody_id" readonly="1"/>
+                    <field name="paid_amount" readonly="1" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="return_amount" widget="monetary"/>
+                    <field name="return_date"/>
+                    <field name="notes"/>
+                </group>
+                <footer>
+                    <button name="action_confirm_return" string="Confirm Return / تأكيد الرد"
+                        type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Settlement Wizard ─────────────────────────────────────────────── -->
+    <record id="view_petty_cash_settlement_wizard" model="ir.ui.view">
+        <field name="name">petty.cash.settlement.wizard.form</field>
+        <field name="model">petty.cash.settlement.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Settlement / إنشاء تسوية">
+                <group>
+                    <field name="custody_id" readonly="1"/>
+                    <field name="settlement_date"/>
+                    <field name="notes"/>
+                </group>
+                <footer>
+                    <button name="action_create_and_open" string="Create &amp; Open / إنشاء وفتح"
+                        type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

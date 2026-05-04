@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ─── Category ──────────────────────────────────────────────────── -->
+        <record id="module_category_petty_cash" model="ir.module.category">
+            <field name="name">Petty Cash Management</field>
+            <field name="description">Manage petty cash funds and employee custodies.</field>
+            <field name="sequence">70</field>
+        </record>
+
+        <!-- ─── Groups ────────────────────────────────────────────────────── -->
+        <record id="group_petty_cash_user" model="res.groups">
+            <field name="name">User</field>
+            <field name="implied_ids" eval="[Command.link(ref('base.group_user'))]"/>
+            <field name="comment">Can create and submit own custody requests.</field>
+        </record>
+
+        <record id="group_petty_cash_manager" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="implied_ids" eval="[Command.link(ref('group_petty_cash_user'))]"/>
+            <field name="comment">Can approve/refuse custodies for their department.</field>
+        </record>
+
+        <record id="group_petty_cash_accountant" model="res.groups">
+            <field name="name">Accountant</field>
+            <field name="implied_ids" eval="[Command.link(ref('group_petty_cash_manager'))]"/>
+            <field name="comment">Can post journal entries, manage fund transfers.</field>
+        </record>
+
+        <record id="group_petty_cash_admin" model="res.groups">
+            <field name="name">Administrator</field>
+            <field name="implied_ids" eval="[Command.link(ref('group_petty_cash_accountant'))]"/>
+            <field name="comment">Full access including configuration and fund closure.</field>
+            <field name="user_ids" eval="[Command.link(ref('base.user_root')), Command.link(ref('base.user_admin'))]"/>
+        </record>
+
+    </data>
+</odoo>

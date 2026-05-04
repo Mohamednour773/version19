@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Petty Cash Management | إدارة البيتي كاش</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; color: #333; }
+        .hero { background: linear-gradient(135deg, #2c5282, #4a90d9); color: white; padding: 60px 40px; text-align: center; }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .hero p { font-size: 1.2rem; opacity: 0.9; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; padding: 40px; background: #f8f9fa; }
+        .feature-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .feature-card .icon { font-size: 2rem; margin-bottom: 12px; }
+        .feature-card h3 { color: #2c5282; margin: 0 0 8px; }
+        .feature-card p { color: #666; font-size: 0.9rem; line-height: 1.6; }
+        .section { padding: 40px; }
+        .section h2 { color: #2c5282; border-bottom: 3px solid #4a90d9; padding-bottom: 10px; }
+        .workflow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding: 20px 0; }
+        .step { background: #4a90d9; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; }
+        .arrow { color: #4a90d9; font-size: 1.2rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th { background: #2c5282; color: white; padding: 12px; text-align: left; }
+        td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+        tr:nth-child(even) td { background: #f8f9fa; }
+        .badge { display: inline-block; background: #28a745; color: white; padding: 3px 10px; border-radius: 12px; font-size: 0.8rem; }
+        .footer { background: #2c5282; color: white; text-align: center; padding: 30px; }
+    </style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+    <h1>🏦 Petty Cash Management</h1>
+    <h2 style="font-weight:normal; margin:0 0 16px;">إدارة البيتي كاش والعهد للسوق العربي</h2>
+    <p>Complete Petty Cash Fund & Employee Custody Management for Odoo 19<br/>
+    Designed for Egypt, Gulf, and Arabic-speaking markets</p>
+    <div style="margin-top:20px;">
+        <span style="background:rgba(255,255,255,0.2);padding:8px 20px;border-radius:20px;margin:4px;display:inline-block;">Odoo 19</span>
+        <span style="background:rgba(255,255,255,0.2);padding:8px 20px;border-radius:20px;margin:4px;display:inline-block;">Arabic RTL</span>
+        <span style="background:rgba(255,255,255,0.2);padding:8px 20px;border-radius:20px;margin:4px;display:inline-block;">Multi-Company</span>
+        <span style="background:rgba(255,255,255,0.2);padding:8px 20px;border-radius:20px;margin:4px;display:inline-block;">OPL-1</span>
+    </div>
+</div>
+
+<!-- Features Grid -->
+<div class="features">
+    <div class="feature-card">
+        <div class="icon">💰</div>
+        <h3>Petty Cash Funds | صناديق البيتي كاش</h3>
+        <p>Create and manage multiple petty cash funds with configurable max/min balance thresholds, assigned custodians, and dedicated journals per fund.</p>
+    </div>
+    <div class="feature-card">
+        <div class="icon">📋</div>
+        <h3>Temporary Custodies | العهدة المؤقتة</h3>
+        <p>Full 8-state lifecycle: Draft → Waiting Approval → Approved → Paid → Settlement → Settled → Closed. With multi-level approval and journal entry automation.</p>
+    </div>
+    <div class="feature-card">
+        <div class="icon">🔄</div>
+        <h3>Permanent Custodies | العهدة الدائمة</h3>
+        <p>Fixed float amount always in employee's hands. Automatic replenishment workflow restores the float after each expense settlement.</p>
+    </div>
+    <div class="feature-card">
+        <div class="icon">📄</div>
+        <h3>Expense Settlement | تسوية المصاريف</h3>
+        <p>Line-level expense tracking with category, expense account, tax, receipt attachment, and optional link to vendor bills. 5-state approval flow.</p>
+    </div>
+    <div class="feature-card">
+        <div class="icon">🏦</div>
+        <h3>Fund Replenishment | تعبئة الصندوق</h3>
+        <p>4-step replenishment (Confirmed → Reviewed → Approved → Posted) from main cash or bank journals with automatic journal entry generation.</p>
+    </div>
+    <div class="feature-card">
+        <div class="icon">📊</div>
+        <h3>Dashboard | لوحة التحكم</h3>
+        <p>Real-time OWL dashboard showing total balances, pending approvals, overdue custodies, and expense breakdown by category.</p>
+    </div>
+    <div class="feature-card">
+        <div class="icon">🖨️</div>
+        <h3>Arabic RTL Reports | تقارير عربية</h3>
+        <p>4 professional QWeb PDF reports: Custody Statement, Settlement Voucher, Fund Balance, and Outstanding Custodies with color-coded overdue indicators.</p>
+    </div>
+    <div class="feature-card">
+        <div class="icon">⚡</div>
+        <h3>Automation | أتمتة</h3>
+        <p>Daily overdue custody alerts, low balance fund notifications, and monthly reconciliation reminders via automated email templates.</p>
+    </div>
+    <div class="feature-card">
+        <div class="icon">🔐</div>
+        <h3>Access Control | صلاحيات</h3>
+        <p>4-level group hierarchy (User / Manager / Accountant / Admin) with record-level rules for department and company isolation.</p>
+    </div>
+</div>
+
+<!-- Workflow Section -->
+<div class="section">
+    <h2>Temporary Custody Workflow | دورة العهدة المؤقتة</h2>
+    <div class="workflow">
+        <span class="step">Draft</span><span class="arrow">→</span>
+        <span class="step">Waiting Approval</span><span class="arrow">→</span>
+        <span class="step">Approved</span><span class="arrow">→</span>
+        <span class="step">Paid</span><span class="arrow">→</span>
+        <span class="step">Settlement</span><span class="arrow">→</span>
+        <span class="step">Settled</span><span class="arrow">→</span>
+        <span class="step">Closed</span>
+    </div>
+</div>
+
+<!-- Access Groups Table -->
+<div class="section" style="background:#f8f9fa;">
+    <h2>User Groups &amp; Permissions</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Group</th><th>Create</th><th>Approve</th><th>Pay / Post</th><th>Configure</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>User</strong> — الموظف</td><td>✅ Own</td><td>❌</td><td>❌</td><td>❌</td></tr>
+            <tr><td><strong>Manager</strong> — المدير</td><td>✅</td><td>✅ Dept</td><td>❌</td><td>❌</td></tr>
+            <tr><td><strong>Accountant</strong> — المحاسب</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr>
+            <tr><td><strong>Admin</strong> — المسؤول</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Expense Categories -->
+<div class="section">
+    <h2>Default Expense Categories | فئات المصاريف الافتراضية</h2>
+    <p>10 pre-seeded Arabic/English expense categories included:</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+        <span class="badge">وجبات ومشروبات</span>
+        <span class="badge">مواصلات ونقل</span>
+        <span class="badge">مستلزمات مكتبية</span>
+        <span class="badge">اتصالات وإنترنت</span>
+        <span class="badge">بريد وشحن</span>
+        <span class="badge">صيانة وإصلاح</span>
+        <span class="badge">مواد تنظيف</span>
+        <span class="badge">ضيافة وهدايا</span>
+        <span class="badge">رسوم حكومية</span>
+        <span class="badge">مصاريف أخرى</span>
+    </div>
+</div>
+
+<!-- Technical -->
+<div class="section" style="background:#f8f9fa;">
+    <h2>Technical Specifications</h2>
+    <table>
+        <tr><td><strong>Odoo Version</strong></td><td>19.0</td></tr>
+        <tr><td><strong>Python</strong></td><td>3.10+</td></tr>
+        <tr><td><strong>Dependencies</strong></td><td>account, hr, mail, analytic, base_setup</td></tr>
+        <tr><td><strong>ORM Models</strong></td><td>8 custom models + 1 inherited (account.payment)</td></tr>
+        <tr><td><strong>Wizards</strong></td><td>3 (Refuse, Return Amount, Quick Settlement)</td></tr>
+        <tr><td><strong>Reports</strong></td><td>4 QWeb PDF reports (Arabic RTL)</td></tr>
+        <tr><td><strong>Tests</strong></td><td>18 automated test cases</td></tr>
+        <tr><td><strong>Translations</strong></td><td>Arabic (ar.po) — 100% coverage</td></tr>
+        <tr><td><strong>License</strong></td><td>OPL-1 (Commercial)</td></tr>
+    </table>
+</div>
+
+<div class="footer">
+    <p><strong>Petty Cash Management</strong> — Professional Odoo Addon for the Arabic Market</p>
+    <p>© 2024 Your Company Name | support@yourcompany.com</p>
+</div>
+
+</body>
+</html>

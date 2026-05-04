@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_petty_cash_fund_transfer_form" model="ir.ui.view">
+        <field name="name">petty.cash.fund.transfer.form</field>
+        <field name="model">petty.cash.fund.transfer</field>
+        <field name="arch" type="xml">
+            <form string="Fund Transfer / Replenishment | تعبئة الصندوق">
+                <header>
+                    <button name="action_confirm" string="Confirm / تأكيد"
+                        type="object" class="btn-primary"
+                        invisible="state != 'draft'"
+                        groups="petty_cash_management.group_petty_cash_accountant"/>
+                    <button name="action_review" string="Review / مراجعة"
+                        type="object"
+                        invisible="state != 'confirmed'"
+                        groups="petty_cash_management.group_petty_cash_accountant"/>
+                    <button name="action_approve" string="Approve / اعتماد"
+                        type="object" class="btn-success"
+                        invisible="state != 'reviewed'"
+                        groups="petty_cash_management.group_petty_cash_admin"/>
+                    <button name="action_post" string="Post / ترحيل"
+                        type="object" class="btn-primary"
+                        invisible="state != 'approved'"
+                        groups="petty_cash_management.group_petty_cash_accountant"/>
+                    <button name="action_reset_to_draft" string="Reset"
+                        type="object"
+                        invisible="state == 'posted'"
+                        groups="petty_cash_management.group_petty_cash_admin"/>
+                    <field name="state" widget="statusbar"
+                        statusbar_visible="draft,confirmed,reviewed,approved,posted"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Transfer Details">
+                            <field name="fund_id"/>
+                            <field name="source_journal_id"/>
+                            <field name="amount" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="transfer_date"/>
+                            <field name="reference"/>
+                        </group>
+                        <group string="Related">
+                            <field name="custody_id"
+                                domain="[('state', 'in', ('paid','settlement_in_progress'))]"/>
+                            <field name="is_reviewed" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_petty_cash_fund_transfer_list" model="ir.ui.view">
+        <field name="name">petty.cash.fund.transfer.list</field>
+        <field name="model">petty.cash.fund.transfer</field>
+        <field name="arch" type="xml">
+            <list string="Fund Transfers" decoration-success="state == 'posted'">
+                <field name="name"/>
+                <field name="fund_id"/>
+                <field name="source_journal_id"/>
+                <field name="amount" widget="monetary"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="transfer_date"/>
+                <field name="reference"/>
+                <field name="state" widget="badge"
+                    decoration-muted="state == 'draft'"
+                    decoration-warning="state == 'confirmed' or state == 'reviewed'"
+                    decoration-info="state == 'approved'"
+                    decoration-success="state == 'posted'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_petty_cash_fund_transfer" model="ir.actions.act_window">
+        <field name="name">Fund Transfers | تعبئة الصناديق</field>
+        <field name="res_model">petty.cash.fund.transfer</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>
