@@ -89,12 +89,13 @@ class PettyCashDashboard extends Component {
     }
 
     openOverdue() {
+        const today = new Date().toISOString().split("T")[0];
         this.action.doAction({
             type: "ir.actions.act_window",
             name: "Overdue Custodies",
             res_model: "hr.petty.cash",
-            view_mode: "list,form",
-            domain: [["state", "=", "paid"], ["expected_return_date", "<", new Date().toISOString().split("T")[0]]],
+            views: [[false, "list"], [false, "form"]], // Keep list here as it's the JS standard now
+            domain: [["state", "=", "paid"], ["expected_return_date", "<", today]],
         });
     }
 
@@ -108,8 +109,9 @@ class PettyCashDashboard extends Component {
 }
 
 // Register as a list controller override (dashboard mode)
+const listView = registry.category("views").get("list") || registry.category("views").get("tree");
 registry.category("views").add("petty_cash_dashboard", {
-    ...registry.category("views").get("list"),
+    ...listView,
     Controller: PettyCashDashboard,
 });
 

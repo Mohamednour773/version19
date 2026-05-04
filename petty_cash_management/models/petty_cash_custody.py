@@ -219,6 +219,7 @@ class HrPettyCash(models.Model):
             'type': 'ir.actions.act_window',
             'name': _('Refuse Reason'),
             'res_model': 'petty.cash.refuse.wizard',
+            'views': [(False, 'form')],
             'view_mode': 'form',
             'target': 'new',
             'context': {'default_custody_id': self.id},
@@ -253,7 +254,8 @@ class HrPettyCash(models.Model):
                     'debit': amount,
                     'credit': 0.0,
                     'partner_id': self.employee_id.work_contact_id.id if self.employee_id.work_contact_id else False,
-                    'analytic_account_id': self.analytic_account_id.id if self.analytic_account_id else False,
+                    # Odoo 17+/19: analytic_distribution replaces deprecated analytic_account_id
+                    'analytic_distribution': self.analytic_distribution if self.analytic_distribution else {},
                 }),
                 (0, 0, {
                     'name': _('Custody Disbursement: %(name)s', name=self.name),
@@ -285,6 +287,7 @@ class HrPettyCash(models.Model):
             'name': _('Settlement'),
             'res_model': 'petty.cash.settlement',
             'res_id': settlement.id,
+            'views': [(False, 'form')],
             'view_mode': 'form',
         }
 
@@ -296,6 +299,7 @@ class HrPettyCash(models.Model):
             'type': 'ir.actions.act_window',
             'name': _('Return Amount'),
             'res_model': 'petty.cash.return.wizard',
+            'views': [(False, 'form')],
             'view_mode': 'form',
             'target': 'new',
             'context': {'default_custody_id': self.id},
@@ -319,6 +323,7 @@ class HrPettyCash(models.Model):
             'type': 'ir.actions.act_window',
             'name': _('Settlements'),
             'res_model': 'petty.cash.settlement',
+            'views': [(False, 'list'), (False, 'form')],
             'view_mode': 'list,form',
             'domain': [('custody_id', '=', self.id)],
             'context': {'default_custody_id': self.id},
@@ -331,6 +336,7 @@ class HrPettyCash(models.Model):
             'name': _('Journal Entry'),
             'res_model': 'account.move',
             'res_id': self.move_id.id,
+            'views': [(False, 'form')],
             'view_mode': 'form',
         }
 

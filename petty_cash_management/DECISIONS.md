@@ -49,3 +49,31 @@
 ## ADR-012: Email templates use `auto_delete=True`
 **Decision:** All email templates have `auto_delete=True`.  
 **Reason:** Petty cash notifications can be high-volume (daily overdue checks). Keeping all sent emails in the DB would cause unnecessary storage growth.
+
+---
+
+## FIXES — v19.0.1.0.1
+
+### FIX-001: `current_balance` — removed `store=True` and wrong `@api.depends`
+**Problem:** `@api.depends('journal_id', 'account_id')` does not trigger recompute when new journal entries are posted. `store=True` on a field that reads `account.move.line` causes stale data.
+**Fix:** Removed `store=True` (field is now always computed fresh). Removed the `@api.depends` decorator entirely since non-stored computed fields recompute on every access. Added `journal_id` filter to the domain so multiple funds sharing the same account code are properly isolated.
+
+### FIX-002: Return Wizard — wrong config key
+**Problem:** `config.get('default_custody_account_id')` always returned `None` because `_get_values()` returns key `'custody_account_id'`.
+**Fix:** Changed to `config.get('custody_account_id')`.
+
+### FIX-003: Settlement `action_post` — deprecated `analytic_account_id`
+**Problem:** `analytic_account_id` on `account.move.line` is removed in Odoo 17+/19. Using it raises a field-not-found error silently or on post.
+**Fix:** Replaced with `analytic_distribution` (JSON dict) for all move line creation in settlement and custody disbursement.
+
+### FIX-004: `petty.cash.expense.category` — deprecated `name_get()`
+**Problem:** `name_get()` is deprecated in Odoo 17+. Causes a deprecation warning on every Many2one dropdown render.
+**Fix:** Added `_rec_name = 'display_name_combined'` and a stored computed field `display_name_combined` that produces the bilingual label.
+
+### FIX-005: Settlement line `receipt_attachment` — Binary field replaced with `ir.attachment` M2M
+**Problem:** `fields.Binary` stores file contents directly in the DB column. Large PDFs/images cause DB bloat and slow queries. Odoo's standard pattern is `ir.attachment`.
+**Fix:** Replaced with `receipt_attachment_ids = fields.Many2many('ir.attachment', ...)`. Updated the `_check_receipt_required` constraint accordingly.
+
+### FIX-006: Cron `_cron_check_fund_balance` — wrong model reference
+**Problem:** XML `model_id` pointed to `petty.cash.fund.transfer` but the method logically belongs on `petty.cash.fund`. When Odoo's cron executor calls `model._cron_check_fund_balance()`, it calls it on the wrong model class.
+**Fix:** Moved method to `petty.cash.fund`. Updated XML `model_id` ref to `model_petty_cash_fund`.

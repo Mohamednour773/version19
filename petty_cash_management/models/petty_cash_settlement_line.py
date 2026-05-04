@@ -73,8 +73,14 @@ class PettyCashSettlementLine(models.Model):
 
     # ── Date & Receipt ────────────────────────────────────────────────────────
     expense_date = fields.Date(string='Expense Date', required=True, default=fields.Date.today)
-    receipt_attachment = fields.Binary(string='Receipt / الإيصال')
-    receipt_filename = fields.Char(string='Receipt Filename')
+    receipt_attachment_ids = fields.Many2many(
+        'ir.attachment',
+        'petty_cash_settlement_line_attachment_rel',
+        'line_id',
+        'attachment_id',
+        string='Receipts / الإيصالات',
+        help='Attach receipt scans or PDFs. Stored as proper attachments, not inline binary.',
+    )
     bill_id = fields.Many2one(
         'account.move',
         string='Related Bill',
@@ -115,11 +121,11 @@ class PettyCashSettlementLine(models.Model):
                         cat=rec.category_id.name_ar or rec.category_id.name_en,
                     ))
 
-    @api.constrains('receipt_attachment', 'category_id', 'settlement_id')
+    @api.constrains('receipt_attachment_ids', 'category_id', 'settlement_id')
     def _check_receipt_required(self):
         for rec in self:
             if (rec.category_id and rec.category_id.requires_receipt
-                    and not rec.receipt_attachment
+                    and not rec.receipt_attachment_ids
                     and rec.settlement_id.state not in ('draft', 'submitted')):
                 raise ValidationError(_(
                     'A receipt is required for category "%s".',

@@ -27,6 +27,7 @@ class PettyCashSettlementWizard(models.TransientModel):
             'name': _('Settlement'),
             'res_model': 'petty.cash.settlement',
             'res_id': settlement.id,
+            'views': [(False, 'form')],
             'view_mode': 'form',
             'target': 'current',
         }

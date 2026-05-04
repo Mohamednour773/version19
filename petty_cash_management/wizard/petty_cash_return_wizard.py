@@ -42,9 +42,9 @@ class PettyCashReturnWizard(models.TransientModel):
     def action_confirm_return(self):
         self.ensure_one()
         config = self.env['petty.cash.config.settings']._get_values()
-        custody_account = config.get('default_custody_account_id')
+        custody_account = config.get('custody_account_id')  # fixed: was 'default_custody_account_id'
         if not custody_account:
-            raise UserError(_('Employee Custody Account is not configured.'))
+            raise UserError(_('Employee Custody Account is not configured in Petty Cash Settings.'))
 
         fund = self.custody_id.petty_fund_id
         move = self.env['account.move'].create({

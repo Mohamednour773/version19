@@ -165,14 +165,17 @@ class PettyCashSettlement(models.Model):
 
         lines = []
         for line in self.settlement_line_ids:
-            lines.append((0, 0, {
+            move_line_vals = {
                 'name': line.description or line.description_en or 'Expense',
                 'account_id': line.expense_account_id.id,
                 'debit': line.total_amount,
                 'credit': 0.0,
                 'date': line.expense_date,
-                'analytic_account_id': line.analytic_account_id.id if line.analytic_account_id else False,
-            }))
+            }
+            # Odoo 17+/19: use analytic_distribution (dict) instead of deprecated analytic_account_id
+            if line.analytic_distribution:
+                move_line_vals['analytic_distribution'] = line.analytic_distribution
+            lines.append((0, 0, move_line_vals))
 
         # Credit: Employee Custody Account (total)
         lines.append((0, 0, {
@@ -222,5 +225,6 @@ class PettyCashSettlement(models.Model):
             'name': _('Journal Entry'),
             'res_model': 'account.move',
             'res_id': self.move_id.id,
+            'views': [(False, 'form')],
             'view_mode': 'form',
         }

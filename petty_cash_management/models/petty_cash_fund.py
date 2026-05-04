@@ -48,7 +48,7 @@ class PettyCashFund(models.Model):
     current_balance = fields.Monetary(
         string='Current Balance / الرصيد الحالي',
         compute='_compute_current_balance',
-        store=True,
+        store=False,
         currency_field='currency_id',
     )
     max_balance = fields.Monetary(
@@ -83,15 +83,20 @@ class PettyCashFund(models.Model):
         ('code_company_uniq', 'unique(code, company_id)', 'Fund code must be unique per company.'),
     ]
 
-    @api.depends('journal_id', 'account_id')
     def _compute_current_balance(self):
-        """Compute balance from posted journal entry lines on the petty cash account."""
+        """Compute real-time balance from posted journal entry lines.
+
+        Filters by both account_id AND journal_id to correctly isolate each fund
+        even when multiple funds share the same chart of accounts account code.
+        store=False ensures the value is always fresh from accounting records.
+        """
         for fund in self:
-            if not fund.account_id or not fund.company_id:
+            if not fund.account_id or not fund.journal_id or not fund.company_id:
                 fund.current_balance = 0.0
                 continue
             domain = [
                 ('account_id', '=', fund.account_id.id),
+                ('journal_id', '=', fund.journal_id.id),
                 ('move_id.state', '=', 'posted'),
                 ('company_id', '=', fund.company_id.id),
             ]
@@ -128,6 +133,7 @@ class PettyCashFund(models.Model):
             'type': 'ir.actions.act_window',
             'name': _('Custodies'),
             'res_model': 'hr.petty.cash',
+            'views': [(False, 'list'), (False, 'form')],
             'view_mode': 'list,form',
             'domain': [('petty_fund_id', '=', self.id)],
             'context': {'default_petty_fund_id': self.id},
@@ -139,6 +145,7 @@ class PettyCashFund(models.Model):
             'type': 'ir.actions.act_window',
             'name': _('Fund Transfers'),
             'res_model': 'petty.cash.fund.transfer',
+            'views': [(False, 'list'), (False, 'form')],
             'view_mode': 'list,form',
             'domain': [('fund_id', '=', self.id)],
             'context': {'default_fund_id': self.id},
@@ -150,6 +157,7 @@ class PettyCashFund(models.Model):
             'type': 'ir.actions.act_window',
             'name': _('Direct Payments'),
             'res_model': 'account.payment',
+            'views': [(False, 'list'), (False, 'form')],
             'view_mode': 'list,form',
             'domain': [('petty_fund_id', '=', self.id)],
             'context': {'default_petty_fund_id': self.id},
@@ -168,3 +176,24 @@ class PettyCashFund(models.Model):
                 ))
             return True  # warning only
         return False
+
+    @api.model
+    def _cron_check_fund_balance(self):
+        """Alert accountant when any active fund balance drops below its min_balance.
+        Cron runs on petty.cash.fund model — correctly placed here, not on fund.transfer.
+        """
+        funds = self.search([('state', '=', 'active')])
+        template = self.env.ref(
+            'petty_cash_management.email_template_fund_low_balance', raise_if_not_found=False
+        )
+        for fund in funds:
+            if fund.min_balance > 0 and fund.current_balance < fund.min_balance:
+                if template:
+                    template.send_mail(fund.id, force_send=True)
+                fund.message_post(
+                    body=_('⚠️ Fund balance (%(bal)s) is below minimum threshold (%(min)s).') % {
+                        'bal': fund.currency_id.format(fund.current_balance),
+                        'min': fund.currency_id.format(fund.min_balance),
+                    },
+                    subtype_xmlid='mail.mt_note',
+                )

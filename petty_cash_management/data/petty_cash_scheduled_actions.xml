@@ -18,7 +18,7 @@
         <!-- ─── Fund Balance Check ─────────────────────────────────────────── -->
         <record id="ir_cron_check_fund_balance" model="ir.cron">
             <field name="name">Petty Cash: Daily Fund Balance Check</field>
-            <field name="model_id" ref="petty_cash_management.model_petty_cash_fund_transfer"/>
+            <field name="model_id" ref="petty_cash_management.model_petty_cash_fund"/>
             <field name="state">code</field>
             <field name="code">model._cron_check_fund_balance()</field>
             <field name="interval_number">1</field>

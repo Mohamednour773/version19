@@ -143,22 +143,3 @@ class PettyCashFundTransfer(models.Model):
         if self.move_id and self.move_id.state == 'posted':
             raise UserError(_('Cannot reset a transfer with a posted journal entry.'))
         self.write({'state': 'draft'})
-
-    @api.model
-    def _cron_check_fund_balance(self):
-        """Alert accountant when fund balance is below min_balance."""
-        funds = self.env['petty.cash.fund'].search([('state', '=', 'active')])
-        template = self.env.ref(
-            'petty_cash_management.email_template_fund_low_balance', raise_if_not_found=False
-        )
-        for fund in funds:
-            if fund.min_balance > 0 and fund.current_balance < fund.min_balance:
-                if template:
-                    template.send_mail(fund.id, force_send=True)
-                fund.message_post(
-                    body=_('⚠️ Fund balance (%(bal)s) is below minimum threshold (%(min)s).') % {
-                        'bal': fund.currency_id.format(fund.current_balance),
-                        'min': fund.currency_id.format(fund.min_balance),
-                    },
-                    subtype_xmlid='mail.mt_note',
-                )

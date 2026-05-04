@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Petty Cash Management | إدارة الخزينة الصغيرة والعهد',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Accounting/Finance',
     'summary': 'Complete Petty Cash & Employee Custody Management for Arabic/Gulf/Egyptian Market',
     'description': """

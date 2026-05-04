@@ -72,7 +72,7 @@
                                     <field name="amount" widget="monetary"/>
                                     <field name="tax_ids" widget="many2many_tags"/>
                                     <field name="total_amount" widget="monetary" readonly="1"/>
-                                    <field name="receipt_attachment" widget="binary" optional="show"/>
+                                    <field name="receipt_attachment_ids" widget="many2many_binary" optional="show"/>
                                     <field name="bill_id" optional="hide"/>
                                     <field name="currency_id" column_invisible="1"/>
                                 </list>
@@ -126,7 +126,7 @@
         <field name="name">Settlements | التسويات</field>
         <field name="res_model">petty.cash.settlement</field>
         <field name="view_mode">list,form</field>
-        <field name="view_id" ref="view_petty_cash_settlement_list"/>
+
     </record>
 
 </odoo>

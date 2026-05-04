@@ -7,9 +7,16 @@ class PettyCashExpenseCategory(models.Model):
     _description = 'Petty Cash Expense Category'
     _order = 'sequence, name_en'
 
+    _rec_name = 'display_name_combined'
+
     name_en = fields.Char(string='Name (English)', required=True, translate=False)
     name_ar = fields.Char(string='الاسم (عربي)', required=True)
     name = fields.Char(string='Name', compute='_compute_name', store=True)
+    display_name_combined = fields.Char(
+        string='Display Name',
+        compute='_compute_display_name_combined',
+        store=True,
+    )
     sequence = fields.Integer(string='Sequence', default=10)
     account_id = fields.Many2one(
         'account.account',
@@ -38,9 +45,10 @@ class PettyCashExpenseCategory(models.Model):
         for rec in self:
             rec.name = rec.name_ar or rec.name_en or ''
 
-    def name_get(self):
-        result = []
+    @api.depends('name_en', 'name_ar')
+    def _compute_display_name_combined(self):
         for rec in self:
-            name = f"{rec.name_ar} / {rec.name_en}" if rec.name_ar else rec.name_en
-            result.append((rec.id, name))
-        return result
+            if rec.name_ar and rec.name_en:
+                rec.display_name_combined = f"{rec.name_ar} / {rec.name_en}"
+            else:
+                rec.display_name_combined = rec.name_ar or rec.name_en or ''
