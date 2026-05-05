@@ -3,7 +3,7 @@
     <data noupdate="1">
         <record id="mail_template_approval_notification" model="mail.template">
             <field name="name">Approval Request: Notification to Approver</field>
-            <field name="model_id" ref="model_approval_request"/>
+            <field name="model_id" ref="model_univ_approval_request"/>
             <field name="subject">Action Required: Approval Request - {{ object.display_name }}</field>
             <field name="email_from">{{ (object.company_id.email or user.email) }}</field>
             <field name="email_to">{{ ctx.get('approver') and ctx['approver'].email or '' }}</field>

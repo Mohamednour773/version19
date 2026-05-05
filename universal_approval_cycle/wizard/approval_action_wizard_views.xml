@@ -4,8 +4,8 @@
          Approval Action Wizard - Form View
     ==================================================================== -->
     <record id="view_approval_action_wizard_form" model="ir.ui.view">
-        <field name="name">approval.action.wizard.form</field>
-        <field name="model">approval.action.wizard</field>
+        <field name="name">univ.approval.wizard.form</field>
+        <field name="model">univ.approval.wizard</field>
         <field name="arch" type="xml">
             <form string="Approval Action">
                 <sheet>
@@ -50,7 +50,7 @@
     <!-- Wizard action (start mode) -->
     <record id="action_approval_start_wizard" model="ir.actions.act_window">
         <field name="name">Start Approval</field>
-        <field name="res_model">approval.action.wizard</field>
+        <field name="res_model">univ.approval.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
         <field name="context">{'default_wizard_mode': 'start'}</field>

@@ -4,8 +4,8 @@
          Approval Log - List View
     ==================================================================== -->
     <record id="view_approval_log_list" model="ir.ui.view">
-        <field name="name">approval.log.list</field>
-        <field name="model">approval.log</field>
+        <field name="name">univ.approval.log.list</field>
+        <field name="model">univ.approval.log</field>
         <field name="arch" type="xml">
             <list string="Approval Log"
                   decoration-success="action == 'approve'"
@@ -26,8 +26,8 @@
          Approval Log - Form View (read-only)
     ==================================================================== -->
     <record id="view_approval_log_form" model="ir.ui.view">
-        <field name="name">approval.log.form</field>
-        <field name="model">approval.log</field>
+        <field name="name">univ.approval.log.form</field>
+        <field name="model">univ.approval.log</field>
         <field name="arch" type="xml">
             <form string="Approval Log Entry" create="false" edit="false">
                 <sheet>
@@ -51,7 +51,7 @@
     <!-- Action -->
     <record id="action_approval_log" model="ir.actions.act_window">
         <field name="name">Approval History</field>
-        <field name="res_model">approval.log</field>
+        <field name="res_model">univ.approval.log</field>
         <field name="view_mode">list,form</field>
     </record>
 </odoo>

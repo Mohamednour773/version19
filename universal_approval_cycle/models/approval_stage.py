@@ -8,12 +8,12 @@ from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
 
-class ApprovalStage(models.Model):
+class UnivApprovalStage(models.Model):
     """
     Represents a single stage within an approval cycle.
     Defines approvers, approval type, and notification settings.
     """
-    _name = 'approval.stage'
+    _name = 'univ.approval.stage'
     _description = 'Approval Stage'
     _order = 'cycle_id, sequence, id'
 
@@ -23,7 +23,7 @@ class ApprovalStage(models.Model):
         translate=True,
     )
     cycle_id = fields.Many2one(
-        comodel_name='approval.cycle',
+        comodel_name='univ.approval.cycle',
         string='Approval Cycle',
         required=True,
         ondelete='cascade',

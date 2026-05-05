@@ -7,24 +7,24 @@ Immutable record of every action taken on an approval request.
 from odoo import fields, models
 
 
-class ApprovalLog(models.Model):
+class UnivApprovalLog(models.Model):
     """
     Stores an immutable log entry for each action (approve/reject/cancel)
     taken during an approval request lifecycle.
     """
-    _name = 'approval.log'
+    _name = 'univ.approval.log'
     _description = 'Approval Log Entry'
     _order = 'date desc, id desc'
 
     request_id = fields.Many2one(
-        comodel_name='approval.request',
+        comodel_name='univ.approval.request',
         string='Approval Request',
         required=True,
         ondelete='cascade',
         index=True,
     )
     stage_id = fields.Many2one(
-        comodel_name='approval.stage',
+        comodel_name='univ.approval.stage',
         string='Stage',
         ondelete='set null',
     )

@@ -12,12 +12,12 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-class ApprovalRequest(models.Model):
+class UnivApprovalRequest(models.Model):
     """
     Tracks the state of an approval cycle for a specific record.
     Links the source record (any model) to the cycle and current stage.
     """
-    _name = 'approval.request'
+    _name = 'univ.approval.request'
     _description = 'Approval Request'
     _inherit = ['mail.thread']
     _order = 'create_date desc'
@@ -46,7 +46,7 @@ class ApprovalRequest(models.Model):
     # -------------------------------------------------------------------------
 
     cycle_id = fields.Many2one(
-        comodel_name='approval.cycle',
+        comodel_name='univ.approval.cycle',
         string='Approval Cycle',
         required=True,
         ondelete='restrict',
@@ -94,7 +94,7 @@ class ApprovalRequest(models.Model):
         index=True,
     )
     current_stage_id = fields.Many2one(
-        comodel_name='approval.stage',
+        comodel_name='univ.approval.stage',
         string='Current Stage',
         tracking=True,
     )
@@ -121,7 +121,7 @@ class ApprovalRequest(models.Model):
         tracking=True,
     )
     log_ids = fields.One2many(
-        comodel_name='approval.log',
+        comodel_name='univ.approval.log',
         inverse_name='request_id',
         string='Approval History',
     )
@@ -360,7 +360,7 @@ class ApprovalRequest(models.Model):
     def _create_log(self, action, comment=False):
         """Create an approval log entry."""
         self.ensure_one()
-        self.env['approval.log'].create({
+        self.env['univ.approval.log'].create({
             'request_id': self.id,
             'stage_id': self.current_stage_id.id,
             'approver_id': self.env.user.id,
@@ -426,7 +426,7 @@ class ApprovalRequest(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': _('Approval History'),
-            'res_model': 'approval.log',
+            'res_model': 'univ.approval.log',
             'view_mode': 'list,form',
             'domain': [('request_id', '=', self.id)],
         }

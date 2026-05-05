@@ -8,12 +8,12 @@ from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
 
-class ApprovalCycle(models.Model):
+class UnivApprovalCycle(models.Model):
     """
     Stores the definition of an approval cycle linked to any Odoo model.
     One model can have multiple cycles (e.g. for different record types).
     """
-    _name = 'approval.cycle'
+    _name = 'univ.approval.cycle'
     _description = 'Approval Cycle Definition'
     _order = 'name'
 
@@ -41,7 +41,7 @@ class ApprovalCycle(models.Model):
         readonly=True,
     )
     stage_ids = fields.One2many(
-        comodel_name='approval.stage',
+        comodel_name='univ.approval.stage',
         inverse_name='cycle_id',
         string='Approval Stages',
         copy=True,
@@ -128,7 +128,7 @@ class ApprovalCycle(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': _('Approval Stages'),
-            'res_model': 'approval.stage',
+            'res_model': 'univ.approval.stage',
             'view_mode': 'list,form',
             'domain': [('cycle_id', '=', self.id)],
             'context': {'default_cycle_id': self.id},

@@ -12,12 +12,12 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-class ApprovalMixin(models.AbstractModel):
+class UnivApprovalMixin(models.AbstractModel):
     """
     Mixin to add approval workflow support to any Odoo model.
 
     Usage in your model:
-        _inherit = ['your.model', 'approval.mixin']
+        _inherit = ['your.model', 'univ.approval.mixin']
 
     This adds:
         - approval_request_ids (computed): related approval requests
@@ -25,11 +25,11 @@ class ApprovalMixin(models.AbstractModel):
         - approval_state: current aggregated state
         - Auto-trigger on create (if configured in cycle)
     """
-    _name = 'approval.mixin'
+    _name = 'univ.approval.mixin'
     _description = 'Approval Mixin'
 
     approval_request_ids = fields.One2many(
-        comodel_name='approval.request',
+        comodel_name='univ.approval.request',
         string='Approval Requests',
         compute='_compute_approval_requests',
     )
@@ -57,7 +57,7 @@ class ApprovalMixin(models.AbstractModel):
     def _compute_approval_requests(self):
         model_name = self._name
         for rec in self:
-            requests = self.env['approval.request'].search([
+            requests = self.env['univ.approval.request'].search([
                 ('model_name', '=', model_name),
                 ('res_id', '=', rec.id),
             ])
@@ -96,7 +96,7 @@ class ApprovalMixin(models.AbstractModel):
         If so, create and submit an approval request automatically.
         """
         model_name = self._name
-        cycles = self.env['approval.cycle'].search([
+        cycles = self.env['univ.approval.cycle'].search([
             ('model_name', '=', model_name),
             ('auto_trigger', '=', True),
             ('active', '=', True),
@@ -108,7 +108,7 @@ class ApprovalMixin(models.AbstractModel):
             for cycle in cycles:
                 if self._matches_trigger_domain(rec, cycle):
                     try:
-                        request = self.env['approval.request'].create({
+                        request = self.env['univ.approval.request'].create({
                             'cycle_id': cycle.id,
                             'res_id': rec.id,
                             'requester_id': self.env.user.id,
@@ -142,7 +142,7 @@ class ApprovalMixin(models.AbstractModel):
         action = {
             'type': 'ir.actions.act_window',
             'name': _('Approval Requests'),
-            'res_model': 'approval.request',
+            'res_model': 'univ.approval.request',
             'view_mode': 'list,form',
             'domain': [('model_name', '=', self._name), ('res_id', '=', self.id)],
             'context': {
@@ -158,7 +158,7 @@ class ApprovalMixin(models.AbstractModel):
         return {
             'type': 'ir.actions.act_window',
             'name': _('Start Approval'),
-            'res_model': 'approval.action.wizard',
+            'res_model': 'univ.approval.wizard',
             'view_mode': 'form',
             'target': 'new',
             'context': {
