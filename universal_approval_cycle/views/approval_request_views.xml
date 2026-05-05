@@ -191,21 +191,18 @@
         <field name="arch" type="xml">
             <search string="Search Approval Requests">
                 <field name="cycle_id"/>
-                <field name="res_name" string="Record"/>
+                <field name="res_name"/>
                 <field name="requester_id"/>
-                <field name="current_stage_id"/>
+                <field name="state"/>
                 <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
                 <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
                 <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
                 <filter name="my_requests" string="My Requests"
                         domain="[('requester_id', '=', uid)]"/>
-                <filter name="to_approve" string="Waiting My Approval"
-                        domain="[('state', '=', 'pending')]"/>
                 <separator/>
                 <group expand="0" string="Group By">
                     <filter name="group_cycle" string="Cycle" context="{'group_by': 'cycle_id'}"/>
                     <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
-                    <filter name="group_stage" string="Current Stage" context="{'group_by': 'current_stage_id'}"/>
                     <filter name="group_requester" string="Requester" context="{'group_by': 'requester_id'}"/>
                 </group>
             </search>
