@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ====================================================================
+         Top-level menu
+    ==================================================================== -->
+    <menuitem id="menu_approval_root"
+              name="Approvals"
+              sequence="75"
+              web_icon="universal_approval_cycle,static/description/icon.png"
+              groups="universal_approval_cycle.group_approval_user"/>
+
+    <!-- ====================================================================
+         Requests sub-menu
+    ==================================================================== -->
+    <menuitem id="menu_approval_requests"
+              name="Requests"
+              parent="menu_approval_root"
+              sequence="10"
+              groups="universal_approval_cycle.group_approval_user"/>
+
+    <menuitem id="menu_all_approval_requests"
+              name="All Requests"
+              parent="menu_approval_requests"
+              sequence="10"
+              action="action_approval_request"
+              groups="universal_approval_cycle.group_approval_approver"/>
+
+    <menuitem id="menu_my_approval_requests"
+              name="My Requests"
+              parent="menu_approval_requests"
+              sequence="20"
+              action="action_my_approval_requests"
+              groups="universal_approval_cycle.group_approval_user"/>
+
+    <!-- ====================================================================
+         Configuration sub-menu (Managers only)
+    ==================================================================== -->
+    <menuitem id="menu_approval_config"
+              name="Configuration"
+              parent="menu_approval_root"
+              sequence="50"
+              groups="universal_approval_cycle.group_approval_manager"/>
+
+    <menuitem id="menu_approval_cycles"
+              name="Approval Cycles"
+              parent="menu_approval_config"
+              sequence="10"
+              action="action_approval_cycle"
+              groups="universal_approval_cycle.group_approval_manager"/>
+
+    <menuitem id="menu_approval_stages"
+              name="Approval Stages"
+              parent="menu_approval_config"
+              sequence="20"
+              action="action_approval_stage"
+              groups="universal_approval_cycle.group_approval_manager"/>
+
+    <menuitem id="menu_approval_logs"
+              name="Audit Log"
+              parent="menu_approval_config"
+              sequence="30"
+              action="action_approval_log"
+              groups="universal_approval_cycle.group_approval_manager"/>
+</odoo>

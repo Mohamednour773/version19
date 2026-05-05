@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ====================================================================
+         Approval Cycle - List View
+    ==================================================================== -->
+    <record id="view_approval_cycle_list" model="ir.ui.view">
+        <field name="name">approval.cycle.list</field>
+        <field name="model">approval.cycle</field>
+        <field name="arch" type="xml">
+            <list string="Approval Cycles" decoration-muted="not active">
+                <field name="name"/>
+                <field name="model_id"/>
+                <field name="stage_count" string="Stages"/>
+                <field name="auto_trigger"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ====================================================================
+         Approval Cycle - Form View
+    ==================================================================== -->
+    <record id="view_approval_cycle_form" model="ir.ui.view">
+        <field name="name">approval.cycle.form</field>
+        <field name="model">approval.cycle</field>
+        <field name="arch" type="xml">
+            <form string="Approval Cycle">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_stages"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-list-ol">
+                            <field name="stage_count" widget="statinfo" string="Stages"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Cycle Name..." required="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Configuration">
+                            <field name="model_id"
+                                   options="{'no_create': True}"
+                                   required="1"/>
+                            <field name="model_name" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Auto-Trigger">
+                            <field name="auto_trigger"/>
+                            <field name="trigger_domain"
+                                   widget="domain"
+                                   options="{'model': 'model_name'}"
+                                   invisible="not auto_trigger"/>
+                        </group>
+                    </group>
+                    <group string="Field Update on Completion">
+                        <group>
+                            <field name="approve_field_id"
+                                   domain="[('model_id', '=', model_id)]"
+                                   options="{'no_create': True}"/>
+                            <field name="approve_field_value"
+                                   invisible="not approve_field_id"
+                                   placeholder="e.g. approved"/>
+                        </group>
+                        <group>
+                            <field name="reject_field_value"
+                                   invisible="not approve_field_id"
+                                   placeholder="e.g. rejected"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Optional description..."/>
+                    <notebook>
+                        <page string="Approval Stages" name="stages">
+                            <field name="stage_ids" context="{'default_cycle_id': active_id}">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="approval_type"/>
+                                    <field name="approver_ids"
+                                           widget="many2many_tags"
+                                           invisible="approval_type != 'user'"/>
+                                    <field name="approver_group_id"
+                                           invisible="approval_type != 'group'"/>
+                                    <field name="dynamic_approver_field_id"
+                                           invisible="approval_type != 'dynamic'"/>
+                                    <field name="require_all"/>
+                                    <field name="notify_approvers"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ====================================================================
+         Approval Cycle - Search View
+    ==================================================================== -->
+    <record id="view_approval_cycle_search" model="ir.ui.view">
+        <field name="name">approval.cycle.search</field>
+        <field name="model">approval.cycle</field>
+        <field name="arch" type="xml">
+            <search string="Search Approval Cycles">
+                <field name="name"/>
+                <field name="model_id"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <filter name="auto_trigger" string="Auto-Trigger" domain="[('auto_trigger', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_model" string="Model" context="{'group_by': 'model_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_approval_cycle" model="ir.actions.act_window">
+        <field name="name">Approval Cycles</field>
+        <field name="res_model">approval.cycle</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_approval_cycle_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Approval Cycle!
+            </p>
+            <p>Define multi-stage approval workflows for any Odoo model.</p>
+        </field>
+    </record>
+</odoo>

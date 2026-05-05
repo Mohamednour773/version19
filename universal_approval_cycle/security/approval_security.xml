@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ============================================================
+             Security Category
+        ============================================================ -->
+        <record id="module_category_approval" model="ir.module.category">
+            <field name="name">Universal Approval Cycle</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- ============================================================
+             Security Groups
+        ============================================================ -->
+
+        <!-- User: can submit requests and view their own -->
+        <record id="group_approval_user" model="res.groups">
+            <field name="name">Approval User</field>
+            <field name="category_id" ref="module_category_approval"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Approver: can approve/reject requests assigned to them -->
+        <record id="group_approval_approver" model="res.groups">
+            <field name="name">Approval Approver</field>
+            <field name="category_id" ref="module_category_approval"/>
+            <field name="implied_ids" eval="[(4, ref('group_approval_user'))]"/>
+        </record>
+
+        <!-- Manager: can configure cycles, stages, and override approvals -->
+        <record id="group_approval_manager" model="res.groups">
+            <field name="name">Approval Manager</field>
+            <field name="category_id" ref="module_category_approval"/>
+            <field name="implied_ids" eval="[(4, ref('group_approval_approver'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+    </data>
+</odoo>

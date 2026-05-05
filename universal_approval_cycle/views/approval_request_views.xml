@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ====================================================================
+         Approval Request - List View
+    ==================================================================== -->
+    <record id="view_approval_request_list" model="ir.ui.view">
+        <field name="name">approval.request.list</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <list string="Approval Requests"
+                  decoration-success="state == 'approved'"
+                  decoration-danger="state == 'rejected'"
+                  decoration-warning="state == 'pending'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="display_name" string="Request"/>
+                <field name="cycle_id"/>
+                <field name="model_name" optional="hide"/>
+                <field name="res_name" string="Record"/>
+                <field name="requester_id"/>
+                <field name="current_stage_id"/>
+                <field name="progress" widget="progressbar"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'approved'"
+                       decoration-danger="state == 'rejected'"
+                       decoration-warning="state == 'pending'"
+                       decoration-info="state == 'draft'"/>
+                <field name="date_start" optional="show"/>
+                <field name="date_end" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ====================================================================
+         Approval Request - Form View
+    ==================================================================== -->
+    <record id="view_approval_request_form" model="ir.ui.view">
+        <field name="name">approval.request.form</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <form string="Approval Request">
+                <header>
+                    <!-- Action buttons based on state -->
+                    <button name="action_submit"
+                            string="Submit for Approval"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"
+                            confirm="Are you sure you want to submit this request?"/>
+
+                    <button name="%(universal_approval_cycle.action_approval_process_wizard)d"
+                            string="Approve / Reject"
+                            type="action"
+                            class="btn-success"
+                            invisible="state != 'pending'"
+                            context="{'default_wizard_mode': 'process', 'default_request_id': active_id}"/>
+
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            class="btn-danger"
+                            invisible="state not in ('draft', 'pending')"
+                            confirm="Cancel this approval request?"/>
+
+                    <button name="action_reset_to_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state not in ('rejected', 'cancelled')"/>
+
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,pending,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_logs"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-history">
+                            <field name="log_count" widget="statinfo" string="History"/>
+                        </button>
+                        <button name="action_open_record"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-external-link"
+                                invisible="not res_id">
+                            <span class="o_stat_text">Source Record</span>
+                        </button>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="o_field_widget" invisible="state == 'draft'">
+                        <field name="progress" widget="progressbar"
+                               options="{'current_value': 'progress', 'max_value': 100}"/>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="display_name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Request Details">
+                            <field name="cycle_id" required="1"
+                                   readonly="state != 'draft'"/>
+                            <field name="model_name" invisible="1"/>
+                            <field name="res_id" readonly="state != 'draft'"/>
+                            <field name="res_name" readonly="1"/>
+                            <field name="requester_id" readonly="1"/>
+                        </group>
+                        <group string="Status &amp; Progress">
+                            <field name="current_stage_id" readonly="1"/>
+                            <field name="date_start" readonly="1"/>
+                            <field name="date_end" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+
+                    <group string="Notes / Justification">
+                        <field name="notes" nolabel="1"
+                               placeholder="Enter justification or additional context..."
+                               readonly="state != 'draft'"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Approval History" name="history">
+                            <field name="log_ids" readonly="1">
+                                <list decoration-success="action == 'approve'"
+                                      decoration-danger="action == 'reject'"
+                                      decoration-muted="action == 'cancel'">
+                                    <field name="date"/>
+                                    <field name="stage_id"/>
+                                    <field name="approver_id"/>
+                                    <field name="action_label" string="Action"/>
+                                    <field name="comment"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ====================================================================
+         Approval Request - Kanban View
+    ==================================================================== -->
+    <record id="view_approval_request_kanban" model="ir.ui.view">
+        <field name="name">approval.request.kanban</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" default_group_by="state">
+                <field name="display_name"/>
+                <field name="cycle_id"/>
+                <field name="res_name"/>
+                <field name="requester_id"/>
+                <field name="current_stage_id"/>
+                <field name="state"/>
+                <field name="progress"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card">
+                            <div class="oe_kanban_content">
+                                <strong><field name="display_name"/></strong>
+                                <div class="text-muted small">
+                                    <field name="cycle_id"/> | <field name="res_name"/>
+                                </div>
+                                <div>
+                                    <span class="badge rounded-pill"
+                                          t-attf-class="bg-{{ record.state.raw_value == 'approved' ? 'success' : record.state.raw_value == 'rejected' ? 'danger' : record.state.raw_value == 'pending' ? 'warning' : 'secondary' }}">
+                                        <field name="state"/>
+                                    </span>
+                                </div>
+                                <div t-if="record.current_stage_id.raw_value" class="small">
+                                    Stage: <field name="current_stage_id"/>
+                                </div>
+                                <field name="progress" widget="progressbar"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ====================================================================
+         Approval Request - Search View
+    ==================================================================== -->
+    <record id="view_approval_request_search" model="ir.ui.view">
+        <field name="name">approval.request.search</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <search string="Search Approval Requests">
+                <field name="cycle_id"/>
+                <field name="res_name" string="Record"/>
+                <field name="requester_id"/>
+                <field name="current_stage_id"/>
+                <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
+                <filter name="my_requests" string="My Requests"
+                        domain="[('requester_id', '=', uid)]"/>
+                <filter name="to_approve" string="Waiting My Approval"
+                        domain="[('state', '=', 'pending')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_cycle" string="Cycle" context="{'group_by': 'cycle_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_stage" string="Current Stage" context="{'group_by': 'current_stage_id'}"/>
+                    <filter name="group_requester" string="Requester" context="{'group_by': 'requester_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Main Action -->
+    <record id="action_approval_request" model="ir.actions.act_window">
+        <field name="name">Approval Requests</field>
+        <field name="res_model">approval.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_approval_request_search"/>
+        <field name="context">{'search_default_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No approval requests yet!
+            </p>
+            <p>Submit an approval request from any record using the configured approval cycle.</p>
+        </field>
+    </record>
+
+    <!-- My Pending Approvals Action -->
+    <record id="action_my_approval_requests" model="ir.actions.act_window">
+        <field name="name">My Approvals</field>
+        <field name="res_model">approval.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_approval_request_search"/>
+        <field name="context">{'search_default_my_requests': 1}</field>
+    </record>
+
+    <!-- Process Wizard Action (called from form button) -->
+    <record id="action_approval_process_wizard" model="ir.actions.act_window">
+        <field name="name">Process Approval</field>
+        <field name="res_model">approval.action.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_wizard_mode': 'process'}</field>
+    </record>
+</odoo>

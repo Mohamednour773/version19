@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ====================================================================
+         Approval Action Wizard - Form View
+    ==================================================================== -->
+    <record id="view_approval_action_wizard_form" model="ir.ui.view">
+        <field name="name">approval.action.wizard.form</field>
+        <field name="model">approval.action.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Approval Action">
+                <sheet>
+                    <field name="wizard_mode" invisible="1"/>
+
+                    <!-- ====================================================
+                         MODE: Start New Approval
+                    ==================================================== -->
+                    <group invisible="wizard_mode != 'start'" string="Start Approval Request">
+                        <field name="res_model" invisible="1"/>
+                        <field name="res_id" invisible="1"/>
+                        <field name="available_cycle_ids" invisible="1"/>
+                        <field name="cycle_id"
+                               required="wizard_mode == 'start'"
+                               domain="[('id', 'in', available_cycle_ids)]"
+                               options="{'no_create': True}"/>
+                        <field name="notes" placeholder="Reason or context for this approval request..."/>
+                    </group>
+
+                    <!-- ====================================================
+                         MODE: Process (Approve / Reject)
+                    ==================================================== -->
+                    <group invisible="wizard_mode != 'process'" string="Process Approval">
+                        <field name="request_id" invisible="1"/>
+                        <field name="action" widget="radio" required="wizard_mode == 'process'"/>
+                        <field name="comment"
+                               placeholder="Add a comment or reason..."
+                               required="action == 'reject'"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm"
+                            string="Confirm"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard action (start mode) -->
+    <record id="action_approval_start_wizard" model="ir.actions.act_window">
+        <field name="name">Start Approval</field>
+        <field name="res_model">approval.action.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_wizard_mode': 'start'}</field>
+    </record>
+</odoo>
