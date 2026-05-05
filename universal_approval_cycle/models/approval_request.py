@@ -24,6 +24,24 @@ class ApprovalRequest(models.Model):
     _rec_name = 'display_name'
 
     # -------------------------------------------------------------------------
+    # Odoo 19 compatibility: mail.activity._compute_approver_id looks for
+    # 'approver_ids' in any model inheriting mail.thread. This computed
+    # Many2many satisfies that dependency without affecting business logic.
+    # -------------------------------------------------------------------------
+    approver_ids = fields.Many2many(
+        comodel_name='res.users',
+        relation='approval_request_dummy_approver_rel',
+        column1='request_id',
+        column2='user_id',
+        string='Activity Approvers',
+        compute='_compute_dummy_approver_ids',
+    )
+
+    def _compute_dummy_approver_ids(self):
+        for rec in self:
+            rec.approver_ids = self.env['res.users']
+
+    # -------------------------------------------------------------------------
     # Identity & Linking
     # -------------------------------------------------------------------------
 
