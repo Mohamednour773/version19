@@ -34,13 +34,6 @@
                         invisible="not active_approval_request_id">
                     <span class="o_stat_text">Current Approval</span>
                 </button>
-                <button name="action_start_approval"
-                        type="object"
-                        class="oe_stat_button"
-                        icon="fa-play"
-                        invisible="not approval_can_start">
-                    <span class="o_stat_text">Start Approval</span>
-                </button>
             </xpath>
 
             <xpath expr="//notebook" position="inside">

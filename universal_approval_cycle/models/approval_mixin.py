@@ -106,7 +106,7 @@ class UnivApprovalMixin(models.AbstractModel):
             rec.approval_current_approver_ids = active_request.current_approver_ids
             rec.approval_pending_approver_ids = active_request.pending_approver_ids
             rec.approval_last_action_summary = active_request.last_action_summary or ''
-            rec.approval_can_start = not bool(active_request)
+            rec.approval_can_start = not bool(active_request) and not rec._approval_requires_action_block()
             rec.approval_is_blocked = False
             if not requests:
                 rec.approval_state = 'none'
@@ -134,33 +134,14 @@ class UnivApprovalMixin(models.AbstractModel):
 
     def _auto_trigger_approval(self):
         """
-        Check if any approval cycle is configured with auto_trigger for this model.
-        If so, create and submit an approval request automatically.
+        Create and submit approval requests automatically for cycles that
+        either auto-trigger on create or block a business action.
         """
-        model_name = self._name
-        cycles = self.env['univ.approval.cycle'].search([
-            ('model_name', '=', model_name),
-            ('auto_trigger', '=', True),
-            ('active', '=', True),
-        ])
-        if not cycles:
-            return
-
         for rec in self:
+            cycles = rec._get_matching_approval_cycles()
+            cycles = cycles.filtered(lambda c: c.auto_trigger or c.enforce_on_action)
             for cycle in cycles:
-                if self._matches_trigger_domain(rec, cycle):
-                    try:
-                        request = self.env['univ.approval.request'].create({
-                            'cycle_id': cycle.id,
-                            'res_id': rec.id,
-                            'requester_id': self.env.user.id,
-                        })
-                        request.action_submit()
-                    except Exception as e:
-                        _logger.warning(
-                            'Auto-trigger failed for cycle %s on record %s: %s',
-                            cycle.name, rec.id, e
-                        )
+                rec._ensure_approval_request_for_cycle(cycle)
 
     def _matches_trigger_domain(self, record, cycle):
         """Check if a record matches the cycle's trigger domain."""
@@ -201,6 +182,29 @@ class UnivApprovalMixin(models.AbstractModel):
             ('res_id', '=', self.id),
         ], order='id desc', limit=1)
 
+    def _ensure_approval_request_for_cycle(self, cycle):
+        """Create and submit an approval request for the cycle when needed."""
+        self.ensure_one()
+        request = self._get_cycle_request(cycle)
+        if request and request.state in ('pending', 'approved'):
+            return request
+
+        try:
+            if not request:
+                request = self.env['univ.approval.request'].create({
+                    'cycle_id': cycle.id,
+                    'res_id': self.id,
+                    'requester_id': self.env.user.id,
+                })
+            if request.state == 'draft':
+                request.action_submit()
+        except Exception as e:
+            _logger.warning(
+                'Approval request preparation failed for cycle %s on record %s: %s',
+                cycle.name, self.id, e
+            )
+        return request
+
     def _check_approval_action_allowed(self, action_name, action_label=False):
         """Block model actions until all matching approval cycles are approved."""
         self.ensure_one()
@@ -210,7 +214,7 @@ class UnivApprovalMixin(models.AbstractModel):
 
         action_label = action_label or action_name
         for cycle in cycles:
-            request = self._get_cycle_request(cycle)
+            request = self._ensure_approval_request_for_cycle(cycle)
             if not request:
                 raise UserError(_(
                     'This record must complete the approval cycle "%(cycle)s" before you can %(action)s.'
