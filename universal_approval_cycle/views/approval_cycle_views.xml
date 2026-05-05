@@ -109,8 +109,8 @@
             <search string="Search Approval Cycles">
                 <field name="name"/>
                 <field name="model_id"/>
-                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
-                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
                 <filter name="auto_trigger" string="Auto-Trigger" domain="[('auto_trigger', '=', True)]"/>
                 <group expand="0" string="Group By">
                     <filter name="group_model" string="Model" context="{'group_by': 'model_id'}"/>
@@ -125,7 +125,7 @@
         <field name="res_model">univ.approval.cycle</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_approval_cycle_search"/>
-        <field name="context">{'search_default_active': 1}</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Approval Cycle!
