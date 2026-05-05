@@ -220,6 +220,21 @@ class UnivApprovalRequest(models.Model):
             message_type='notification',
         )
 
+    def action_open_process_wizard(self):
+        """Launch the approval processing wizard for this request."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Process Approval'),
+            'res_model': 'univ.approval.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_wizard_mode': 'process',
+                'default_request_id': self.id,
+            },
+        }
+
     def action_approve(self, comment=False):
         """
         Approve the current stage.

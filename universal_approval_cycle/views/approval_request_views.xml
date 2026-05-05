@@ -47,12 +47,11 @@
                             invisible="state != 'draft'"
                             confirm="Are you sure you want to submit this request?"/>
 
-                    <button name="%(universal_approval_cycle.action_approval_process_wizard)d"
+                    <button name="action_open_process_wizard"
                             string="Approve / Reject"
-                            type="action"
+                            type="object"
                             class="btn-success"
-                            invisible="state != 'pending'"
-                            context="{'default_wizard_mode': 'process', 'default_request_id': active_id}"/>
+                            invisible="state != 'pending'"/>
 
                     <button name="action_cancel"
                             string="Cancel"
