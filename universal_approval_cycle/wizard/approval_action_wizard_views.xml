@@ -55,4 +55,13 @@
         <field name="target">new</field>
         <field name="context">{'default_wizard_mode': 'start'}</field>
     </record>
+
+    <!-- Wizard action (process mode) -->
+    <record id="action_approval_process_wizard" model="ir.actions.act_window">
+        <field name="name">Process Approval</field>
+        <field name="res_model">univ.approval.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_wizard_mode': 'process'}</field>
+    </record>
 </odoo>

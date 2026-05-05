@@ -237,12 +237,4 @@
         <field name="context">{'search_default_my_requests': 1}</field>
     </record>
 
-    <!-- Process Wizard Action (called from form button) -->
-    <record id="action_approval_process_wizard" model="ir.actions.act_window">
-        <field name="name">Process Approval</field>
-        <field name="res_model">univ.approval.wizard</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
-        <field name="context">{'default_wizard_mode': 'process'}</field>
-    </record>
 </odoo>
