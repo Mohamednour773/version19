@@ -76,7 +76,7 @@
                     <field name="description" placeholder="Optional description..."/>
                     <notebook>
                         <page string="Approval Stages" name="stages">
-                            <field name="stage_ids" context="{'default_cycle_id': active_id}">
+                            <field name="stage_ids" context="{'default_cycle_id': id}">
                                 <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
