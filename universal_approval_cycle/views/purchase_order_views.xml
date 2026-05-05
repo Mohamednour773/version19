@@ -5,12 +5,21 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//button[@name='button_confirm']" position="attributes">
+                <attribute name="invisible">not can_confirm_with_approval</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='button_approve']" position="attributes">
+                <attribute name="invisible">not can_confirm_with_approval</attribute>
+            </xpath>
+
             <xpath expr="//sheet" position="inside">
                 <group string="Approval Status" invisible="approval_state == 'none' and not approval_request_ids">
                     <group>
                         <field name="approval_state" widget="badge"/>
                         <field name="approval_stage_name" readonly="1" invisible="not approval_stage_name"/>
                         <field name="approval_is_blocked" invisible="1"/>
+                        <field name="can_confirm_with_approval" invisible="1"/>
                     </group>
                     <group>
                         <field name="approval_current_approver_ids" widget="many2many_tags" readonly="1"/>
@@ -18,6 +27,22 @@
                         <field name="approval_last_action_summary" readonly="1"/>
                     </group>
                 </group>
+            </xpath>
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_approvals"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-check-square-o">
+                    <field name="approval_count" widget="statinfo" string="Approvals"/>
+                </button>
+                <button name="action_view_active_approval"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-clock-o"
+                        invisible="not active_approval_request_id">
+                    <span class="o_stat_text">Current Approval</span>
+                </button>
             </xpath>
 
             <xpath expr="//notebook" position="inside">
