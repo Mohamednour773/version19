@@ -182,39 +182,11 @@
         </field>
     </record>
 
-    <!-- ====================================================================
-         Approval Request - Search View
-    ==================================================================== -->
-    <record id="view_approval_request_search" model="ir.ui.view">
-        <field name="name">univ.approval.request.search</field>
-        <field name="model">univ.approval.request</field>
-        <field name="arch" type="xml">
-            <search string="Search Approval Requests">
-                <field name="cycle_id"/>
-                <field name="res_name"/>
-                <field name="requester_id"/>
-                <field name="state"/>
-                <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
-                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
-                <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
-                <filter name="my_requests" string="My Requests"
-                        domain="[('requester_id', '=', uid)]"/>
-                <separator/>
-                <group expand="0" string="Group By">
-                    <filter name="group_cycle" string="Cycle" context="{'group_by': 'cycle_id'}"/>
-                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
-                    <filter name="group_requester" string="Requester" context="{'group_by': 'requester_id'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
-
     <!-- Main Action -->
     <record id="action_approval_request" model="ir.actions.act_window">
         <field name="name">Approval Requests</field>
         <field name="res_model">univ.approval.request</field>
         <field name="view_mode">list,kanban,form</field>
-        <field name="search_view_id" ref="view_approval_request_search"/>
         <field name="context">{'search_default_pending': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -229,7 +201,6 @@
         <field name="name">My Approvals</field>
         <field name="res_model">univ.approval.request</field>
         <field name="view_mode">list,kanban,form</field>
-        <field name="search_view_id" ref="view_approval_request_search"/>
         <field name="context">{'search_default_my_requests': 1}</field>
     </record>
 
