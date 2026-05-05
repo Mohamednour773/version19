@@ -22,7 +22,7 @@ Features:
     """,
     'author': 'Mohamed Nour',
     'license': 'LGPL-3',
-    'depends': ['base', 'mail'],
+    'depends': ['base', 'mail', 'purchase'],
     'data': [
         'security/approval_security.xml',
         'security/ir.model.access.csv',
@@ -33,6 +33,7 @@ Features:
         'views/approval_request_views.xml',
         'views/approval_log_views.xml',
         'views/approval_menus.xml',
+        'views/purchase_order_views.xml',
     ],
     'installable': True,
     'application': True,

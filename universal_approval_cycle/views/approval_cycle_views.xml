@@ -52,6 +52,10 @@
                         </group>
                         <group string="Auto-Trigger">
                             <field name="auto_trigger"/>
+                            <field name="enforce_on_action"/>
+                            <field name="blocking_action_name"
+                                   placeholder="e.g. button_confirm"
+                                   invisible="not enforce_on_action"/>
                             <field name="trigger_domain"
                                    widget="domain"
                                    options="{'model': 'model_name'}"

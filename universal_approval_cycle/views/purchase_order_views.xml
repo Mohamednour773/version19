@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="purchase_order_form_inherit_universal_approval" model="ir.ui.view">
+        <field name="name">purchase.order.form.universal.approval</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Approval Status" invisible="approval_state == 'none' and not approval_request_ids">
+                    <group>
+                        <field name="approval_state" widget="badge"/>
+                        <field name="approval_stage_name" readonly="1" invisible="not approval_stage_name"/>
+                        <field name="approval_is_blocked" invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="approval_current_approver_ids" widget="many2many_tags" readonly="1"/>
+                        <field name="approval_pending_approver_ids" widget="many2many_tags" readonly="1"/>
+                        <field name="approval_last_action_summary" readonly="1"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_approvals"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-check-square-o">
+                    <field name="approval_count" widget="statinfo" string="Approvals"/>
+                </button>
+                <button name="action_view_active_approval"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-clock-o"
+                        invisible="not active_approval_request_id">
+                    <span class="o_stat_text">Current Approval</span>
+                </button>
+                <button name="action_start_approval"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-play"
+                        invisible="not approval_can_start">
+                    <span class="o_stat_text">Start Approval</span>
+                </button>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Approvals" name="approvals">
+                    <field name="approval_request_ids" readonly="1">
+                        <list decoration-success="state == 'approved'"
+                              decoration-danger="state == 'rejected'"
+                              decoration-warning="state == 'pending'">
+                            <field name="display_name"/>
+                            <field name="cycle_id"/>
+                            <field name="state" widget="badge"/>
+                            <field name="current_stage_id"/>
+                            <field name="requester_id"/>
+                            <field name="progress" widget="progressbar"/>
+                            <field name="pending_approver_ids" widget="many2many_tags"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </list>
+                        <form>
+                            <sheet>
+                                <group>
+                                    <group>
+                                        <field name="cycle_id" readonly="1"/>
+                                        <field name="state" readonly="1"/>
+                                        <field name="current_stage_id" readonly="1"/>
+                                        <field name="requester_id" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="current_approver_ids" widget="many2many_tags" readonly="1"/>
+                                        <field name="approved_approver_ids" widget="many2many_tags" readonly="1"/>
+                                        <field name="pending_approver_ids" widget="many2many_tags" readonly="1"/>
+                                    </group>
+                                </group>
+                                <field name="notes" readonly="1"/>
+                                <field name="log_ids" readonly="1">
+                                    <list>
+                                        <field name="date"/>
+                                        <field name="stage_id"/>
+                                        <field name="approver_id"/>
+                                        <field name="action_label"/>
+                                        <field name="comment"/>
+                                    </list>
+                                </field>
+                            </sheet>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

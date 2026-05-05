@@ -49,6 +49,37 @@ class UnivApprovalMixin(models.AbstractModel):
         compute='_compute_approval_state',
         store=False,
     )
+    active_approval_request_id = fields.Many2one(
+        comodel_name='univ.approval.request',
+        string='Active Approval Request',
+        compute='_compute_approval_requests',
+    )
+    approval_stage_name = fields.Char(
+        string='Current Approval Stage',
+        compute='_compute_approval_state',
+    )
+    approval_current_approver_ids = fields.Many2many(
+        comodel_name='res.users',
+        string='Current Approvers',
+        compute='_compute_approval_state',
+    )
+    approval_pending_approver_ids = fields.Many2many(
+        comodel_name='res.users',
+        string='Pending Approvers',
+        compute='_compute_approval_state',
+    )
+    approval_last_action_summary = fields.Char(
+        string='Approval Summary',
+        compute='_compute_approval_state',
+    )
+    approval_can_start = fields.Boolean(
+        string='Can Start Approval',
+        compute='_compute_approval_state',
+    )
+    approval_is_blocked = fields.Boolean(
+        string='Approval Blocks Action',
+        compute='_compute_approval_state',
+    )
 
     # -------------------------------------------------------------------------
     # Computed
@@ -63,10 +94,20 @@ class UnivApprovalMixin(models.AbstractModel):
             ])
             rec.approval_request_ids = requests
             rec.approval_count = len(requests)
+            rec.active_approval_request_id = requests.filtered(
+                lambda r: r.state in ('draft', 'pending')
+            )[:1]
 
     def _compute_approval_state(self):
         for rec in self:
             requests = rec.approval_request_ids
+            active_request = rec.active_approval_request_id or requests[:1]
+            rec.approval_stage_name = active_request.current_stage_id.name or ''
+            rec.approval_current_approver_ids = active_request.current_approver_ids
+            rec.approval_pending_approver_ids = active_request.pending_approver_ids
+            rec.approval_last_action_summary = active_request.last_action_summary or ''
+            rec.approval_can_start = not bool(active_request)
+            rec.approval_is_blocked = False
             if not requests:
                 rec.approval_state = 'none'
             elif any(r.state == 'pending' for r in requests):
@@ -79,6 +120,7 @@ class UnivApprovalMixin(models.AbstractModel):
                 rec.approval_state = 'draft'
             else:
                 rec.approval_state = 'none'
+            rec.approval_is_blocked = rec._approval_requires_action_block()
 
     # -------------------------------------------------------------------------
     # Auto-trigger on Create
@@ -132,6 +174,71 @@ class UnivApprovalMixin(models.AbstractModel):
         except Exception:
             return False
 
+    def _get_matching_approval_cycles(self, action_name=False):
+        """Return active approval cycles matching this record and optional action."""
+        self.ensure_one()
+        cycles = self.env['univ.approval.cycle'].search([
+            ('model_name', '=', self._name),
+            ('active', '=', True),
+        ])
+        if action_name:
+            cycles = cycles.filtered(
+                lambda c: c.enforce_on_action and c.blocking_action_name == action_name
+            )
+        return cycles.filtered(lambda c: self._matches_trigger_domain(self, c))
+
+    def _approval_requires_action_block(self, action_name=False):
+        """Whether this record has a blocking approval rule."""
+        self.ensure_one()
+        return bool(self._get_matching_approval_cycles(action_name=action_name))
+
+    def _get_cycle_request(self, cycle):
+        """Return the latest approval request for the given cycle and record."""
+        self.ensure_one()
+        return self.env['univ.approval.request'].search([
+            ('cycle_id', '=', cycle.id),
+            ('model_name', '=', self._name),
+            ('res_id', '=', self.id),
+        ], order='id desc', limit=1)
+
+    def _check_approval_action_allowed(self, action_name, action_label=False):
+        """Block model actions until all matching approval cycles are approved."""
+        self.ensure_one()
+        cycles = self._get_matching_approval_cycles(action_name=action_name)
+        if not cycles:
+            return True
+
+        action_label = action_label or action_name
+        for cycle in cycles:
+            request = self._get_cycle_request(cycle)
+            if not request:
+                raise UserError(_(
+                    'This record must complete the approval cycle "%(cycle)s" before you can %(action)s.'
+                ) % {
+                    'cycle': cycle.name,
+                    'action': action_label,
+                })
+            if request.state == 'approved':
+                continue
+            if request.state == 'pending':
+                raise UserError(_(
+                    'Approval cycle "%(cycle)s" is still pending at stage "%(stage)s". '
+                    'Current approvers: %(approvers)s.'
+                ) % {
+                    'cycle': cycle.name,
+                    'stage': request.current_stage_id.name or _('Unknown'),
+                    'approvers': ', '.join(request.pending_approver_ids.mapped('name')) or _('No approvers assigned'),
+                })
+            raise UserError(_(
+                'Approval cycle "%(cycle)s" is in state "%(state)s". '
+                'You cannot %(action)s until it is approved.'
+            ) % {
+                'cycle': cycle.name,
+                'state': request.state,
+                'action': action_label,
+            })
+        return True
+
     # -------------------------------------------------------------------------
     # Smart Button Action
     # -------------------------------------------------------------------------
@@ -165,4 +272,18 @@ class UnivApprovalMixin(models.AbstractModel):
                 'default_res_model': self._name,
                 'default_res_id': self.id,
             },
+        }
+
+    def action_view_active_approval(self):
+        """Open the most relevant approval request for this record."""
+        self.ensure_one()
+        request = self.active_approval_request_id or self.approval_request_ids[:1]
+        if not request:
+            raise UserError(_('No approval request exists for this record yet.'))
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Approval Request'),
+            'res_model': 'univ.approval.request',
+            'view_mode': 'form',
+            'res_id': request.id,
         }

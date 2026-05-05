@@ -60,6 +60,15 @@ class UnivApprovalCycle(models.Model):
         default=False,
         help='Automatically start the approval cycle when a new record is created',
     )
+    enforce_on_action = fields.Boolean(
+        string='Block Action Until Approved',
+        default=False,
+        help='Prevent a specific model action from running until this cycle is approved.',
+    )
+    blocking_action_name = fields.Char(
+        string='Blocked Method Name',
+        help='Python method name to block until approval is complete, e.g. button_confirm.',
+    )
     trigger_domain = fields.Char(
         string='Trigger Condition (Domain)',
         default='[]',

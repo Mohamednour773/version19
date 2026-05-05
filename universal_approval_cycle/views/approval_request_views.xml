@@ -114,6 +114,18 @@
                         </group>
                     </group>
 
+                    <group string="Approval Snapshot" invisible="state == 'draft'">
+                        <group>
+                            <field name="current_approver_ids" widget="many2many_tags" readonly="1"/>
+                            <field name="approved_approver_ids" widget="many2many_tags" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="pending_approver_ids" widget="many2many_tags" readonly="1"/>
+                            <field name="last_action_summary" readonly="1"/>
+                            <field name="can_current_user_approve" invisible="1"/>
+                        </group>
+                    </group>
+
                     <group string="Notes / Justification">
                         <field name="notes" nolabel="1"
                                placeholder="Enter justification or additional context..."

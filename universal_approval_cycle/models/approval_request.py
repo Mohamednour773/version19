@@ -129,6 +129,38 @@ class UnivApprovalRequest(models.Model):
         string='Log Entries',
         compute='_compute_log_count',
     )
+    current_approver_ids = fields.Many2many(
+        comodel_name='res.users',
+        relation='approval_request_current_user_rel',
+        column1='request_id',
+        column2='user_id',
+        string='Current Approvers',
+        compute='_compute_approver_status',
+    )
+    approved_approver_ids = fields.Many2many(
+        comodel_name='res.users',
+        relation='approval_request_approved_user_rel',
+        column1='request_id',
+        column2='user_id',
+        string='Approved Approvers',
+        compute='_compute_approver_status',
+    )
+    pending_approver_ids = fields.Many2many(
+        comodel_name='res.users',
+        relation='approval_request_pending_user_rel',
+        column1='request_id',
+        column2='user_id',
+        string='Pending Approvers',
+        compute='_compute_approver_status',
+    )
+    last_action_summary = fields.Char(
+        string='Latest Approval Summary',
+        compute='_compute_approver_status',
+    )
+    can_current_user_approve = fields.Boolean(
+        string='Can Current User Approve',
+        compute='_compute_approver_status',
+    )
 
     # -------------------------------------------------------------------------
     # Metadata
@@ -196,6 +228,61 @@ class UnivApprovalRequest(models.Model):
         for rec in self:
             rec.log_count = len(rec.log_ids)
 
+    @api.depends(
+        'state',
+        'current_stage_id',
+        'log_ids.action',
+        'log_ids.approver_id',
+        'log_ids.stage_id',
+        'requester_id',
+    )
+    def _compute_approver_status(self):
+        for rec in self:
+            current_approvers = self.env['res.users']
+            approved_approvers = self.env['res.users']
+            pending_approvers = self.env['res.users']
+            last_summary = ''
+            can_approve = False
+
+            source_record = rec._get_source_record()
+            if rec.state == 'pending' and rec.current_stage_id:
+                current_approvers = rec.current_stage_id.get_approvers_for_record(source_record)
+                approved_approvers = rec.log_ids.filtered(
+                    lambda log: log.stage_id == rec.current_stage_id and log.action == 'approve'
+                ).mapped('approver_id')
+                pending_approvers = current_approvers - approved_approvers
+                can_approve = (
+                    self.env.user in pending_approvers
+                    and (rec.current_stage_id.allow_self_approval or self.env.user != rec.requester_id)
+                )
+                last_summary = _(
+                    'Waiting for %(done)s/%(total)s approvals at stage "%(stage)s".'
+                ) % {
+                    'done': len(approved_approvers),
+                    'total': len(current_approvers),
+                    'stage': rec.current_stage_id.name,
+                }
+            elif rec.state == 'approved':
+                approved_approvers = rec.log_ids.filtered(
+                    lambda log: log.action == 'approve'
+                ).mapped('approver_id')
+                last_summary = _('All approval stages are complete.')
+            elif rec.state == 'rejected':
+                reject_log = rec.log_ids.filtered(lambda log: log.action == 'reject')[:1]
+                last_summary = _(
+                    'Rejected by %(user)s.'
+                ) % {'user': reject_log.approver_id.name or _('Unknown')} if reject_log else _('Rejected.')
+            elif rec.state == 'draft':
+                last_summary = _('Approval request is in draft.')
+            elif rec.state == 'cancelled':
+                last_summary = _('Approval request was cancelled.')
+
+            rec.current_approver_ids = current_approvers
+            rec.approved_approver_ids = approved_approvers
+            rec.pending_approver_ids = pending_approvers
+            rec.last_action_summary = last_summary
+            rec.can_current_user_approve = can_approve
+
     # -------------------------------------------------------------------------
     # Workflow Actions
     # -------------------------------------------------------------------------
@@ -214,6 +301,7 @@ class UnivApprovalRequest(models.Model):
             'current_stage_id': first_stage.id,
             'date_start': fields.Datetime.now(),
         })
+        self._create_log(action='submit')
         self._notify_approvers(first_stage)
         self.message_post(
             body=_('Approval request submitted. Awaiting approval at stage: %s') % first_stage.name,
@@ -352,11 +440,12 @@ class UnivApprovalRequest(models.Model):
 
         if next_stages:
             next_stage = next_stages[0]
+            previous_stage = self.current_stage_id
             self.write({'current_stage_id': next_stage.id})
             self._notify_approvers(next_stage)
             self.message_post(
                 body=_('Stage "%s" approved. Moved to stage "%s".') % (
-                    self.current_stage_id.name, next_stage.name
+                    previous_stage.name, next_stage.name
                 ),
                 message_type='notification',
             )
