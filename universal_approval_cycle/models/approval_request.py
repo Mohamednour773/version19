@@ -19,7 +19,7 @@ class ApprovalRequest(models.Model):
     """
     _name = 'approval.request'
     _description = 'Approval Request'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread']
     _order = 'create_date desc'
     _rec_name = 'display_name'
 

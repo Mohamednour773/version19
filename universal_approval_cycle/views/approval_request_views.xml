@@ -137,7 +137,7 @@
                         </page>
                     </notebook>
                 </sheet>
-                <chatter/>
+                <chatter activities="0"/>
             </form>
         </field>
     </record>
