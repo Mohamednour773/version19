@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add club_branch_id to the POS configuration form -->
+    <record id="pos_config_view_form_club" model="ir.ui.view">
+        <field name="name">pos.config.form.club</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Insert after the ePos Printer setting so club options group together -->
+            <xpath expr="//setting[@id='other_devices']" position="after">
+                <setting
+                        string="Club Branch"
+                        help="Restrict this POS terminal to packages of a single branch. Leave empty to show packages from all branches.">
+                    <field name="club_branch_id" options="{'no_create': True}"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

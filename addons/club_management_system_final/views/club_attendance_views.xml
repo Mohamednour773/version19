@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ════════════════════════════════════
+         TREE VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_attendance_tree" model="ir.ui.view">
+        <field name="name">club.attendance.tree</field>
+        <field name="model">club.attendance</field>
+        <field name="arch" type="xml">
+            <list string="Attendance"
+                  decoration-success="state == 'attended'"
+                  decoration-danger="state == 'absent'"
+                  decoration-warning="state == 'excused'"
+                  decoration-muted="state == 'present'">
+                <field name="date"/>
+                <field name="partner_id"/>
+                <field name="session_id"/>
+                <field name="class_id"/>
+                <field name="branch_id"/>
+                <field name="trainer_id"/>
+                <field name="marked_by_trainer_id" string="Conducted By" optional="show"/>
+                <field name="membership_id"/>
+                <field name="check_in"/>
+                <field name="check_out"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'attended'"
+                       decoration-danger="state == 'absent'"
+                       decoration-warning="state == 'excused'"/>
+                <button name="action_mark_attended" string="✓" type="object"
+                        class="btn-sm btn-success" invisible="state == 'attended'"/>
+                <button name="action_mark_absent" string="✗" type="object"
+                        class="btn-sm btn-danger" invisible="state == 'absent'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         FORM VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_attendance_form" model="ir.ui.view">
+        <field name="name">club.attendance.form</field>
+        <field name="model">club.attendance</field>
+        <field name="arch" type="xml">
+            <form string="Attendance Record">
+                <header>
+                    <button name="action_mark_attended" string="Mark Attended" type="object"
+                            invisible="state == 'attended'" class="btn-success"/>
+                    <button name="action_mark_absent" string="Mark Absent" type="object"
+                            invisible="state == 'absent'" class="btn-danger"/>
+                    <button name="action_mark_excused" string="Mark Excused" type="object"
+                            invisible="state == 'excused'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="present,attended,absent,excused"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Client">
+                            <field name="partner_id"/>
+                            <field name="membership_id"
+                                   domain="[('partner_id', '=', partner_id), ('state', 'in', ('active', 'confirmed'))]"/>
+                        </group>
+                        <group string="Session">
+                            <field name="session_id"/>
+                            <field name="class_id" readonly="1"/>
+                            <field name="branch_id" readonly="1"/>
+                            <field name="trainer_id" readonly="1"/>
+                            <field name="marked_by_trainer_id" string="Conducted By Trainer"/>
+                            <field name="date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Check-in / Check-out">
+                            <field name="check_in"/>
+                            <field name="check_out"/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Notes..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         SEARCH VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_attendance_search" model="ir.ui.view">
+        <field name="name">club.attendance.search</field>
+        <field name="model">club.attendance</field>
+        <field name="arch" type="xml">
+            <search string="Attendance">
+                <field name="partner_id"/>
+                <field name="session_id"/>
+                <field name="class_id"/>
+                <field name="branch_id"/>
+                <field name="trainer_id"/>
+                <field name="date"/>
+                <separator/>
+                <filter string="Attended" name="attended" domain="[('state', '=', 'attended')]"/>
+                <filter string="Absent" name="absent" domain="[('state', '=', 'absent')]"/>
+                <filter string="Excused" name="excused" domain="[('state', '=', 'excused')]"/>
+                <filter string="Present (Pending)" name="present" domain="[('state', '=', 'present')]"/>
+                <separator/>
+                <filter string="Today" name="today"
+                        domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <group>
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                    <filter string="Trainer" name="group_trainer" context="{'group_by': 'trainer_id'}"/>
+                    <filter string="Client" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'date:day'}"/>
+                    <filter string="Session" name="group_session" context="{'group_by': 'session_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         ACTION
+    ════════════════════════════════════ -->
+    <record id="action_club_attendance" model="ir.actions.act_window">
+        <field name="name">Attendance</field>
+        <field name="res_model">club.attendance</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_club_attendance_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No attendance records yet.</p>
+            <p>Attendance is recorded per session. Open a session and click "Take Attendance".</p>
+        </field>
+    </record>
+
+</odoo>

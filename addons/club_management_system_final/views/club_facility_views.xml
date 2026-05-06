@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ════════════════════════════════════
+         KANBAN VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_facility_kanban" model="ir.ui.view">
+        <field name="name">club.facility.kanban</field>
+        <field name="model">club.facility</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="facility_type">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="facility_type"/>
+                <field name="capacity"/>
+                <field name="price_per_hour"/>
+                <field name="rental_count"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="card">
+                        <field name="name" class="fw-bold d-block"/>
+                        <div><i class="fa fa-map-marker"/> <field name="branch_id"/></div>
+                        <div><i class="fa fa-users"/> Capacity: <field name="capacity"/></div>
+                        <div><i class="fa fa-money"/> <field name="price_per_hour"/> / hr</div>
+                        <div class="text-muted"><field name="rental_count"/> Bookings</div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         TREE VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_facility_tree" model="ir.ui.view">
+        <field name="name">club.facility.tree</field>
+        <field name="model">club.facility</field>
+        <field name="arch" type="xml">
+            <list string="Facilities" decoration-muted="not active">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="facility_type"/>
+                <field name="lane_section" optional="show"/>
+                <field name="is_split" optional="show"/>
+                <field name="capacity"/>
+                <field name="max_trainers" optional="show"/>
+                <field name="price_per_hour"/>
+                <field name="rental_count" string="Rentals"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         FORM VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_facility_form" model="ir.ui.view">
+        <field name="name">club.facility.form</field>
+        <field name="model">club.facility</field>
+        <field name="arch" type="xml">
+            <form string="Facility">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_rentals" type="object"
+                                class="oe_stat_button" icon="fa-calendar">
+                            <field name="rental_count" widget="statinfo" string="Bookings"/>
+                        </button>
+                        <button name="action_view_rentals" type="object"
+                                class="oe_stat_button" icon="fa-graduation-cap">
+                            <field name="class_count" widget="statinfo" string="Classes"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Facility Name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Details">
+                            <field name="branch_id"/>
+                            <field name="facility_type"/>
+                            <field name="parent_facility_id"
+                                   invisible="facility_type != 'lane'"/>
+                            <field name="lane_section"
+                                   invisible="facility_type != 'lane'"/>
+                            <field name="is_split"
+                                   invisible="facility_type != 'lane'"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Capacity &amp; Pricing">
+                            <field name="capacity"/>
+                            <field name="max_trainers"/>
+                            <field name="price_per_hour"/>
+                            <field name="product_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Sub-Facilities" name="children"
+                              invisible="facility_type not in ('pool',)">
+                            <field name="child_facility_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="facility_type"/>
+                                    <field name="lane_section"/>
+                                    <field name="is_split"/>
+                                    <field name="capacity"/>
+                                    <field name="price_per_hour"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         SEARCH VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_facility_search" model="ir.ui.view">
+        <field name="name">club.facility.search</field>
+        <field name="model">club.facility</field>
+        <field name="arch" type="xml">
+            <search string="Facilities">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <separator/>
+                <filter string="Pools" name="pools"
+                        domain="[('facility_type', '=', 'pool')]"/>
+                <filter string="Lanes" name="lanes"
+                        domain="[('facility_type', '=', 'lane')]"/>
+                <filter string="Courts" name="courts"
+                        domain="[('facility_type', '=', 'court')]"/>
+                <filter string="Gyms" name="gyms"
+                        domain="[('facility_type', '=', 'gym')]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'facility_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         ACTION
+    ════════════════════════════════════ -->
+    <record id="action_club_facility" model="ir.actions.act_window">
+        <field name="name">Facilities</field>
+        <field name="res_model">club.facility</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_club_facility_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add your first facility!</p>
+            <p>Manage pools, lanes, courts and gyms.</p>
+        </field>
+    </record>
+
+</odoo>

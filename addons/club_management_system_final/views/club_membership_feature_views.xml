@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_club_membership_form_features" model="ir.ui.view">
+        <field name="name">club.membership.form.features</field>
+        <field name="model">club.membership</field>
+        <field name="inherit_id" ref="club_management_system_final.view_club_membership_form"/>
+        <field name="arch" type="xml">
+            <header position="inside">
+                <button name="action_apply_freeze" string="Apply Freeze" type="object"
+                        invisible="state not in ('active', 'confirmed')"/>
+                <button name="action_clear_freeze" string="Clear Freeze" type="object"
+                        invisible="freeze_start_date == False and freeze_end_date == False"/>
+                <button name="action_create_renewal" string="Create Renewal" type="object"
+                        invisible="state not in ('active', 'confirmed', 'expired')"/>
+            </header>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_schedule_plan" type="object"
+                        class="oe_stat_button" icon="fa-calendar">
+                    <field name="schedule_count" widget="statinfo" string="Plan"/>
+                </button>
+                <button name="action_view_waitlist" type="object"
+                        class="oe_stat_button" icon="fa-list">
+                    <field name="waitlist_count" widget="statinfo" string="Waitlist"/>
+                </button>
+            </xpath>
+            <xpath expr="//sheet/notebook" position="before">
+                <group>
+                    <group string="Freeze">
+                        <field name="freeze_start_date"/>
+                        <field name="freeze_end_date"/>
+                        <field name="freeze_days" readonly="1"/>
+                        <field name="is_currently_frozen" readonly="1"/>
+                    </group>
+                    <group string="Renewal">
+                        <field name="auto_renew"/>
+                        <field name="renewal_membership_id" readonly="1"/>
+                        <field name="renewed_from_id" readonly="1"/>
+                        <field name="freeze_reason"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Training Plan">
+                    <field name="schedule_session_ids" readonly="1">
+                        <list>
+                            <field name="date"/>
+                            <field name="class_id"/>
+                            <field name="trainer_id"/>
+                            <field name="time_start" widget="float_time"/>
+                            <field name="time_end" widget="float_time"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Waitlist">
+                    <field name="waitlist_ids" readonly="1">
+                        <list>
+                            <field name="session_id"/>
+                            <field name="priority"/>
+                            <field name="state"/>
+                            <field name="offered_on"/>
+                            <field name="joined_on"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

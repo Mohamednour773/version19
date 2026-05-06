@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ═══════════════════════════════════════════════════════════
+             BRANCH ISOLATION RULES
+             Admin  → no restriction (sees all)
+             Manager / Reception → only their branch (via branch.user_ids)
+             Trainer → only sessions/attendance where they are the trainer
+        ═══════════════════════════════════════════════════════════ -->
+
+        <!-- ─── BRANCH ─── -->
+        <record id="rule_branch_manager" model="ir.rule">
+            <field name="name">Branch: Manager sees own branch only</field>
+            <field name="model_id" ref="model_club_branch"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_branch_reception" model="ir.rule">
+            <field name="name">Branch: Reception sees own branch only</field>
+            <field name="model_id" ref="model_club_branch"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_reception'))]"/>
+            <field name="domain_force">[('user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── TRAINER (model) ─── -->
+        <record id="rule_trainer_manager" model="ir.rule">
+            <field name="name">Trainer: Manager sees own branch trainers</field>
+            <field name="model_id" ref="model_club_trainer"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_trainer_reception" model="ir.rule">
+            <field name="name">Trainer: Reception sees own branch trainers</field>
+            <field name="model_id" ref="model_club_trainer"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_reception'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_trainer_own_profile" model="ir.rule">
+            <field name="name">Trainer: Can only see own trainer profile</field>
+            <field name="model_id" ref="model_club_trainer"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_trainer'))]"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── CLASS ─── -->
+        <record id="rule_class_manager" model="ir.rule">
+            <field name="name">Class: Manager sees own branch</field>
+            <field name="model_id" ref="model_club_class"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_class_reception" model="ir.rule">
+            <field name="name">Class: Reception sees own branch</field>
+            <field name="model_id" ref="model_club_class"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_reception'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_class_trainer" model="ir.rule">
+            <field name="name">Class: Trainer sees only assigned classes</field>
+            <field name="model_id" ref="model_club_class"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_trainer'))]"/>
+            <field name="domain_force">[('trainer_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── SESSION ─── -->
+        <record id="rule_session_manager" model="ir.rule">
+            <field name="name">Session: Manager sees own branch</field>
+            <field name="model_id" ref="model_club_session"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_session_reception" model="ir.rule">
+            <field name="name">Session: Reception sees own branch</field>
+            <field name="model_id" ref="model_club_session"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_reception'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_session_trainer" model="ir.rule">
+            <field name="name">Session: Trainer sees only own sessions</field>
+            <field name="model_id" ref="model_club_session"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_trainer'))]"/>
+            <field name="domain_force">
+                ['|',
+                    ('trainer_id.user_id', '=', user.id),
+                    ('trainer_line_ids.trainer_id.user_id', '=', user.id)
+                ]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── ATTENDANCE ─── -->
+        <record id="rule_attendance_manager" model="ir.rule">
+            <field name="name">Attendance: Manager sees own branch</field>
+            <field name="model_id" ref="model_club_attendance"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_attendance_reception" model="ir.rule">
+            <field name="name">Attendance: Reception sees own branch</field>
+            <field name="model_id" ref="model_club_attendance"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_reception'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_attendance_trainer" model="ir.rule">
+            <field name="name">Attendance: Trainer sees own sessions attendance only</field>
+            <field name="model_id" ref="model_club_attendance"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_trainer'))]"/>
+            <field name="domain_force">
+                ['|',
+                    ('trainer_id.user_id', '=', user.id),
+                    ('marked_by_trainer_id.user_id', '=', user.id)
+                ]
+            </field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── MEMBERSHIP ─── -->
+        <record id="rule_membership_manager" model="ir.rule">
+            <field name="name">Membership: Manager sees own branch</field>
+            <field name="model_id" ref="model_club_membership"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_membership_reception" model="ir.rule">
+            <field name="name">Membership: Reception sees own branch</field>
+            <field name="model_id" ref="model_club_membership"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_reception'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── FACILITY ─── -->
+        <record id="rule_facility_manager" model="ir.rule">
+            <field name="name">Facility: Manager sees own branch</field>
+            <field name="model_id" ref="model_club_facility"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_facility_reception" model="ir.rule">
+            <field name="name">Facility: Reception sees own branch</field>
+            <field name="model_id" ref="model_club_facility"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_reception'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── PACKAGE ─── -->
+        <record id="rule_package_manager" model="ir.rule">
+            <field name="name">Package: Manager sees own branch</field>
+            <field name="model_id" ref="model_club_package"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── RENTAL ─── -->
+        <record id="rule_rental_manager" model="ir.rule">
+            <field name="name">Rental: Manager sees own branch</field>
+            <field name="model_id" ref="model_club_rental"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_rental_reception" model="ir.rule">
+            <field name="name">Rental: Reception sees own branch</field>
+            <field name="model_id" ref="model_club_rental"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_reception'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── COMMISSION ─── -->
+        <record id="rule_commission_manager" model="ir.rule">
+            <field name="name">Commission: Manager sees own branch</field>
+            <field name="model_id" ref="model_club_trainer_commission"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_commission_trainer" model="ir.rule">
+            <field name="name">Commission: Trainer sees only own commissions</field>
+            <field name="model_id" ref="model_club_trainer_commission"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_trainer'))]"/>
+            <field name="domain_force">[('trainer_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Reception should NOT see commissions — enforced via ir.model.access.csv -->
+
+        <!-- ─── BRANCH (trainer) ─── -->
+        <record id="rule_branch_trainer" model="ir.rule">
+            <field name="name">Branch: Trainer sees own branch only</field>
+            <field name="model_id" ref="model_club_branch"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_trainer'))]"/>
+            <field name="domain_force">[('user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── FACILITY (trainer) ─── -->
+        <record id="rule_facility_trainer" model="ir.rule">
+            <field name="name">Facility: Trainer sees own branch</field>
+            <field name="model_id" ref="model_club_facility"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_trainer'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── PACKAGE (reception + trainer) ─── -->
+        <record id="rule_package_reception" model="ir.rule">
+            <field name="name">Package: Reception sees own branch</field>
+            <field name="model_id" ref="model_club_package"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_reception'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_package_trainer" model="ir.rule">
+            <field name="name">Package: Trainer sees own branch</field>
+            <field name="model_id" ref="model_club_package"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_trainer'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── MEMBERSHIP (trainer) ─── -->
+        <record id="rule_membership_trainer" model="ir.rule">
+            <field name="name">Membership: Trainer sees own branch</field>
+            <field name="model_id" ref="model_club_membership"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_trainer'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── SESSION TRAINER LINE ─── -->
+        <record id="rule_session_trainer_line_manager" model="ir.rule">
+            <field name="name">Session Trainer Line: Manager sees own branch</field>
+            <field name="model_id" ref="model_club_session_trainer_line"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_session_trainer_line_reception" model="ir.rule">
+            <field name="name">Session Trainer Line: Reception sees own branch</field>
+            <field name="model_id" ref="model_club_session_trainer_line"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_reception'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_session_trainer_line_trainer" model="ir.rule">
+            <field name="name">Session Trainer Line: Trainer sees own lines only</field>
+            <field name="model_id" ref="model_club_session_trainer_line"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_trainer'))]"/>
+            <field name="domain_force">[('trainer_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ─── REPORT: SESSION UTILIZATION ─── -->
+        <record id="rule_report_session_util_manager" model="ir.rule">
+            <field name="name">Session Utilization Report: Manager sees own branch</field>
+            <field name="model_id" ref="model_club_report_session_utilization"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+        </record>
+
+        <!-- ─── REPORT: TRAINER REVENUE ─── -->
+        <record id="rule_report_trainer_rev_manager" model="ir.rule">
+            <field name="name">Trainer Revenue Report: Manager sees own branch</field>
+            <field name="model_id" ref="model_club_report_trainer_revenue"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+        </record>
+
+        <!-- ─── REPORT: CASH ─── -->
+        <record id="rule_report_cash_manager" model="ir.rule">
+            <field name="name">Cash Report: Manager sees own branch</field>
+            <field name="model_id" ref="model_club_report_cash"/>
+            <field name="groups" eval="[(4, ref('club_management_system_final.group_club_manager'))]"/>
+            <field name="domain_force">[('branch_id.user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

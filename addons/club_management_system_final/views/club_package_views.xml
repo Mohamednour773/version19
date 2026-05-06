@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ════════════════════════════════════
+         KANBAN VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_package_kanban" model="ir.ui.view">
+        <field name="name">club.package.kanban</field>
+        <field name="model">club.package</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="package_type">
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="package_type"/>
+                <field name="price"/>
+                <field name="total_sessions"/>
+                <field name="sessions_per_week"/>
+                <field name="duration_weeks"/>
+                <field name="membership_count"/>
+                <field name="color"/>
+                <field name="active"/>
+                <templates>
+                    <t t-name="card">
+                        <field name="name" class="fw-bold d-block"/>
+                        <span class="text-muted">(<field name="code"/>)</span>
+                        <div class="text-primary fw-bold"><field name="price" widget="monetary"/></div>
+                        <div><i class="fa fa-map-marker"/> <field name="branch_id"/></div>
+                        <div>
+                            <i class="fa fa-calendar-check-o"/>
+                            <field name="total_sessions"/> sessions ·
+                            <field name="sessions_per_week"/> /week ·
+                            <field name="duration_weeks"/> weeks
+                        </div>
+                        <div class="text-muted"><field name="membership_count"/> Members</div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         TREE VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_package_tree" model="ir.ui.view">
+        <field name="name">club.package.tree</field>
+        <field name="model">club.package</field>
+        <field name="arch" type="xml">
+            <list string="Packages" decoration-muted="not active">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="package_type"/>
+                <field name="specialization"/>
+                <field name="total_sessions"/>
+                <field name="sessions_per_week"/>
+                <field name="duration_weeks"/>
+                <field name="price"/>
+                <field name="price_per_session" optional="show"/>
+                <field name="membership_count" string="Members"/>
+                <field name="is_registration_fee" optional="show"/>
+                <field name="requires_registration" optional="show"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         FORM VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_package_form" model="ir.ui.view">
+        <field name="name">club.package.form</field>
+        <field name="model">club.package</field>
+        <field name="arch" type="xml">
+            <form string="Package">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_memberships" type="object"
+                                class="oe_stat_button" icon="fa-id-card">
+                            <field name="membership_count" widget="statinfo" string="Members"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Package Name"/></h1>
+                        <div class="text-muted"><field name="code"/></div>
+                    </div>
+                    <group>
+                        <group string="Classification">
+                            <field name="branch_id"/>
+                            <field name="package_type"/>
+                            <field name="specialization"/>
+                            <field name="product_id"/>
+                            <field name="active"/>
+                            <field name="is_registration_fee"/>
+                            <field name="requires_registration"/>
+                        </group>
+                        <group string="Pricing">
+                            <field name="pricelist_id" readonly="1"/>
+                            <field name="price"/>
+                            <field name="price_per_session" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Session Limits">
+                            <field name="total_sessions"/>
+                            <field name="sessions_per_week"/>
+                            <field name="duration_weeks" readonly="1"/>
+                        </group>
+                        <group string="Age Restrictions">
+                            <field name="min_age"/>
+                            <field name="max_age"/>
+                            <field name="facility_type"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Linked Classes" name="classes">
+                            <field name="class_ids">
+                                <list>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="trainer_id"/>
+                                    <field name="class_type"/>
+                                    <field name="specialization"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         SEARCH VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_package_search" model="ir.ui.view">
+        <field name="name">club.package.search</field>
+        <field name="model">club.package</field>
+        <field name="arch" type="xml">
+            <search string="Packages">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="branch_id"/>
+                <separator/>
+                <filter string="Group Classes" name="group_type"
+                        domain="[('package_type', '=', 'group')]"/>
+                <filter string="Private Sessions" name="private_type"
+                        domain="[('package_type', '=', 'private')]"/>
+                <filter string="Day Pass" name="day_pass_type"
+                        domain="[('package_type', '=', 'day_pass')]"/>
+                <filter string="Registration Fee" name="reg_fee"
+                        domain="[('is_registration_fee', '=', True)]"/>
+                <filter string="Swimming" name="swimming"
+                        domain="[('specialization', '=', 'swimming')]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                    <filter string="Type" name="group_pkg_type" context="{'group_by': 'package_type'}"/>
+                    <filter string="Sport" name="group_sport" context="{'group_by': 'specialization'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         ACTION
+    ════════════════════════════════════ -->
+    <record id="action_club_package" model="ir.actions.act_window">
+        <field name="name">Packages</field>
+        <field name="res_model">club.package</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_club_package_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first package!</p>
+            <p>Packages define the number of sessions, duration, and pricing for memberships.</p>
+        </field>
+    </record>
+
+</odoo>

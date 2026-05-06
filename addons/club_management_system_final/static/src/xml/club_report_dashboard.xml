@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="ReportDashboard">
+<div class="o_club_report_dashboard">
+
+  <t t-if="state.loading">
+    <div class="rdb-loading">
+      <div class="rdb-spinner"/>
+      <span>جاري تحميل التقارير...</span>
+    </div>
+  </t>
+
+  <t t-else="">
+    <!-- Header -->
+    <div class="rdb-header">
+      <div>
+        <div class="rdb-title">Reports Dashboard</div>
+        <div class="rdb-sub">تحديث: <t t-esc="state.updated"/></div>
+      </div>
+      <div class="rdb-header-btns">
+        <button class="rdb-btn rdb-btn-outline"
+                t-on-click="() => this.openReport('action_report_cash')">
+          Cash Report ›
+        </button>
+        <button class="rdb-btn rdb-btn-outline"
+                t-on-click="() => this.openReport('action_report_trainer_revenue')">
+          Trainer Revenue ›
+        </button>
+        <button class="rdb-btn rdb-btn-outline"
+                t-on-click="() => this.openReport('action_report_session_utilization')">
+          Utilization ›
+        </button>
+        <button class="rdb-btn rdb-btn-primary" t-on-click="() => this.load()">↻</button>
+      </div>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="rdb-kpi-row">
+
+      <div class="rdb-kpi rdb-kpi-purple"
+           t-on-click="() => this.openReport('action_report_cash')">
+        <div class="rdb-kpi-label">إيرادات الشهر</div>
+        <div class="rdb-kpi-val"><t t-esc="fmt(state.kpis.revenue_total)"/></div>
+        <div class="rdb-kpi-sub">
+          اشتراكات: <t t-esc="fmt(state.kpis.revenue_month)"/> ·
+          إيجارات: <t t-esc="fmt(state.kpis.rental_revenue)"/>
+        </div>
+      </div>
+
+      <div class="rdb-kpi rdb-kpi-green">
+        <div class="rdb-kpi-label">حضور الشهر</div>
+        <div class="rdb-kpi-val"><t t-esc="state.kpis.attended_month || 0"/></div>
+        <div class="rdb-kpi-sub">اليوم: <t t-esc="state.kpis.attended_today || 0"/> حضور</div>
+      </div>
+
+      <div class="rdb-kpi rdb-kpi-blue">
+        <div class="rdb-kpi-label">جلسات الشهر</div>
+        <div class="rdb-kpi-val"><t t-esc="state.kpis.sessions_month || 0"/></div>
+        <div class="rdb-kpi-sub">هذا الأسبوع: <t t-esc="state.kpis.sessions_week || 0"/></div>
+      </div>
+
+      <div class="rdb-kpi rdb-kpi-amber"
+           t-on-click="() => this.openReport('action_club_trainer_commission')">
+        <div class="rdb-kpi-label">عمولات معلقة</div>
+        <div class="rdb-kpi-val"><t t-esc="fmt(state.kpis.pending_amount)"/></div>
+        <div class="rdb-kpi-sub"><t t-esc="state.kpis.pending_count || 0"/> سجل · مدفوع: <t t-esc="fmt(state.kpis.paid_month)"/></div>
+      </div>
+
+      <div class="rdb-kpi rdb-kpi-teal"
+           t-on-click="() => this.openReport('action_club_membership')">
+        <div class="rdb-kpi-label">الاشتراكات النشطة</div>
+        <div class="rdb-kpi-val"><t t-esc="state.kpis.active_members || 0"/></div>
+        <div class="rdb-kpi-sub">
+          جديد: <t t-esc="state.kpis.new_month || 0"/> ·
+          <span t-attf-class="{{(state.kpis.expiring_7 || 0) > 0 ? 'rdb-warn-text' : ''}}">
+            تنتهي: <t t-esc="state.kpis.expiring_7 || 0"/>
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="rdb-charts-grid">
+
+      <div class="rdb-chart-card">
+        <div class="rdb-chart-title">الإيرادات بطريقة الدفع</div>
+        <div class="rdb-chart-wrap" style="height:200px">
+          <canvas id="chart-method"/>
+        </div>
+      </div>
+
+      <div class="rdb-chart-card">
+        <div class="rdb-chart-title">أفضل المدربين — العمولات</div>
+        <div class="rdb-chart-wrap" style="height:200px">
+          <canvas id="chart-trainers"/>
+        </div>
+      </div>
+
+      <div class="rdb-chart-card">
+        <div class="rdb-chart-title">الحضور اليومي — 7 أيام</div>
+        <div class="rdb-chart-wrap" style="height:200px">
+          <canvas id="chart-attendance"/>
+        </div>
+      </div>
+
+      <div class="rdb-chart-card">
+        <div class="rdb-chart-title">نسبة الامتلاء — جماعي / خاص</div>
+        <div class="rdb-chart-wrap" style="height:200px">
+          <canvas id="chart-utilization"/>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="rdb-table-card">
+      <div class="rdb-table-header">
+        <span class="rdb-chart-title">آخر المعاملات</span>
+        <span class="rdb-link"
+              t-on-click="() => this.openReport('action_report_cash')">
+          عرض التقرير الكامل ›
+        </span>
+      </div>
+      <table class="rdb-table">
+        <thead>
+          <tr>
+            <th>Reference</th>
+            <th>Client</th>
+            <th>Package</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Transaction ID</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <t t-if="state.recent.length === 0">
+            <tr><td colspan="7" class="rdb-empty">لا توجد معاملات</td></tr>
+          </t>
+          <t t-foreach="state.recent" t-as="tx" t-key="tx.id">
+            <tr class="rdb-table-row" t-on-click="() => this.openMembership(tx.id)">
+              <td class="rdb-ref"><t t-esc="tx.ref"/></td>
+              <td><t t-esc="tx.client"/></td>
+              <td class="rdb-muted"><t t-esc="tx.package"/></td>
+              <td class="rdb-amount"><t t-esc="fmt(tx.amount)"/></td>
+              <td>
+                <span t-attf-class="rdb-badge rdb-badge-{{tx.method}}">
+                  <t t-esc="tx.method"/>
+                </span>
+              </td>
+              <td class="rdb-txn"><t t-esc="tx.payment_ref"/></td>
+              <td class="rdb-muted"><t t-esc="tx.date"/></td>
+            </tr>
+          </t>
+        </tbody>
+      </table>
+    </div>
+
+  </t>
+</div>
+</t>
+</templates>

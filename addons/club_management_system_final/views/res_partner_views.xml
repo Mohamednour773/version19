@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ════════════════════════════════════
+         EXTEND res.partner FORM (Club Tab)
+    ════════════════════════════════════ -->
+    <record id="view_partner_club_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.club.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Smart buttons -->
+            <div name="button_box" position="inside">
+                <button name="action_view_memberships" type="object"
+                        class="oe_stat_button" icon="fa-id-card"
+                        invisible="not is_club_client">
+                    <field name="membership_count" widget="statinfo" string="Memberships"/>
+                </button>
+                <button name="action_view_attendance" type="object"
+                        class="oe_stat_button" icon="fa-check-square-o"
+                        invisible="not is_club_client">
+                    <field name="attendance_count" widget="statinfo" string="Attendance"/>
+                </button>
+                <button name="action_view_children" type="object"
+                        class="oe_stat_button" icon="fa-child"
+                        invisible="not is_club_client or is_child_member">
+                    <field name="child_member_count" widget="statinfo" string="Children"/>
+                </button>
+            </div>
+
+            <!-- Club Client flag next to name -->
+            <field name="name" position="after">
+                <field name="is_club_client" widget="boolean_toggle"/>
+                <label for="is_club_client" string="Club Client"/>
+            </field>
+
+            <!-- Club tab -->
+            <notebook position="inside">
+                <page string="Club Info" name="club_info" invisible="not is_club_client">
+                    <group>
+                        <group string="Member Details">
+                            <field name="is_child_member"/>
+                            <field name="parent_member_id"
+                                   invisible="not is_child_member"/>
+                            <field name="date_of_birth"/>
+                            <field name="age" readonly="1"/>
+                            <field name="gender"/>
+                        </group>
+                        <group string="Emergency Contact">
+                            <field name="emergency_contact"/>
+                            <field name="emergency_phone"/>
+                        </group>
+                    </group>
+                    <group string="Medical Notes">
+                        <field name="medical_notes" nolabel="1"
+                               placeholder="Any relevant medical information..."/>
+                    </group>
+                    <separator string="Active Memberships"/>
+                    <field name="active_membership_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="branch_id"/>
+                            <field name="package_id"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="sessions_remaining"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                    <separator string="Child Members" invisible="is_child_member"/>
+                    <field name="child_member_ids" readonly="1"
+                           invisible="is_child_member">
+                        <list>
+                            <field name="name"/>
+                            <field name="date_of_birth"/>
+                            <field name="age"/>
+                            <field name="gender"/>
+                            <field name="membership_count"/>
+                        </list>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         CLUB CLIENTS LIST VIEW
+    ════════════════════════════════════ -->
+    <record id="view_club_client_tree" model="ir.ui.view">
+        <field name="name">club.client.tree</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <list string="Club Clients">
+                <field name="name"/>
+                <field name="is_child_member"/>
+                <field name="parent_member_id" optional="show"/>
+                <field name="age"/>
+                <field name="gender" optional="show"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="membership_count" string="Memberships"/>
+                <field name="attendance_count" string="Attendance"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         CLUB CLIENTS SEARCH
+    ════════════════════════════════════ -->
+    <record id="view_club_client_search" model="ir.ui.view">
+        <field name="name">club.client.search</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <search string="Club Clients">
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <separator/>
+                <filter string="Adults" name="adults"
+                        domain="[('is_child_member', '=', False)]"/>
+                <filter string="Children" name="children"
+                        domain="[('is_child_member', '=', True)]"/>
+                <filter string="Has Active Membership" name="active_mem"
+                        domain="[('membership_ids.state', '=', 'active')]"/>
+                <group>
+                    <filter string="Gender" name="group_gender" context="{'group_by': 'gender'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════════
+         ACTION — Club Clients
+    ════════════════════════════════════ -->
+    <record id="action_club_client" model="ir.actions.act_window">
+        <field name="name">Club Clients</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_club_client_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('base.view_partner_form')})]"/>
+        <field name="domain">[('is_club_client', '=', True)]</field>
+        <field name="context">{
+            'default_is_club_client': True,
+            'search_default_active_mem': 0
+        }</field>
+        <field name="search_view_id" ref="view_club_client_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register your first club client!</p>
+            <p>Manage adults and children. Children can be linked to a parent/guardian.</p>
+        </field>
+    </record>
+
+</odoo>
