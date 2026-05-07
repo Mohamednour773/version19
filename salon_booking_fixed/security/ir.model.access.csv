@@ -1,9 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_salon_cancel_wizard_user,salon.cancel.appointment.wizard user,model_salon_cancel_appointment_wizard,base.group_user,1,1,1,1
-access_salon_cancel_wizard_public,salon.cancel.appointment.wizard public,model_salon_cancel_appointment_wizard,base.group_public,0,0,0,0
-access_salon_appt_type_user,salon appt type user,appointment.model_appointment_type,salon_booking.group_salon_user,1,1,1,0
-access_salon_appt_type_manager,salon appt type manager,appointment.model_appointment_type,salon_booking.group_salon_manager,1,1,1,1
-access_salon_calendar_user,salon calendar event user,calendar.model_calendar_event,salon_booking.group_salon_user,1,1,1,0
-access_salon_calendar_manager,salon calendar event manager,calendar.model_calendar_event,salon_booking.group_salon_manager,1,1,1,1
-access_salon_product_tmpl_user,salon product tmpl user,product.model_product_template,salon_booking.group_salon_user,1,0,0,0
-access_salon_pos_order_line_user,salon pos order line user,point_of_sale.model_pos_order_line,salon_booking.group_salon_user,1,1,1,0
