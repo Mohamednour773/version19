@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="website_salon_booking_page" name="Salon Booking">
+        <t t-call="website.layout">
+            <div id="wrap" class="o_salon_booking_page">
+                <section class="o_salon_booking_band">
+                    <div class="container py-5">
+                        <div class="row align-items-start g-4">
+                            <div class="col-lg-4">
+                                <h1 class="h2 mb-3">Book a salon appointment</h1>
+                                <p class="text-muted mb-0">
+                                    Choose a service, barber, date, and available time.
+                                </p>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="o_salon_booking_app"
+                                     data-csrf-token=""
+                                     t-att-data-csrf-token="csrf_token">
+                                    <div class="o_salon_booking_steps mb-3">
+                                        <span class="active" data-step-pill="service">Service</span>
+                                        <span data-step-pill="employee">Barber</span>
+                                        <span data-step-pill="slot">Time</span>
+                                        <span data-step-pill="customer">Details</span>
+                                    </div>
+
+                                    <div class="alert alert-danger d-none" data-role="error"></div>
+                                    <div class="alert alert-success d-none" data-role="success"></div>
+
+                                    <div data-step="service">
+                                        <div class="row g-3" data-role="services"></div>
+                                    </div>
+
+                                    <div class="d-none" data-step="employee">
+                                        <div class="row g-3" data-role="employees"></div>
+                                    </div>
+
+                                    <div class="d-none" data-step="slot">
+                                        <div class="row g-2 mb-3" data-role="days"></div>
+                                        <div class="row g-2" data-role="slots"></div>
+                                    </div>
+
+                                    <div class="d-none" data-step="customer">
+                                        <form data-role="booking-form" class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="salon_customer_name">Name</label>
+                                                <input id="salon_customer_name" class="form-control" name="customer_name" required="required"/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="salon_customer_mobile">Mobile</label>
+                                                <input id="salon_customer_mobile" class="form-control" name="customer_mobile" required="required"/>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label" for="salon_customer_email">Email</label>
+                                                <input id="salon_customer_email" class="form-control" type="email" name="customer_email"/>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="o_salon_booking_summary" data-role="summary"></div>
+                                            </div>
+                                            <div class="col-12 d-flex gap-2 justify-content-end">
+                                                <button type="button" class="btn btn-outline-secondary" data-action="back">Back</button>
+                                                <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <div class="d-flex gap-2 justify-content-between mt-4" data-role="nav">
+                                        <button type="button" class="btn btn-outline-secondary d-none" data-action="back">Back</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <record id="menu_salon_booking_website" model="website.menu">
+        <field name="name">Book Salon</field>
+        <field name="url">/salon/booking</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">60</field>
+    </record>
+
+</odoo>
