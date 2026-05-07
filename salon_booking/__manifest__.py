@@ -27,7 +27,6 @@ Features
         'mail',
         'website',
     ],
-    'post_init_hook': 'post_init_hook',
     'data': [
         'security/salon_booking_security.xml',
         'security/ir.model.access.csv',
@@ -36,15 +35,15 @@ Features
         'views/res_config_settings_views.xml',
         'views/website_booking_templates.xml',
         'wizard/cancel_appointment_wizard_view.xml',
-        # whatsapp_template.xml intentionally excluded:
-        # Enterprise WhatsApp templates are created manually via WhatsApp > Templates.
-        # Community uses Direct Meta Cloud API (no whatsapp module required).
     ],
     'assets': {
+        'point_of_sale.assets': [
+            'salon_booking/static/src/xml/pos_booking_popup.xml',
+            'salon_booking/static/src/js/pos_booking_popup.js',
+        ],
         'point_of_sale._assets_pos': [
             'salon_booking/static/src/xml/pos_booking_popup.xml',
             'salon_booking/static/src/js/pos_booking_popup.js',
-            'salon_booking/static/src/scss/salon_booking.scss',
         ],
         'web.assets_backend': [
             'salon_booking/static/src/scss/salon_booking.scss',
