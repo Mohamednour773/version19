@@ -35,6 +35,9 @@ Features
         'views/res_config_settings_views.xml',
         'views/website_booking_templates.xml',
         'wizard/cancel_appointment_wizard_view.xml',
+        # whatsapp_template.xml intentionally excluded:
+        # Enterprise WhatsApp templates are created manually via WhatsApp > Templates.
+        # Community uses Direct Meta Cloud API (no whatsapp module required).
     ],
     'assets': {
         'point_of_sale.assets': [

@@ -228,13 +228,28 @@ class CalendarEvent(models.Model):
         event._salon_send_whatsapp_confirmation()
         return event
 
-    # â”€â”€ WhatsApp confirmation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # ── WhatsApp (Enterprise + Community dual-mode) ────────────────────────
+
+    def _salon_has_whatsapp_module(self):
+        """Return True if Odoo Enterprise WhatsApp module is installed."""
+        return 'whatsapp.message' in self.env
 
     def _salon_send_whatsapp_confirmation(self):
-        """Send WhatsApp confirmation through Meta Cloud API."""
-        self.ensure_one()
-        customer_partner = self._salon_get_customer_partner()
+        """
+        Send WhatsApp booking confirmation.
 
+        - Enterprise (whatsapp module installed): route through whatsapp.message
+          so messages appear in the WhatsApp conversation thread.
+        - Community (no whatsapp module): send directly via Meta Cloud API.
+        """
+        self.ensure_one()
+
+        config = self.env['ir.config_parameter'].sudo()
+        # get_param always returns a string, never a real bool
+        if config.get_param('salon_booking.whatsapp_enabled') != 'True':
+            return
+
+        customer_partner = self._salon_get_customer_partner()
         if not customer_partner:
             _logger.warning(
                 'Salon booking %s: no customer partner found, skipping WhatsApp.',
@@ -242,19 +257,14 @@ class CalendarEvent(models.Model):
             )
             return
 
-        customer_mobile = (
-            customer_partner.mobile
-            if 'mobile' in customer_partner._fields
-            else customer_partner.phone
-        )
+        customer_mobile = customer_partner.mobile or customer_partner.phone
         if not customer_mobile:
             _logger.warning(
-                'Salon booking %s: customer has no mobile number, skipping WhatsApp.',
+                'Salon booking %s: customer has no mobile/phone, skipping WhatsApp.',
                 self.id,
             )
             return
 
-        config = self.env['ir.config_parameter'].sudo()
         template_name = (
             self.appointment_type_id.salon_whatsapp_confirmation_template_name
             or config.get_param('salon_booking.whatsapp_confirmation_template_name')
@@ -272,35 +282,109 @@ class CalendarEvent(models.Model):
             start_local.strftime('%H:%M'),
         ]
 
-        if self._salon_send_whatsapp_template(
-                customer_mobile, template_name, language, body_values):
+        sent = False
+        if self._salon_has_whatsapp_module():
+            sent = self._salon_send_whatsapp_via_odoo(
+                customer_partner, template_name, language, body_values
+            )
+        else:
+            sent = self._salon_send_whatsapp_direct(
+                customer_mobile, template_name, language, body_values
+            )
+
+        if sent:
             self.sudo().write({'salon_whatsapp_sent': True})
 
     def _salon_get_customer_partner(self):
+        """Return the first partner that is NOT the assigned staff member."""
         self.ensure_one()
-        return self.partner_ids.filtered(lambda p: p != self.user_id.partner_id)[:1]
+        staff_partner_ids = {self.user_id.partner_id.id}
+        if self.salon_employee_id and self.salon_employee_id.user_id:
+            staff_partner_ids.add(self.salon_employee_id.user_id.partner_id.id)
+        return self.partner_ids.filtered(lambda p: p.id not in staff_partner_ids)[:1]
 
-    def _salon_send_whatsapp_template(self, mobile, template_name, language, body_values):
-        """Send a Meta WhatsApp Cloud API template without Odoo WhatsApp."""
+    # -- Enterprise path ------------------------------------------------------
+
+    def _salon_send_whatsapp_via_odoo(self, partner, template_name, language, body_values):
+        """
+        Send via Odoo whatsapp.message (Enterprise only).
+        Falls back to Direct API if template not found.
+        """
+        try:
+            template = self.env['whatsapp.template'].sudo().search([
+                ('name', '=', template_name),
+                ('model', '=', 'calendar.event'),
+            ], limit=1)
+
+            if not template:
+                _logger.warning(
+                    'Salon booking %s: Enterprise WhatsApp template "%s" not found, '
+                    'falling back to Direct API.',
+                    self.id, template_name,
+                )
+                return self._salon_send_whatsapp_direct(
+                    partner.mobile or partner.phone,
+                    template_name, language, body_values,
+                )
+
+            self.env['whatsapp.message'].sudo().create({
+                'mobile_number': partner.mobile or partner.phone,
+                'partner_id': partner.id,
+                'wa_template_id': template.id,
+                'res_id': self.id,
+                'model': 'calendar.event',
+            })._send()
+
+            _logger.info(
+                'Salon booking %s: WhatsApp sent via Odoo Enterprise (template=%s).',
+                self.id, template_name,
+            )
+            return True
+
+        except Exception as exc:
+            _logger.error(
+                'Salon booking %s: Odoo WhatsApp send error: %s. Falling back to Direct API.',
+                self.id, exc,
+            )
+            return self._salon_send_whatsapp_direct(
+                partner.mobile or partner.phone,
+                template_name, language, body_values,
+            )
+
+    # -- Community path (Meta Cloud API direct) --------------------------------
+
+    @staticmethod
+    def _salon_normalize_phone(mobile):
+        """
+        Strip non-digits and ensure international format.
+        Egyptian local format 01xxxxxxxxx -> 201xxxxxxxxx.
+        """
+        digits = ''.join(ch for ch in mobile if ch.isdigit())
+        if len(digits) == 11 and digits.startswith('0'):
+            digits = '20' + digits[1:]
+        return digits
+
+    def _salon_send_whatsapp_direct(self, mobile, template_name, language, body_values):
+        """Send directly via Meta WhatsApp Cloud API (Community-compatible)."""
         config = self.env['ir.config_parameter'].sudo()
-        if not config.get_param('salon_booking.whatsapp_enabled', False):
-            return False
-
         phone_number_id = config.get_param('salon_booking.whatsapp_phone_number_id')
         token = config.get_param('salon_booking.whatsapp_api_token')
         api_version = config.get_param('salon_booking.whatsapp_api_version', 'v20.0')
+
         if not phone_number_id or not token or not template_name:
-            _logger.warning('Salon booking %s: WhatsApp Cloud API is not configured.', self.id)
+            _logger.warning(
+                'Salon booking %s: WhatsApp Cloud API not fully configured.',
+                self.id,
+            )
             return False
 
-        clean_mobile = ''.join(ch for ch in mobile if ch.isdigit())
+        clean_mobile = self._salon_normalize_phone(mobile)
         components = []
         if body_values:
             components.append({
                 'type': 'body',
                 'parameters': [
-                    {'type': 'text', 'text': str(value or '')}
-                    for value in body_values
+                    {'type': 'text', 'text': str(v or '')} for v in body_values
                 ],
             })
         payload = {
@@ -325,21 +409,23 @@ class CalendarEvent(models.Model):
         try:
             with url_request.urlopen(req, timeout=15) as response:
                 if response.status in (200, 201):
+                    _logger.info(
+                        'Salon booking %s: WhatsApp sent via Direct API to %s.',
+                        self.id, clean_mobile,
+                    )
                     return True
                 _logger.error(
-                    'Salon booking %s: WhatsApp send failed with HTTP %s',
+                    'Salon booking %s: WhatsApp Direct API HTTP %s.',
                     self.id, response.status,
                 )
         except HTTPError as exc:
-            details = exc.read().decode('utf-8', errors='replace')
             _logger.error(
-                'Salon booking %s: WhatsApp send failed HTTP %s: %s',
-                self.id, exc.code, details,
+                'Salon booking %s: WhatsApp Direct API HTTP %s: %s',
+                self.id, exc.code, exc.read().decode('utf-8', errors='replace'),
             )
         except URLError as exc:
-            _logger.error('Salon booking %s: WhatsApp send failed: %s', self.id, exc)
+            _logger.error('Salon booking %s: WhatsApp Direct API error: %s', self.id, exc)
         return False
-
     def action_salon_cancel(self):
         """Open the cancellation wizard."""
         self.ensure_one()

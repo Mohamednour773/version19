@@ -92,38 +92,41 @@ class SalonCancelAppointmentWizard(models.TransientModel):
         return {'type': 'ir.actions.act_window_close'}
 
     def _send_cancellation_notification(self):
-        """Send a best-effort WhatsApp cancellation notice."""
+        """Send a best-effort WhatsApp cancellation notice (Enterprise + Community)."""
         try:
             appt = self.appointment_id
+            config = self.env['ir.config_parameter'].sudo()
+            # get_param returns string, not bool
+            if config.get_param('salon_booking.whatsapp_enabled') != 'True':
+                return
             customer = appt._salon_get_customer_partner()
             if not customer:
                 return
-            customer_mobile = (
-                customer.mobile
-                if 'mobile' in customer._fields
-                else customer.phone
-            )
+            customer_mobile = customer.mobile or customer.phone
             if not customer_mobile:
                 return
-            config = self.env['ir.config_parameter'].sudo()
             template_name = config.get_param(
                 'salon_booking.whatsapp_cancellation_template_name'
             )
             language = config.get_param('salon_booking.whatsapp_language_code', 'en_US')
             start_local = fields.Datetime.context_timestamp(appt, appt.start)
-            sent = appt._salon_send_whatsapp_template(
-                customer_mobile,
-                template_name,
-                language,
-                [
-                    customer.name,
-                    appt.appointment_type_id.name or appt.name,
-                    appt.salon_employee_id.name or appt.user_id.name,
-                    start_local.strftime('%Y-%m-%d'),
-                    start_local.strftime('%H:%M'),
-                    self.cancellation_reason,
-                ],
-            )
+            body_values = [
+                customer.name,
+                appt.appointment_type_id.name or appt.name,
+                appt.salon_employee_id.name or appt.user_id.name,
+                start_local.strftime('%Y-%m-%d'),
+                start_local.strftime('%H:%M'),
+                self.cancellation_reason,
+            ]
+            # Use dual-mode: Enterprise whatsapp.message or Direct Meta API
+            if appt._salon_has_whatsapp_module():
+                sent = appt._salon_send_whatsapp_via_odoo(
+                    customer, template_name, language, body_values
+                )
+            else:
+                sent = appt._salon_send_whatsapp_direct(
+                    customer_mobile, template_name, language, body_values
+                )
             appt.sudo().message_post(
                 body=_(
                     'Cancellation notice %(status)s for %(name)s (%(mobile)s). '
