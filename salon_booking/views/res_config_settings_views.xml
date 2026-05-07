@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_res_config_settings_salon_form" model="ir.ui.view">
+        <field name="name">res.config.settings.salon.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//form" position="inside">
+                <app data-string="Salon Booking"
+                     string="Salon Booking"
+                     name="salon_booking"
+                     groups="salon_booking.group_salon_user">
+
+                    <block title="Scheduling" name="salon_scheduling_setting_container">
+
+                        <setting id="salon_default_slot_duration_setting"
+                                 string="Default Slot Duration"
+                                 help="Default appointment slot duration in minutes (e.g. 30 for a standard haircut). Can be overridden per service product.">
+                            <field name="salon_default_slot_duration"/>
+                            <span class="text-muted ms-2">minutes</span>
+                        </setting>
+
+                        <setting id="salon_advance_booking_days_setting"
+                                 string="Advance Booking Limit"
+                                 help="Maximum number of days in advance that customers can book an appointment online.">
+                            <field name="salon_advance_booking_days"/>
+                            <span class="text-muted ms-2">days</span>
+                        </setting>
+
+                    </block>
+
+                    <block title="Communication" name="salon_communication_setting_container">
+
+                        <setting id="salon_whatsapp_enabled_setting"
+                                 string="WhatsApp Confirmations"
+                                 help="Automatically send a WhatsApp Cloud API template after each successful booking (POS or website).">
+                            <field name="salon_whatsapp_enabled"/>
+                            <div class="content-group mt-2" invisible="not salon_whatsapp_enabled">
+                                <label for="salon_whatsapp_api_version" class="o_light_label"/>
+                                <field name="salon_whatsapp_api_version"/>
+                                <label for="salon_whatsapp_phone_number_id" class="o_light_label"/>
+                                <field name="salon_whatsapp_phone_number_id"/>
+                                <label for="salon_whatsapp_api_token" class="o_light_label"/>
+                                <field name="salon_whatsapp_api_token" password="True"/>
+                                <label for="salon_whatsapp_language_code" class="o_light_label"/>
+                                <field name="salon_whatsapp_language_code"/>
+                                <label for="salon_whatsapp_confirmation_template_name" class="o_light_label"/>
+                                <field name="salon_whatsapp_confirmation_template_name"/>
+                                <label for="salon_whatsapp_cancellation_template_name" class="o_light_label"/>
+                                <field name="salon_whatsapp_cancellation_template_name"/>
+                            </div>
+                        </setting>
+
+                    </block>
+
+                    <block title="Policies" name="salon_policies_setting_container">
+
+                        <setting id="salon_cancellation_policy_enabled_setting"
+                                 string="Cancellation Policy"
+                                 help="Enforce a minimum notice period for cancellations and always require a written cancellation reason.">
+                            <field name="salon_cancellation_policy_enabled"/>
+                            <div class="content-group mt-2 d-flex align-items-center gap-2"
+                                 invisible="not salon_cancellation_policy_enabled">
+                                <label for="salon_cancellation_hours_limit"
+                                       class="o_light_label mb-0"/>
+                                <field name="salon_cancellation_hours_limit"
+                                       class="o_field_widget"/>
+                                <span class="text-muted">hours minimum notice</span>
+                            </div>
+                        </setting>
+
+                    </block>
+
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

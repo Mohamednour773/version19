@@ -1,0 +1,143 @@
+// ── Salon Booking – backend + POS styles ──────────────────────────────────────
+
+// ── Kanban board ──────────────────────────────────────────────────────────────
+.o_salon_kanban {
+
+    .o_kanban_record {
+        border-left: 4px solid var(--bs-primary);
+        transition: box-shadow 0.15s ease;
+
+        &:hover {
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+        }
+    }
+
+    // Status-based accent colours on the left border
+    [data-salon_status="confirmed"] { border-left-color: var(--bs-success); }
+    [data-salon_status="cancelled"] { border-left-color: var(--bs-danger);  }
+    [data-salon_status="no_show"]   { border-left-color: var(--bs-warning); }
+    [data-salon_status="draft"]     { border-left-color: var(--bs-secondary); }
+}
+
+// ── POS Booking Dialog ─────────────────────────────────────────────────────────
+.salon-booking-step {
+    min-height: 200px;
+
+    // Employee / slot cards
+    .card {
+        cursor: pointer;
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+
+        &:hover {
+            border-color: var(--bs-primary) !important;
+            background-color: rgba(var(--bs-primary-rgb), 0.04);
+        }
+    }
+
+    // Outline buttons used for date / slot grid
+    .btn-outline-secondary {
+        transition: background-color 0.12s ease, color 0.12s ease;
+
+        &:hover,
+        &.active {
+            background-color: var(--bs-primary);
+            border-color:     var(--bs-primary);
+            color:            #fff;
+        }
+    }
+}
+
+// ── Booking summary table ──────────────────────────────────────────────────────
+.salon-summary-table td {
+    padding: 0.45rem 0.75rem;
+    border: none;
+
+    &:first-child {
+        color:       var(--bs-secondary-color, #6c757d);
+        font-weight: 600;
+        white-space: nowrap;
+    }
+}
+.o_salon_booking_band {
+    background: #f6f7f9;
+    min-height: 70vh;
+}
+
+.o_salon_booking_app {
+    background: #fff;
+    border: 1px solid #d8dde6;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.o_salon_booking_steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.o_salon_booking_steps span {
+    border: 1px solid #d8dde6;
+    border-radius: 999px;
+    color: #5f6b7a;
+    font-size: 13px;
+    padding: 6px 12px;
+}
+
+.o_salon_booking_steps span.active {
+    background: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+}
+
+.o_salon_service_tile,
+.o_salon_employee_tile {
+    align-items: center;
+    background: #fff;
+    border: 1px solid #d8dde6;
+    border-radius: 8px;
+    display: flex;
+    gap: 12px;
+    min-height: 88px;
+    padding: 12px;
+    text-align: start;
+    width: 100%;
+}
+
+.o_salon_service_tile:hover,
+.o_salon_employee_tile:hover {
+    border-color: #0d6efd;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+.o_salon_service_tile img,
+.o_salon_employee_tile img {
+    border-radius: 8px;
+    flex: 0 0 auto;
+    height: 64px;
+    object-fit: cover;
+    width: 64px;
+}
+
+.o_salon_service_tile span,
+.o_salon_employee_tile {
+    min-width: 0;
+}
+
+.o_salon_service_tile strong,
+.o_salon_employee_tile strong {
+    display: block;
+}
+
+.o_salon_service_tile small,
+.o_salon_employee_tile small {
+    color: #667085;
+    display: block;
+}
+
+.o_salon_booking_summary {
+    background: #f6f7f9;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+}

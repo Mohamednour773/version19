@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!--
+    ╔══════════════════════════════════════════════════════════════════╗
+    ║  salon_booking.SalonBookingDialog                                ║
+    ║  Multi-step OWL dialog for booking a salon appointment from POS. ║
+    ║  Steps: employee → date → slot → confirm → done                  ║
+    ╚══════════════════════════════════════════════════════════════════╝
+    -->
+    <t t-name="salon_booking.SalonBookingDialog">
+        <Dialog size="'lg'" title="stepTitle">
+
+            <!-- ── Global loading spinner ── -->
+            <t t-if="state.loading">
+                <div class="d-flex justify-content-center align-items-center py-5">
+                    <div class="spinner-border text-primary"
+                         role="status"
+                         style="width:3rem;height:3rem;">
+                        <span class="visually-hidden">Loading…</span>
+                    </div>
+                </div>
+            </t>
+
+            <!-- ── Error banner ── -->
+            <t t-if="state.error and !state.loading">
+                <div class="alert alert-danger d-flex align-items-center mb-3" role="alert">
+                    <i class="fa fa-exclamation-triangle me-2"/>
+                    <span t-esc="state.error"/>
+                </div>
+            </t>
+
+            <t t-if="state.step === 'booking' and !state.loading">
+                <div class="salon-booking-step">
+                    <div class="row g-3">
+                        <div class="col-lg-4">
+                            <label class="form-label fw-semibold">Barber / Stylist</label>
+                            <div class="d-grid gap-2">
+                                <t t-foreach="state.employees" t-as="emp" t-key="emp.id">
+                                    <button type="button"
+                                            t-attf-class="btn text-start {{ state.selectedEmployee and state.selectedEmployee.id === emp.id ? 'btn-primary' : 'btn-outline-secondary' }}"
+                                            t-on-click="() => this.selectEmployee(emp)">
+                                        <span class="fw-semibold" t-esc="emp.name"/>
+                                        <small class="d-block opacity-75" t-esc="emp.job_title"/>
+                                    </button>
+                                </t>
+                            </div>
+                            <t t-if="!state.employees.length and !state.error">
+                                <div class="alert alert-info mt-2 mb-0">
+                                    No stylists are configured for this service.
+                                </div>
+                            </t>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <label class="form-label fw-semibold">Day</label>
+                            <div class="row g-2">
+                                <t t-foreach="upcomingDays" t-as="day" t-key="day.value">
+                                    <div class="col-6">
+                                        <button type="button"
+                                                t-attf-class="btn w-100 {{ state.selectedDate === day.value ? 'btn-primary' : 'btn-outline-secondary' }}"
+                                                t-on-click="() => this.selectDate(day.value)">
+                                            <t t-esc="day.label"/>
+                                        </button>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <label class="form-label fw-semibold">Available Time</label>
+                            <t t-if="!state.selectedEmployee">
+                                <div class="alert alert-secondary">
+                                    Select a barber to load times.
+                                </div>
+                            </t>
+                            <t t-if="state.selectedEmployee">
+                                <div class="row g-2">
+                                    <t t-foreach="state.slots" t-as="slot" t-key="slot.start_iso">
+                                        <div class="col-6">
+                                            <button type="button"
+                                                    t-attf-class="btn w-100 {{ state.selectedSlot and state.selectedSlot.start_iso === slot.start_iso ? 'btn-primary' : 'btn-outline-secondary' }}"
+                                                    t-on-click="() => this.selectSlot(slot)">
+                                                <t t-esc="slot.start"/> - <t t-esc="slot.end"/>
+                                            </button>
+                                        </div>
+                                    </t>
+                                </div>
+                                <t t-if="!state.slots.length and !state.error">
+                                    <div class="alert alert-warning">
+                                        No available slots on this date.
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div class="card border-primary mt-3" t-if="state.selectedEmployee or state.selectedSlot">
+                        <div class="card-header bg-primary text-white fw-semibold">
+                            Booking Summary
+                        </div>
+                        <div class="card-body py-2">
+                            <div><strong>Service:</strong> <span t-esc="props.product.display_name"/></div>
+                            <div><strong>Barber:</strong> <span t-esc="state.selectedEmployee and state.selectedEmployee.name or '-'"/></div>
+                            <div><strong>Date:</strong> <span t-esc="formattedSelectedDate"/></div>
+                            <div><strong>Time:</strong> <span t-esc="selectedSlotLabel or '-'"/></div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <!-- ════════════════════════════════════════════════════════
+                 STEP 1 – Employee selection
+            ════════════════════════════════════════════════════════ -->
+            <t t-if="state.step === 'employee' and !state.loading">
+                <div class="salon-booking-step">
+                    <p class="text-muted mb-3">
+                        Select the barber or stylist who will perform
+                        <strong t-esc="props.product.display_name"/>.
+                    </p>
+
+                    <t t-if="!state.employees.length and !state.error">
+                        <div class="alert alert-info">
+                            No stylists are configured for this service.
+                            Please contact the manager.
+                        </div>
+                    </t>
+
+                    <div class="row g-3">
+                        <t t-foreach="state.employees" t-as="emp" t-key="emp.id">
+                            <div class="col-6 col-md-4">
+                                <div t-attf-class="card text-center p-3 h-100 cursor-pointer
+                                    {{ state.selectedEmployee and state.selectedEmployee.id === emp.id
+                                       ? 'border-primary bg-primary bg-opacity-10'
+                                       : 'border' }}"
+                                     t-on-click="() => this.selectEmployee(emp)">
+                                    <img t-att-src="emp.image_url || '/web/static/img/avatar.png'"
+                                         class="rounded-circle mx-auto mb-2"
+                                         style="width:64px;height:64px;object-fit:cover;"
+                                         t-att-alt="emp.name"/>
+                                    <div class="fw-semibold" t-esc="emp.name"/>
+                                    <small class="text-muted" t-esc="emp.job_title"/>
+                                    <t t-if="state.selectedEmployee
+                                             and state.selectedEmployee.id === emp.id">
+                                        <span class="badge bg-primary mt-1">✓ Selected</span>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+
+            <!-- ════════════════════════════════════════════════════════
+                 STEP 2 – Date selection
+            ════════════════════════════════════════════════════════ -->
+            <t t-if="state.step === 'date' and !state.loading">
+                <div class="salon-booking-step">
+                    <p class="text-muted mb-3">
+                        Select a date for
+                        <strong t-esc="state.selectedEmployee and state.selectedEmployee.name"/>.
+                    </p>
+                    <div class="row g-2">
+                        <t t-foreach="upcomingDays" t-as="day" t-key="day.value">
+                            <div class="col-6 col-md-4">
+                                <button t-attf-class="btn w-100
+                                    {{ state.selectedDate === day.value
+                                       ? 'btn-primary'
+                                       : 'btn-outline-secondary' }}"
+                                        t-on-click="() => this.selectDate(day.value)">
+                                    <t t-esc="day.label"/>
+                                </button>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+
+            <!-- ════════════════════════════════════════════════════════
+                 STEP 3 – Slot selection
+            ════════════════════════════════════════════════════════ -->
+            <t t-if="state.step === 'slot' and !state.loading">
+                <div class="salon-booking-step">
+                    <p class="text-muted mb-3">
+                        Available slots for
+                        <strong t-esc="state.selectedEmployee and state.selectedEmployee.name"/>
+                        on <strong t-esc="formattedSelectedDate"/>:
+                    </p>
+
+                    <t t-if="!state.slots.length and !state.error">
+                        <div class="alert alert-warning">
+                            No available slots for this date.
+                            Please try another day.
+                        </div>
+                    </t>
+
+                    <div class="row g-2">
+                        <t t-foreach="state.slots" t-as="slot" t-key="slot.start_iso">
+                            <div class="col-6 col-md-3">
+                                <button t-attf-class="btn w-100
+                                    {{ state.selectedSlot
+                                       and state.selectedSlot.start_iso === slot.start_iso
+                                       ? 'btn-primary'
+                                       : 'btn-outline-secondary' }}"
+                                        t-on-click="() => this.selectSlot(slot)">
+                                    <i class="fa fa-clock-o me-1"/>
+                                    <t t-esc="slot.start"/> – <t t-esc="slot.end"/>
+                                </button>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+
+            <!-- ════════════════════════════════════════════════════════
+                 STEP 4 – Confirm
+            ════════════════════════════════════════════════════════ -->
+            <t t-if="state.step === 'confirm' and !state.loading">
+                <div class="salon-booking-step">
+                    <div class="card border-primary">
+                        <div class="card-header bg-primary text-white fw-semibold">
+                            <i class="fa fa-calendar-check-o me-2"/>
+                            Booking Summary
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-borderless mb-0">
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-semibold text-muted ps-3" style="width:38%">Service</td>
+                                        <td t-esc="props.product.display_name"/>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold text-muted ps-3">Barber / Stylist</td>
+                                        <td t-esc="state.selectedEmployee and state.selectedEmployee.name"/>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold text-muted ps-3">Date</td>
+                                        <td t-esc="formattedSelectedDate"/>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold text-muted ps-3">Time</td>
+                                        <td t-esc="selectedSlotLabel"/>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold text-muted ps-3">Customer</td>
+                                        <td t-esc="state.customerName"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <p class="text-muted mt-3 small">
+                        <i class="fa fa-lock me-1"/>
+                        Confirming will immediately block this time slot.
+                        A WhatsApp confirmation will be sent if configured.
+                    </p>
+                </div>
+            </t>
+
+            <!-- ════════════════════════════════════════════════════════
+                 STEP 5 – Done
+            ════════════════════════════════════════════════════════ -->
+            <t t-if="state.step === 'done'">
+                <div class="salon-booking-step text-center py-4">
+                    <i class="fa fa-check-circle text-success mb-3" style="font-size:4rem;"/>
+                    <h4 class="text-success mb-2">Appointment Confirmed!</h4>
+                    <p class="text-muted">
+                        <strong t-esc="state.selectedEmployee and state.selectedEmployee.name"/>
+                        is booked for
+                        <strong t-esc="props.product.display_name"/>
+                        at <strong t-esc="selectedSlotLabel"/>
+                        on <strong t-esc="formattedSelectedDate"/>.
+                    </p>
+                    <p class="small text-muted">
+                        The slot is now locked.
+                        A WhatsApp confirmation will be sent if enabled.
+                    </p>
+                </div>
+            </t>
+
+            <!-- ════════════════════════════════════════════════════════
+                 FOOTER — direct child of Dialog (OWL requirement)
+                 t-set-slot must NOT be inside t-if blocks
+            ════════════════════════════════════════════════════════ -->
+            <t t-set-slot="footer">
+
+                <t t-if="state.step === 'booking' and !state.loading">
+                    <button class="btn btn-secondary" t-on-click="closeDialog">
+                        <i class="fa fa-times me-1"/>Cancel
+                    </button>
+                    <button class="btn btn-success"
+                            t-att-disabled="!state.selectedEmployee or !state.selectedDate or !state.selectedSlot"
+                            t-on-click="confirmBooking">
+                        <i class="fa fa-check me-1"/>
+                        Confirm Booking
+                    </button>
+                </t>
+
+                <!-- Step 1 footer -->
+                <t t-if="state.step === 'employee' and !state.loading">
+                    <button class="btn btn-secondary" t-on-click="closeDialog">
+                        <i class="fa fa-times me-1"/>Cancel
+                    </button>
+                    <button class="btn btn-primary"
+                            t-att-disabled="!state.selectedEmployee"
+                            t-on-click="() => this.goToStep('date')">
+                        Next: Select Date
+                        <i class="fa fa-arrow-right ms-1"/>
+                    </button>
+                </t>
+
+                <!-- Step 2 footer -->
+                <t t-if="state.step === 'date' and !state.loading">
+                    <button class="btn btn-secondary"
+                            t-on-click="() => this.goToStep('employee')">
+                        <i class="fa fa-arrow-left me-1"/>Back
+                    </button>
+                    <button class="btn btn-primary"
+                            t-att-disabled="!state.selectedDate"
+                            t-on-click="() => this.goToStep('slot')">
+                        Next: Select Time
+                        <i class="fa fa-arrow-right ms-1"/>
+                    </button>
+                </t>
+
+                <!-- Step 3 footer -->
+                <t t-if="state.step === 'slot' and !state.loading">
+                    <button class="btn btn-secondary"
+                            t-on-click="() => this.goToStep('date')">
+                        <i class="fa fa-arrow-left me-1"/>Back
+                    </button>
+                    <button class="btn btn-primary"
+                            t-att-disabled="!state.selectedSlot"
+                            t-on-click="() => this.goToStep('confirm')">
+                        Review Booking
+                        <i class="fa fa-arrow-right ms-1"/>
+                    </button>
+                </t>
+
+                <!-- Step 4 footer -->
+                <t t-if="state.step === 'confirm' and !state.loading">
+                    <button class="btn btn-secondary"
+                            t-on-click="() => this.goToStep('slot')">
+                        <i class="fa fa-arrow-left me-1"/>Back
+                    </button>
+                    <button class="btn btn-success"
+                            t-att-disabled="state.loading"
+                            t-on-click="confirmBooking">
+                        <i class="fa fa-check me-1"/>
+                        Confirm Booking
+                    </button>
+                </t>
+
+                <!-- Step 5 footer (done) -->
+                <t t-if="state.step === 'done'">
+                    <button class="btn btn-primary" t-on-click="closeDialog">
+                        <i class="fa fa-times me-1"/>Close
+                    </button>
+                </t>
+
+            </t>
+
+        </Dialog>
+    </t>
+
+</templates>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend product.template form – add Salon Booking tab -->
+    <record id="view_product_template_salon_form" model="ir.ui.view">
+        <field name="name">product.template.salon.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Salon Booking" name="salon_booking">
+
+                    <group>
+                        <group string="Booking Settings">
+                            <field name="salon_is_bookable"/>
+                            <field name="salon_appointment_type_id"
+                                   invisible="not salon_is_bookable"
+                                   required="salon_is_bookable"/>
+                            <field name="salon_default_duration"
+                                   invisible="not salon_is_bookable"/>
+                        </group>
+                        <group string="Availability" invisible="not salon_is_bookable">
+                            <field name="salon_employee_ids"
+                                   widget="many2many_tags"
+                                   domain="[('active','=',True)]"
+                                   help="Leave empty to use the appointment type's employee list."/>
+                        </group>
+                    </group>
+
+                    <div class="alert alert-info" role="alert"
+                         invisible="not salon_is_bookable">
+                        <i class="fa fa-info-circle me-2"/>
+                        When this product is added to a POS order the booking popup
+                        opens automatically. Customers can also book this service
+                        from the website appointment page.
+                    </div>
+
+                    <div class="alert alert-secondary" role="alert"
+                         invisible="salon_is_bookable">
+                        Enable <strong>Bookable Service</strong> to allow appointment
+                        booking through POS and the website.
+                    </div>
+
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend product list – show bookable flag column -->
+    <record id="view_product_template_salon_list" model="ir.ui.view">
+        <field name="name">product.template.salon.list</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="salon_is_bookable"
+                       string="Bookable"
+                       optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
