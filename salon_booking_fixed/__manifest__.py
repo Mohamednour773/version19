@@ -41,13 +41,10 @@ Features
         # Community uses Direct Meta Cloud API (no whatsapp module required).
     ],
     'assets': {
-        'point_of_sale.assets': [
-            'salon_booking/static/src/xml/pos_booking_popup.xml',
-            'salon_booking/static/src/js/pos_booking_popup.js',
-        ],
         'point_of_sale._assets_pos': [
             'salon_booking/static/src/xml/pos_booking_popup.xml',
             'salon_booking/static/src/js/pos_booking_popup.js',
+            'salon_booking/static/src/scss/salon_booking.scss',
         ],
         'web.assets_backend': [
             'salon_booking/static/src/scss/salon_booking.scss',
