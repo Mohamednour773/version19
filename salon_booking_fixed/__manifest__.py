@@ -27,6 +27,7 @@ Features
         'mail',
         'website',
     ],
+    'post_init_hook': 'post_init_hook',
     'data': [
         'security/salon_booking_security.xml',
         'security/ir.model.access.csv',
