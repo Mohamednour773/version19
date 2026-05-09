@@ -7,6 +7,11 @@ _logger = logging.getLogger(__name__)
 
 
 class ApwRequest(models.Model):
+    """
+    Internal tracking model — stores the approval workflow state.
+    The actual document (e.g. purchase.order) has x_apw_state / x_apw_waiting
+    injected directly onto it. This model is the engine behind those fields.
+    """
     _name = 'apw.request'
     _description = 'APW Approval Request'
     _order = 'create_date desc'
@@ -18,29 +23,31 @@ class ApwRequest(models.Model):
                                 ondelete='cascade', index=True)
 
     res_model = fields.Char(string='Document Model', required=True, index=True)
-    res_id = fields.Integer(string='Document ID', required=True, index=True)
-    res_name = fields.Char(string='Document', compute='_compute_res_name', store=True)
+    res_id    = fields.Integer(string='Document ID', required=True, index=True)
+    res_name  = fields.Char(string='Document', compute='_compute_res_name', store=True)
 
     requester_id = fields.Many2one('res.users', string='Requested By',
                                    default=lambda self: self.env.user, required=True, index=True)
     state = fields.Selection([
-        ('draft', 'Draft'),
-        ('pending', 'Pending'),
+        ('draft',       'Draft'),
+        ('pending',     'Pending'),
         ('in_progress', 'In Progress'),
-        ('approved', 'Approved'),
-        ('refused', 'Refused'),
-        ('cancelled', 'Cancelled'),
+        ('approved',    'Approved'),
+        ('refused',     'Refused'),
+        ('cancelled',   'Cancelled'),
     ], string='Status', default='draft', tracking=True, index=True)
 
     current_stage_id = fields.Many2one('apw.stage', string='Current Stage', index=True)
     line_ids = fields.One2many('apw.request.line', 'request_id', string='Approval Lines', copy=False)
 
     date_submitted = fields.Datetime(string='Submitted On')
-    date_approved = fields.Datetime(string='Approved On')
-    date_refused = fields.Datetime(string='Refused On')
+    date_approved  = fields.Datetime(string='Approved On')
+    date_refused   = fields.Datetime(string='Refused On')
 
-    waiting_on = fields.Char(compute='_compute_waiting_on', string='Waiting On', store=True)
+    waiting_on       = fields.Char(compute='_compute_waiting_on', string='Waiting On', store=True)
     progress_percent = fields.Float(compute='_compute_progress', string='Progress (%)', store=True)
+
+    # ── Computed fields ──────────────────────────────────────────────
 
     @api.depends('res_model', 'res_id')
     def _compute_res_name(self):
@@ -63,7 +70,7 @@ class ApwRequest(models.Model):
                 lambda l: l.stage_id == rec.current_stage_id and l.state == 'pending'
             )
             names = pending.mapped('approver_id.name')
-            rec.waiting_on = ', '.join(names) if names else _('Unknown')
+            rec.waiting_on = ', '.join(names) if names else ''
 
     @api.depends('line_ids.state')
     def _compute_progress(self):
@@ -82,7 +89,7 @@ class ApwRequest(models.Model):
                 vals['name'] = self.env['ir.sequence'].next_by_code('apw.request') or _('New')
         return super().create(vals_list)
 
-    # ── State machine ────────────────────────────────────────────────
+    # ── Public actions ───────────────────────────────────────────────
 
     def action_submit(self):
         for rec in self:
@@ -96,6 +103,7 @@ class ApwRequest(models.Model):
                 body=_('Approval request submitted by %s.') % rec.requester_id.name,
                 subtype_xmlid='mail.mt_note'
             )
+            rec._sync_document_fields()
 
     def action_cancel(self):
         for rec in self:
@@ -103,11 +111,9 @@ class ApwRequest(models.Model):
                 raise UserError(_('Cannot cancel a completed request.'))
             rec.line_ids.filtered(lambda l: l.state == 'pending').write({'state': 'cancelled'})
             rec.state = 'cancelled'
-            rec._refresh_document_state()
-            rec.message_post(
-                body=_('Request cancelled by %s.') % self.env.user.name,
-                subtype_xmlid='mail.mt_note'
-            )
+            rec._sync_document_fields()
+            rec.message_post(body=_('Request cancelled by %s.') % self.env.user.name,
+                             subtype_xmlid='mail.mt_note')
 
     def action_reset_to_draft(self):
         for rec in self:
@@ -116,6 +122,7 @@ class ApwRequest(models.Model):
             rec.line_ids.unlink()
             rec.current_stage_id = False
             rec.state = 'draft'
+            rec._sync_document_fields()
 
     def action_open_document(self):
         self.ensure_one()
@@ -127,7 +134,7 @@ class ApwRequest(models.Model):
             'target': 'current',
         }
 
-    # ── Internal helpers ─────────────────────────────────────────────
+    # ── Core engine ──────────────────────────────────────────────────
 
     def _initialize_lines(self):
         self.ensure_one()
@@ -195,9 +202,10 @@ class ApwRequest(models.Model):
         else:
             if not pending:
                 self._advance_to_next_stage()
+        self._sync_document_fields()
 
     def _mark_approved(self):
-        """All stages approved — execute confirm_method on the document."""
+        """All stages done — run confirm_method on the document, update its fields."""
         self.ensure_one()
         self.write({
             'state': 'approved',
@@ -208,52 +216,76 @@ class ApwRequest(models.Model):
             body=_('✅ All approvals granted. Document is fully approved.'),
             subtype_xmlid='mail.mt_note'
         )
-        # ── Execute the configured confirm method on the document ────
-        self._execute_document_method(self.config_id.confirm_method)
-        self._refresh_document_state()
+        # Update x_apw_state / x_apw_waiting on the document first
+        self._sync_document_fields()
+        # Then run the configured confirm method
+        self._execute_on_document(self.config_id.confirm_method)
         if self.config_id.notify_requester:
             self._notify_requester(_('Approved'),
                 _('Your request for <b>%s</b> has been fully approved.') % self.res_name)
 
     def _mark_refused(self, note=''):
-        """Refused — execute cancel_method on the document."""
+        """Refused — run cancel_method on the document, update its fields."""
         self.ensure_one()
-        # ── Execute the configured cancel method on the document ─────
-        self._execute_document_method(self.config_id.cancel_method)
-        self._refresh_document_state()
+        # x_apw_state already set to 'refused' by do_refuse()
+        self._sync_document_fields()
+        # Run the configured cancel method
+        self._execute_on_document(self.config_id.cancel_method)
         if self.config_id.notify_requester:
             self._notify_requester(_('Refused'),
                 _('Your request for <b>%s</b> was refused. Reason: %s') % (
                     self.res_name, note or _('No reason given')))
 
-    def _execute_document_method(self, method_name):
-        """Call a method on the linked document, safely."""
-        if not method_name:
+    def _execute_on_document(self, method_name):
+        """Safely call a method on the linked document."""
+        if not method_name or not method_name.strip():
             return
         method_name = method_name.strip()
-        if not method_name:
-            return
         try:
-            target = self.env[self.res_model].browse(self.res_id)
-            if hasattr(target, method_name):
-                getattr(target.sudo(), method_name)()
-                _logger.info('APW: called %s.%s() after approval', self.res_model, method_name)
+            doc = self.env[self.res_model].browse(self.res_id)
+            if hasattr(doc, method_name):
+                getattr(doc.sudo(), method_name)()
+                _logger.info('APW: called %s.%s() successfully', self.res_model, method_name)
             else:
-                _logger.warning(
-                    'APW: method %s not found on model %s', method_name, self.res_model
-                )
+                _logger.warning('APW: method "%s" not found on model %s', method_name, self.res_model)
         except Exception as e:
-            _logger.error('APW: error calling %s on %s: %s', method_name, self.res_model, e)
+            _logger.error('APW: error calling %s on %s(%s): %s',
+                          method_name, self.res_model, self.res_id, e)
 
-    def _refresh_document_state(self):
-        """Trigger recompute of apw_approval_state on the linked document if it has the field."""
+    def _sync_document_fields(self):
+        """
+        Write x_apw_state and x_apw_waiting directly onto the document record.
+        These are the custom fields we added via ir.model.fields — they live
+        on the original model, not here. We just keep them updated.
+        """
+        self.ensure_one()
         try:
-            target = self.env[self.res_model].browse(self.res_id)
-            if hasattr(target, '_compute_apw_approval_state'):
-                target._compute_apw_approval_state()
-                target.invalidate_recordset(['apw_approval_state', 'apw_approval_waiting'])
-        except Exception:
-            pass
+            doc = self.env[self.res_model].browse(self.res_id)
+            # Map our internal states to the selection on the document
+            state_map = {
+                'draft':       'pending',
+                'pending':     'pending',
+                'in_progress': 'in_progress',
+                'approved':    'approved',
+                'refused':     'refused',
+                'cancelled':   'none',
+            }
+            x_state = state_map.get(self.state, 'none')
+            x_waiting = self.waiting_on or ''
+
+            # Only write if the fields exist on the model
+            model_fields = self.env[self.res_model]._fields
+            vals = {}
+            if 'x_apw_state' in model_fields:
+                vals['x_apw_state'] = x_state
+            if 'x_apw_waiting' in model_fields:
+                vals['x_apw_waiting'] = x_waiting
+
+            if vals:
+                doc.sudo().write(vals)
+        except Exception as e:
+            _logger.warning('APW: could not sync document fields for %s(%s): %s',
+                            self.res_model, self.res_id, e)
 
     def _notify_approvers(self, lines):
         for line in lines:
@@ -281,37 +313,34 @@ class ApwRequest(models.Model):
         except Exception as e:
             _logger.warning('APW: could not notify requester: %s', e)
 
-    def is_approved(self):
-        self.ensure_one()
-        return self.state == 'approved'
-
 
 class ApwRequestLine(models.Model):
     _name = 'apw.request.line'
     _description = 'APW Approval Request Line'
     _order = 'stage_id, id'
 
-    request_id = fields.Many2one('apw.request', string='Request', required=True,
-                                 ondelete='cascade', index=True)
-    stage_id = fields.Many2one('apw.stage', string='Stage', required=True, ondelete='cascade')
+    request_id   = fields.Many2one('apw.request', string='Request', required=True,
+                                   ondelete='cascade', index=True)
+    stage_id      = fields.Many2one('apw.stage', string='Stage', required=True, ondelete='cascade')
     stage_sequence = fields.Integer(related='stage_id.sequence', string='Seq', store=True)
-    stage_name = fields.Char(related='stage_id.name', string='Stage Name', store=True)
+    stage_name    = fields.Char(related='stage_id.name', string='Stage Name', store=True)
 
     approver_id = fields.Many2one('res.users', string='Approver', required=True, index=True)
     state = fields.Selection([
-        ('pending', 'Pending'),
-        ('approved', 'Approved'),
-        ('refused', 'Refused'),
+        ('pending',   'Pending'),
+        ('approved',  'Approved'),
+        ('refused',   'Refused'),
         ('cancelled', 'Cancelled'),
     ], string='Decision', default='pending', index=True)
 
-    note = fields.Text(string='Comment')
+    note         = fields.Text(string='Comment')
     date_decided = fields.Datetime(string='Decision Date')
 
+    # Denormalised for dashboard
     config_id = fields.Many2one(related='request_id.config_id', store=True, string='Workflow')
     res_model = fields.Char(related='request_id.res_model', store=True, string='Model')
-    res_id = fields.Integer(related='request_id.res_id', store=True, string='Record ID')
-    res_name = fields.Char(related='request_id.res_name', store=True, string='Document')
+    res_id    = fields.Integer(related='request_id.res_id', store=True, string='Record ID')
+    res_name  = fields.Char(related='request_id.res_name', store=True, string='Document')
 
     def _check_can_decide(self):
         self.ensure_one()
@@ -321,7 +350,7 @@ class ApwRequestLine(models.Model):
             raise UserError(_('The request is not in an approvable state.'))
         if self.request_id.current_stage_id != self.stage_id:
             raise UserError(_(
-                'Stage "%s" is not yet active.'
+                'Stage "%s" is not yet active — wait for earlier stages to finish.'
             ) % self.stage_id.name)
         stage = self.stage_id
         if not stage.allow_self_approval and self.env.user == self.request_id.requester_id:
@@ -329,7 +358,7 @@ class ApwRequestLine(models.Model):
         if self.approver_id != self.env.user:
             if stage.approver_type == 'group' and stage.approver_group_id:
                 if self.env.user not in stage.approver_group_id.users:
-                    raise UserError(_('You are not authorized to approve at stage "%s".') % stage.name)
+                    raise UserError(_('You are not authorised to approve at stage "%s".') % stage.name)
             else:
                 raise UserError(_('You are not the designated approver for this stage.'))
 
@@ -367,5 +396,4 @@ class ApwRequestLine(models.Model):
                 self.stage_id.name, self.env.user.name, note or _('No reason given')),
             subtype_xmlid='mail.mt_note'
         )
-        # Execute cancel method on the document
         req._mark_refused(note=note)
