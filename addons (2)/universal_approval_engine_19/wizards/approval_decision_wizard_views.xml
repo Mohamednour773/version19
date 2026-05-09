@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_approval_decision_wizard_form" model="ir.ui.view">
+        <field name="name">universal.approval.decision.wizard.form</field>
+        <field name="model">universal.approval.decision.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="request_id" readonly="1"/>
+                        <field name="line_id" readonly="1"/>
+                        <field name="decision" readonly="1"/>
+                        <field name="reason_id"/>
+                        <field name="forward_user_id" invisible="decision != 'forward'"/>
+                        <field name="comment" placeholder="Add your comment or justification..."/>
+                        <field name="attachment_ids" widget="many2many_binary"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_apply" type="object" string="Apply" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+

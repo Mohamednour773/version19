@@ -1,0 +1,20 @@
+.o_approval_state_badge {
+    border-radius: 4px;
+    display: inline-flex;
+    font-weight: 600;
+    gap: 4px;
+    line-height: 1.2;
+    padding: 3px 8px;
+}
+
+.o_approval_tracker_current {
+    border-inline-start: 3px solid #f0ad4e;
+}
+
+.o_approval_tracker_done {
+    border-inline-start: 3px solid #28a745;
+}
+
+.o_approval_tracker_rejected {
+    border-inline-start: 3px solid #dc3545;
+}

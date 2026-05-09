@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <!--
+        Inject ClubReceiptSection before the before-footer div.
+        Passes the full order object so the component can extract
+        the partner and fetch their active memberships via RPC.
+        The section only renders when the customer has active memberships.
+    -->
+    <t t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('before-footer')]" position="before">
+            <ClubReceiptSection order="props.order"/>
+        </xpath>
+    </t>
+
+</templates>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+<t t-name="club_management_pos_ui.ClubReceiptSection">
+    <div t-if="hasMemberships" class="club-receipt-section pt-2 mt-1 border-top">
+
+        <div class="club-receipt-header text-center text-muted fw-semibold mb-1"
+             style="font-size:0.78rem;">
+            Club Membership / تفاصيل العضوية
+        </div>
+
+        <t t-foreach="state.memberships" t-as="m" t-key="m.id">
+            <div class="club-receipt-line mb-1" style="font-size:0.8rem;">
+
+                <div class="d-flex align-items-center">
+                    <i class="fa fa-id-card-o me-1 text-muted"/>
+                    <span class="fw-semibold"><t t-esc="m.package_name"/></span>
+                </div>
+
+                <div t-if="m.date_start" class="ms-3 text-muted">
+                    <t t-esc="m.date_start"/>
+                    <t t-if="m.date_end">
+                        <span> &#8594; <t t-esc="m.date_end"/></span>
+                    </t>
+                </div>
+
+                <div class="ms-3 text-muted">
+                    <t t-if="m.total_sessions">
+                        <span><t t-esc="m.total_sessions"/> sessions</span>
+                    </t>
+                    <t t-if="m.sessions_per_week">
+                        <span> · <t t-esc="m.sessions_per_week"/>/week</span>
+                    </t>
+                    <t t-if="m.branch_name">
+                        <span> · <t t-esc="m.branch_name"/></span>
+                    </t>
+                </div>
+
+            </div>
+        </t>
+
+        <div class="club-receipt-footer text-center mt-1" style="font-size:0.78rem;">
+            Thank you for your membership! / شكراً لاشتراكك معنا!
+        </div>
+
+    </div>
+</t>
+
+</templates>

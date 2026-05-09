@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.py$\")",
+      "Bash(grep -E \"\\\\.\\(py|xml\\)$\")",
+      "Bash(xargs grep *)",
+      "Bash(grep -n \"point_of_sale\\\\._assets_pos\\\\|_assets_pos\\\\|assets_pos\" \"C:\\\\Program Files\\\\Odoo 19.0e.20251117\\\\server\\\\odoo\\\\addons\\\\point_of_sale\\\\__manifest__.py\" | head -20)",
+      "Bash(mkdir \"C:\\\\Program Files\\\\Odoo 19.0e.20251117\\\\server\\\\odoo\\\\addons\\\\club_management_pos_ui\\\\views\" 2>nul; echo done)",
+      "Bash(md \"C:\\\\Program Files\\\\Odoo 19.0e.20251117\\\\server\\\\odoo\\\\addons\\\\club_management_pos_ui\\\\static\\\\src\\\\components\\\\customer_info_card\")",
+      "Bash(md \"C:\\\\Program Files\\\\Odoo 19.0e.20251117\\\\server\\\\odoo\\\\addons\\\\club_management_pos_ui\\\\static\\\\src\\\\components\\\\walkin_form\")",
+      "Bash(md \"C:\\\\Program Files\\\\Odoo 19.0e.20251117\\\\server\\\\odoo\\\\addons\\\\club_management_pos_ui\\\\static\\\\src\\\\overrides\")",
+      "Bash(mkdir -p \"/mnt/c/Program Files/Odoo 19.0e.20251117/server/odoo/addons/club_management_pos_ui/static/src/components/customer_info_card\" \"/mnt/c/Program Files/Odoo 19.0e.20251117/server/odoo/addons/club_management_pos_ui/static/src/components/walkin_form\" \"/mnt/c/Program Files/Odoo 19.0e.20251117/server/odoo/addons/club_management_pos_ui/static/src/overrides\" && echo done)",
+      "Bash(find \"/mnt/c/Program Files/Odoo 19.0e.20251117/server/odoo/addons/club_management_pos_ui\" -type f | sort)",
+      "Bash(ls \"/mnt/c/Program Files/Odoo 19.0e.20251117/server/odoo/\" 2>&1)",
+      "Bash(ls \"/mnt/c/Program Files/Odoo 19.0e.20251117/\" 2>&1)",
+      "Bash(find \"C:/Program Files/Odoo 19.0e.20251117/server/odoo/addons/web/static/src/core/dialog/\" -type f 2>&1 | head -20)",
+      "Bash(ls \"C:\\\\Program Files\\\\Odoo 19.0e.20251117\\\\server\\\\odoo\\\\addons\\\\\" | grep club)"
+    ]
+  }
+}

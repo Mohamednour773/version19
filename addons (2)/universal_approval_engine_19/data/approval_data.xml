@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_approval_request" model="ir.sequence">
+        <field name="name">Approval Request</field>
+        <field name="code">universal.approval.request</field>
+        <field name="prefix">APR/%(y)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="approval_reason_reviewed" model="universal.approval.reason">
+        <field name="name">Reviewed and accepted</field>
+        <field name="reason_type">approve</field>
+    </record>
+    <record id="approval_reason_budget" model="universal.approval.reason">
+        <field name="name">Outside approved budget</field>
+        <field name="reason_type">reject</field>
+    </record>
+    <record id="approval_reason_documents" model="universal.approval.reason">
+        <field name="name">Required documents are missing</field>
+        <field name="reason_type">modification</field>
+    </record>
+
+    <record id="approval_template_po_amount" model="universal.approval.template">
+        <field name="name">PO Approval by Amount</field>
+        <field name="industry">generic</field>
+        <field name="description">Sequential purchase approval template with amount thresholds and finance escalation.</field>
+        <field name="template_json">{"model": "purchase.order", "stages": ["Direct Manager", "Department Manager", "Finance Manager", "General Manager"]}</field>
+    </record>
+
+    <record id="approval_template_expense" model="universal.approval.template">
+        <field name="name">Expense Approval by Category</field>
+        <field name="industry">generic</field>
+        <field name="description">Expense routing by category, amount, and project/cost center.</field>
+        <field name="template_json">{"model": "hr.expense.sheet", "routing": "category_amount_project"}</field>
+    </record>
+
+    <record id="approval_template_leave" model="universal.approval.template">
+        <field name="name">Leave Approval by Duration</field>
+        <field name="industry">services</field>
+        <field name="description">Leave request workflow based on leave type and number of days.</field>
+        <field name="template_json">{"model": "hr.leave", "routing": "manager_then_hr"}</field>
+    </record>
+
+    <record id="approval_template_payment" model="universal.approval.template">
+        <field name="name">Payment Approval</field>
+        <field name="industry">trading</field>
+        <field name="description">Payment posting approval based on partner, amount, currency, and company.</field>
+        <field name="template_json">{"model": "account.payment", "routing": "treasury_finance_ceo"}</field>
+    </record>
+
+    <record id="approval_template_discount" model="universal.approval.template">
+        <field name="name">Discount Approval</field>
+        <field name="industry">retail</field>
+        <field name="description">Sales and POS discount approval template.</field>
+        <field name="template_json">{"model": "sale.order", "routing": "discount_percent_margin"}</field>
+    </record>
+</odoo>
+

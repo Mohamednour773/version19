@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_approval_request" model="ir.actions.act_window">
+        <field name="name">Approval Requests</field>
+        <field name="res_model">universal.approval.request</field>
+        <field name="view_mode">list,form,kanban,pivot,graph</field>
+        <field name="context">{'search_default_pending': 1}</field>
+    </record>
+
+    <record id="action_approval_inbox" model="ir.actions.act_window">
+        <field name="name">My Approval Inbox</field>
+        <field name="res_model">universal.approval.request.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('approver_id', '=', uid), ('state', '=', 'pending')]</field>
+    </record>
+
+    <record id="action_approval_workflow" model="ir.actions.act_window">
+        <field name="name">Approval Workflows</field>
+        <field name="res_model">universal.approval.workflow</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_approval_matrix" model="ir.actions.act_window">
+        <field name="name">Approval Matrix</field>
+        <field name="res_model">universal.approval.matrix</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_approval_delegation" model="ir.actions.act_window">
+        <field name="name">Delegations</field>
+        <field name="res_model">universal.approval.delegation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_approval_reason" model="ir.actions.act_window">
+        <field name="name">Reason Library</field>
+        <field name="res_model">universal.approval.reason</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_approval_template" model="ir.actions.act_window">
+        <field name="name">Workflow Templates</field>
+        <field name="res_model">universal.approval.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_approval_notification" model="ir.actions.act_window">
+        <field name="name">Notification Queue</field>
+        <field name="res_model">universal.approval.notification</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_approval_notification_channel" model="ir.actions.act_window">
+        <field name="name">Notification Preferences</field>
+        <field name="res_model">universal.approval.notification.channel</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_approval_my_notification_channel" model="ir.actions.act_window">
+        <field name="name">My Notification Preferences</field>
+        <field name="res_model">universal.approval.notification.channel</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('user_id', '=', uid)]</field>
+        <field name="context">{'default_user_id': uid}</field>
+    </record>
+
+    <record id="action_approval_audit" model="ir.actions.act_window">
+        <field name="name">Audit Trail</field>
+        <field name="res_model">universal.approval.audit.log</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_approval_quota" model="ir.actions.act_window">
+        <field name="name">Approval Quotas</field>
+        <field name="res_model">universal.approval.quota</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_approval_anomaly_rule" model="ir.actions.act_window">
+        <field name="name">Anomaly Rules</field>
+        <field name="res_model">universal.approval.anomaly.rule</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_approval_root" name="Approvals Pro" sequence="35" groups="universal_approval_engine_19.group_approval_user"/>
+    <menuitem id="menu_approval_inbox" name="My Inbox" parent="menu_approval_root" action="action_approval_inbox" sequence="10"/>
+    <menuitem id="menu_approval_requests" name="All Requests" parent="menu_approval_root" action="action_approval_request" sequence="20"/>
+    <menuitem id="menu_approval_my_notification_channel" name="My Notification Preferences" parent="menu_approval_root" action="action_approval_my_notification_channel" sequence="25"/>
+    <menuitem id="menu_approval_config_root" name="Configuration" parent="menu_approval_root" sequence="80" groups="universal_approval_engine_19.group_approval_manager"/>
+    <menuitem id="menu_approval_workflows" name="Workflows" parent="menu_approval_config_root" action="action_approval_workflow" sequence="10"/>
+    <menuitem id="menu_approval_matrix" name="Approval Matrix" parent="menu_approval_config_root" action="action_approval_matrix" sequence="20"/>
+    <menuitem id="menu_approval_delegation" name="Delegations" parent="menu_approval_config_root" action="action_approval_delegation" sequence="30"/>
+    <menuitem id="menu_approval_reasons" name="Reason Library" parent="menu_approval_config_root" action="action_approval_reason" sequence="40"/>
+    <menuitem id="menu_approval_templates" name="Templates" parent="menu_approval_config_root" action="action_approval_template" sequence="50"/>
+    <menuitem id="menu_approval_quota" name="Quotas" parent="menu_approval_config_root" action="action_approval_quota" sequence="60"/>
+    <menuitem id="menu_approval_anomaly_rule" name="Anomaly Rules" parent="menu_approval_config_root" action="action_approval_anomaly_rule" sequence="70"/>
+    <menuitem id="menu_approval_notification_channel" name="Notification Preferences" parent="menu_approval_config_root" action="action_approval_notification_channel" sequence="80"/>
+    <menuitem id="menu_approval_admin_root" name="Operations" parent="menu_approval_root" sequence="90" groups="universal_approval_engine_19.group_approval_manager"/>
+    <menuitem id="menu_approval_notifications" name="Notification Queue" parent="menu_approval_admin_root" action="action_approval_notification" sequence="10"/>
+    <menuitem id="menu_approval_audit" name="Audit Trail" parent="menu_approval_admin_root" action="action_approval_audit" sequence="20"/>
+</odoo>
+
+

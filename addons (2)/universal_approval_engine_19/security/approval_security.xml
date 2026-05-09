@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_approval_engine" model="ir.module.category">
+        <field name="name">Universal Approvals</field>
+        <field name="sequence">35</field>
+    </record>
+
+    <record id="privilege_approval_engine" model="res.groups.privilege">
+        <field name="name">Universal Approvals</field>
+        <field name="category_id" ref="module_category_approval_engine"/>
+        <field name="sequence">35</field>
+    </record>
+
+    <record id="group_approval_user" model="res.groups">
+        <field name="name">Approval User</field>
+        <field name="privilege_id" ref="privilege_approval_engine"/>
+    </record>
+
+    <record id="group_approval_manager" model="res.groups">
+        <field name="name">Approval Manager</field>
+        <field name="privilege_id" ref="privilege_approval_engine"/>
+        <field name="implied_ids" eval="[(4, ref('group_approval_user'))]"/>
+    </record>
+
+    <record id="group_approval_admin" model="res.groups">
+        <field name="name">Approval Administrator</field>
+        <field name="privilege_id" ref="privilege_approval_engine"/>
+        <field name="implied_ids" eval="[(4, ref('group_approval_manager'))]"/>
+        <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <record id="rule_approval_request_user_visibility" model="ir.rule">
+        <field name="name">Approval requests visible to involved users</field>
+        <field name="model_id" ref="model_universal_approval_request"/>
+        <field name="domain_force">['|', '|', ('create_uid', '=', user.id), ('owner_id', '=', user.id), ('line_ids.approver_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+    </record>
+
+    <record id="rule_approval_request_manager_visibility" model="ir.rule">
+        <field name="name">Approval managers see all requests</field>
+        <field name="model_id" ref="model_universal_approval_request"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_manager'))]"/>
+    </record>
+
+    <record id="rule_approval_line_user_visibility" model="ir.rule">
+        <field name="name">Approval lines visible to involved users</field>
+        <field name="model_id" ref="model_universal_approval_request_line"/>
+        <field name="domain_force">['|', '|', ('approver_id', '=', user.id), ('original_approver_id', '=', user.id), ('request_id.owner_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+    </record>
+
+    <record id="rule_approval_line_manager_visibility" model="ir.rule">
+        <field name="name">Approval managers see all approval lines</field>
+        <field name="model_id" ref="model_universal_approval_request_line"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_manager'))]"/>
+    </record>
+
+    <record id="rule_approval_comment_user_visibility" model="ir.rule">
+        <field name="name">Approval comments visible to involved users</field>
+        <field name="model_id" ref="model_universal_approval_comment"/>
+        <field name="domain_force">['|', ('request_id.owner_id', '=', user.id), ('request_id.line_ids.approver_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+    </record>
+
+    <record id="rule_approval_comment_manager_visibility" model="ir.rule">
+        <field name="name">Approval managers see all approval comments</field>
+        <field name="model_id" ref="model_universal_approval_comment"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_manager'))]"/>
+    </record>
+
+    <record id="rule_approval_audit_user_visibility" model="ir.rule">
+        <field name="name">Approval audit visible to involved users</field>
+        <field name="model_id" ref="model_universal_approval_audit_log"/>
+        <field name="domain_force">['|', ('request_id.owner_id', '=', user.id), ('request_id.line_ids.approver_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+    </record>
+
+    <record id="rule_approval_audit_manager_visibility" model="ir.rule">
+        <field name="name">Approval managers see all approval audit logs</field>
+        <field name="model_id" ref="model_universal_approval_audit_log"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_manager'))]"/>
+    </record>
+
+    <record id="rule_approval_channel_user_visibility" model="ir.rule">
+        <field name="name">Users manage their notification preferences</field>
+        <field name="model_id" ref="model_universal_approval_notification_channel"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+    </record>
+
+    <record id="rule_approval_channel_manager_visibility" model="ir.rule">
+        <field name="name">Approval managers see all notification preferences</field>
+        <field name="model_id" ref="model_universal_approval_notification_channel"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_manager'))]"/>
+    </record>
+</odoo>
+

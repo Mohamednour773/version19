@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend the POS configuration form with two club settings:
+         1. club_branch_id   — restrict products to one branch
+         2. club_auto_confirm_membership — toggle auto-confirm on payment -->
+    <record id="pos_config_view_form_club" model="ir.ui.view">
+        <field name="name">pos.config.form.club</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//setting[@id='other_devices']" position="after">
+                <setting
+                        string="Club Branch"
+                        help="Restrict this POS terminal to packages of a single branch. Leave empty to show packages from all branches.">
+                    <field name="club_branch_id" options="{'no_create': True}"/>
+                </setting>
+                <setting
+                        string="Auto-confirm Memberships"
+                        help="When enabled, memberships created from POS sales are confirmed automatically after payment. Disable for manual-review workflows.">
+                    <field name="club_auto_confirm_membership"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

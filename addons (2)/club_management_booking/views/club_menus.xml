@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Action: open active/confirmed memberships for booking.
+        Reuses the base membership list/form; the "Book Sessions" stat
+        button on the form opens the wizard.
+    -->
+    <record id="action_club_booking_memberships" model="ir.actions.act_window">
+        <field name="name">Book Sessions</field>
+        <field name="res_model">club.membership</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', 'in', ['confirmed', 'active'])]</field>
+        <field name="context">{'search_default_state_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No active memberships found.
+            </p>
+            <p>Open a membership and click "Sessions Booked" to schedule sessions.</p>
+        </field>
+    </record>
+
+    <!-- Menu item under Reception Desk (sequence 32 = between Memberships:30 and Waitlist:35) -->
+    <menuitem
+        id="menu_club_booking"
+        name="Book Sessions"
+        parent="club_management_system_final.menu_club_reception_desk"
+        action="action_club_booking_memberships"
+        sequence="32"
+        groups="club_management_system_final.group_club_reception,club_management_system_final.group_club_manager,club_management_system_final.group_club_admin"/>
+
+</odoo>

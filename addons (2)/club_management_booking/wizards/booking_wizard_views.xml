@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_club_booking_wizard_form" model="ir.ui.view">
+        <field name="name">club.booking.wizard.form</field>
+        <field name="model">club.booking.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Book Sessions">
+
+                <!-- ── Member info banner ── -->
+                <group col="4" string="Membership">
+                    <field name="membership_id" readonly="1"/>
+                    <field name="partner_id" readonly="1"/>
+                    <field name="package_name" readonly="1"/>
+                    <field name="sessions_remaining" readonly="1"/>
+                    <field name="branch_id" invisible="1"/>
+                </group>
+
+                <!-- ══════════════════════════════════════════
+                     PRE-BOOKING STATE  (booking_done = False)
+                     ══════════════════════════════════════════ -->
+                <group invisible="booking_done">
+
+                    <group string="Booking Mode" col="1">
+                        <field name="booking_mode" widget="radio"/>
+                    </group>
+
+                    <!-- Auto mode: no extra inputs needed -->
+
+                    <!-- Single mode -->
+                    <group string="Session" invisible="booking_mode != 'single'">
+                        <field name="session_id"
+                               options="{'no_create': True}"
+                               required="booking_mode == 'single'"/>
+                        <field name="force_waitlist"/>
+                    </group>
+
+                    <!-- Custom mode -->
+                    <group string="Sessions" invisible="booking_mode != 'custom'">
+                        <field name="force_waitlist"/>
+                        <field name="session_ids"
+                               widget="many2many_checkboxes"
+                               nolabel="1"
+                               required="booking_mode == 'custom'"/>
+                    </group>
+
+                </group>
+
+                <!-- ══════════════════════════════════════════
+                     POST-BOOKING STATE  (booking_done = True)
+                     ══════════════════════════════════════════ -->
+                <group invisible="not booking_done" string="Result">
+                    <group col="3">
+                        <field name="result_booked" readonly="1"/>
+                        <field name="result_waitlisted" readonly="1"/>
+                        <field name="result_skipped" readonly="1"/>
+                    </group>
+                    <field name="result_summary" readonly="1" nolabel="1"
+                           widget="text" style="font-family: monospace;"/>
+                </group>
+
+                <!-- Hidden tracking field -->
+                <field name="booking_done" invisible="1"/>
+
+                <!-- ── Footer buttons ── -->
+                <footer>
+                    <button name="action_book"
+                            type="object"
+                            string="Book"
+                            class="btn-primary"
+                            invisible="booking_done"/>
+                    <button name="action_close"
+                            type="object"
+                            string="Close"
+                            class="btn-secondary"
+                            invisible="not booking_done"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"
+                            invisible="booking_done"/>
+                </footer>
+
+            </form>
+        </field>
+    </record>
+
+</odoo>

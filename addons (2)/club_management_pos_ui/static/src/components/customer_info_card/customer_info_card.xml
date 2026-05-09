@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+<t t-name="club_management_pos_ui.CustomerInfoCard">
+    <div t-if="showCard" class="club-customer-info-card">
+
+        <!-- Loading spinner -->
+        <div t-if="state.loading" class="club-info-loading">
+            <i class="fa fa-spinner fa-spin"/> Loading membership info...
+        </div>
+
+        <!-- Info card body -->
+        <div t-elif="state.info" class="club-info-body">
+
+            <!-- Alerts -->
+            <div t-if="state.info.alerts.length" class="club-info-alerts">
+                <div t-foreach="state.info.alerts" t-as="alert" t-key="alert"
+                     class="club-alert-item">
+                    <t t-esc="alert"/>
+                </div>
+            </div>
+
+            <!-- Memberships list -->
+            <div t-if="state.info.memberships.length" class="club-memberships-list">
+                <div class="club-memberships-header">
+                    <i class="fa fa-id-card-o"/> Active Memberships / العضويات النشطة
+                </div>
+                <div t-foreach="state.info.memberships" t-as="m" t-key="m.id"
+                     class="club-membership-row">
+                    <span class="club-pkg-name" t-esc="m.package_name"/>
+                    <span class="club-pkg-detail">
+                        <t t-if="m.sessions_remaining !== undefined">
+                            <i class="fa fa-check-circle-o"/>
+                            <t t-esc="m.sessions_remaining"/> left
+                        </t>
+                        <t t-if="m.sessions_per_week">
+                            · <t t-esc="m.sessions_per_week"/>/wk
+                        </t>
+                        <t t-if="m.expiry_date">
+                            · exp: <t t-esc="m.expiry_date"/>
+                        </t>
+                    </span>
+                    <span t-attf-class="club-state-badge badge-#{m.state}">
+                        <t t-esc="m.state"/>
+                    </span>
+                </div>
+            </div>
+
+            <!-- No memberships -->
+            <div t-else="" class="club-no-memberships">
+                <i class="fa fa-exclamation-circle text-warning"/>
+                No active memberships / لا توجد عضويات نشطة
+            </div>
+
+            <!-- Check-in button -->
+            <div t-if="enableCheckin" class="club-checkin-section">
+                <button class="btn btn-sm btn-primary club-checkin-btn"
+                        t-on-click="onCheckin"
+                        t-att-disabled="state.checkingIn">
+                    <i t-attf-class="fa #{state.checkingIn ? 'fa-spinner fa-spin' : 'fa-sign-in'}"/>
+                    <t t-if="state.checkingIn"> Checking in...</t>
+                    <t t-else=""> Check In / تسجيل الحضور</t>
+                </button>
+            </div>
+        </div>
+
+        <!-- Partner has no club info yet -->
+        <div t-elif="!state.loading" class="club-info-empty">
+            <i class="fa fa-user-o text-muted"/>
+            <span class="text-muted ms-1">No club data / لا بيانات نادي</span>
+        </div>
+    </div>
+</t>
+
+</templates>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <!--
+        Inject the CustomerInfoCard above the OrderSummary widget on the
+        ProductScreen so staff can see the customer's membership status at
+        a glance while adding products.
+    -->
+    <t t-inherit="point_of_sale.ProductScreen" t-inherit-mode="extension">
+        <xpath expr="//OrderSummary" position="before">
+            <CustomerInfoCard/>
+        </xpath>
+    </t>
+
+</templates>

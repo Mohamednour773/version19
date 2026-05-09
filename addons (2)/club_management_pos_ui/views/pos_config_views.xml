@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend POS Config form: add "Enable POS Check-in" toggle
+         Placed after the Club Management settings added by club_management_pos -->
+    <record id="view_pos_config_club_ui_settings" model="ir.ui.view">
+        <field name="name">pos.config.form.club.ui</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="club_management_pos.pos_config_view_form_club"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='club_auto_confirm_membership']/.." position="after">
+                <setting string="POS Check-in / تسجيل الحضور من POS"
+                         help="Show a one-click attendance check-in button on the customer info card.">
+                    <field name="club_enable_pos_checkin"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

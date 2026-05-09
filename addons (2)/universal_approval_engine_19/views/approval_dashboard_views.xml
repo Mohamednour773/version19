@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_approval_request_line_pivot" model="ir.ui.view">
+        <field name="name">universal.approval.request.line.pivot</field>
+        <field name="model">universal.approval.request.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Approval Bottlenecks">
+                <field name="approver_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="line_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_approval_request_line_graph" model="ir.ui.view">
+        <field name="name">universal.approval.request.line.graph</field>
+        <field name="model">universal.approval.request.line</field>
+        <field name="arch" type="xml">
+            <graph string="Approval Line Status" type="bar">
+                <field name="approver_id"/>
+                <field name="line_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_approval_dashboard_requests" model="ir.actions.act_window">
+        <field name="name">Approval Analytics</field>
+        <field name="res_model">universal.approval.request</field>
+        <field name="view_mode">graph,pivot,list</field>
+    </record>
+
+    <record id="action_approval_dashboard_bottlenecks" model="ir.actions.act_window">
+        <field name="name">Approver Bottlenecks</field>
+        <field name="res_model">universal.approval.request.line</field>
+        <field name="view_mode">pivot,graph,list</field>
+    </record>
+
+    <menuitem id="menu_approval_dashboard_root" name="Analytics" parent="menu_approval_root" sequence="30" groups="universal_approval_engine_19.group_approval_manager"/>
+    <menuitem id="menu_approval_dashboard_requests" name="Approval KPIs" parent="menu_approval_dashboard_root" action="action_approval_dashboard_requests" sequence="10"/>
+    <menuitem id="menu_approval_dashboard_bottlenecks" name="Bottlenecks" parent="menu_approval_dashboard_root" action="action_approval_dashboard_bottlenecks" sequence="20"/>
+</odoo>
+
+

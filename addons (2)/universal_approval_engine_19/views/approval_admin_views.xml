@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_approval_matrix_list" model="ir.ui.view">
+        <field name="name">universal.approval.matrix.list</field>
+        <field name="model">universal.approval.matrix</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="workflow_id"/>
+                <field name="model_id"/>
+                <field name="company_id"/>
+                <field name="approver_id"/>
+                <field name="min_amount"/>
+                <field name="max_amount"/>
+                <field name="unlimited_amount"/>
+                <field name="currency_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_matrix_form" model="ir.ui.view">
+        <field name="name">universal.approval.matrix.form</field>
+        <field name="model">universal.approval.matrix</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="active"/>
+                            <field name="sequence"/>
+                            <field name="workflow_id"/>
+                            <field name="model_id"/>
+                            <field name="company_id"/>
+                            <field name="approver_id"/>
+                            <field name="group_id"/>
+                        </group>
+                        <group>
+                            <field name="currency_id"/>
+                            <field name="min_amount"/>
+                            <field name="max_amount"/>
+                            <field name="unlimited_amount"/>
+                            <field name="branch_key"/>
+                            <field name="analytic_key"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                    </group>
+                    <group string="Condition">
+                        <field name="condition_domain"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_delegation_list" model="ir.ui.view">
+        <field name="name">universal.approval.delegation.list</field>
+        <field name="model">universal.approval.delegation</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="not active">
+                <field name="name"/>
+                <field name="delegation_type"/>
+                <field name="delegator_id"/>
+                <field name="delegate_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="max_amount"/>
+                <field name="currency_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_delegation_form" model="ir.ui.view">
+        <field name="name">universal.approval.delegation.form</field>
+        <field name="model">universal.approval.delegation</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="active"/>
+                            <field name="sequence"/>
+                            <field name="delegation_type"/>
+                            <field name="delegator_id"/>
+                            <field name="delegate_id"/>
+                            <field name="require_original_notification"/>
+                        </group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="currency_id"/>
+                            <field name="max_amount"/>
+                            <field name="model_ids" widget="many2many_tags"/>
+                            <field name="company_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <group string="Partial Scope">
+                        <field name="condition_domain"/>
+                        <field name="note"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_reason_list" model="ir.ui.view">
+        <field name="name">universal.approval.reason.list</field>
+        <field name="model">universal.approval.reason</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="reason_type"/>
+                <field name="model_id"/>
+                <field name="company_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_reason_form" model="ir.ui.view">
+        <field name="name">universal.approval.reason.form</field>
+        <field name="model">universal.approval.reason</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="reason_type"/>
+                        <field name="model_id"/>
+                        <field name="company_id"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_template_list" model="ir.ui.view">
+        <field name="name">universal.approval.template.list</field>
+        <field name="model">universal.approval.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="industry"/>
+                <field name="model_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_template_form" model="ir.ui.view">
+        <field name="name">universal.approval.template.form</field>
+        <field name="model">universal.approval.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="industry"/>
+                        <field name="model_id"/>
+                        <field name="active"/>
+                    </group>
+                    <field name="description"/>
+                    <field name="template_json"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_notification_list" model="ir.ui.view">
+        <field name="name">universal.approval.notification.list</field>
+        <field name="model">universal.approval.notification</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'sent'" decoration-danger="state == 'failed'" decoration-warning="state == 'pending'">
+                <field name="create_date"/>
+                <field name="name"/>
+                <field name="channel"/>
+                <field name="target_user_id"/>
+                <field name="request_id"/>
+                <field name="state" widget="badge"/>
+                <field name="sent_date"/>
+                <field name="error_message"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_notification_form" model="ir.ui.view">
+        <field name="name">universal.approval.notification.form</field>
+        <field name="model">universal.approval.notification</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="channel"/>
+                            <field name="state"/>
+                            <field name="target_user_id"/>
+                            <field name="request_id"/>
+                            <field name="line_id"/>
+                        </group>
+                        <group>
+                            <field name="subject"/>
+                            <field name="sent_date"/>
+                            <field name="error_message"/>
+                        </group>
+                    </group>
+                    <field name="body"/>
+                    <field name="payload_json"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_notification_channel_list" model="ir.ui.view">
+        <field name="name">universal.approval.notification.channel.list</field>
+        <field name="model">universal.approval.notification.channel</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="channel"/>
+                <field name="user_id"/>
+                <field name="quiet_hours_from"/>
+                <field name="quiet_hours_to"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_notification_channel_form" model="ir.ui.view">
+        <field name="name">universal.approval.notification.channel.form</field>
+        <field name="model">universal.approval.notification.channel</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                        <field name="channel"/>
+                        <field name="user_id"/>
+                        <field name="quiet_hours_from"/>
+                        <field name="quiet_hours_to"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_audit_log_list" model="ir.ui.view">
+        <field name="name">universal.approval.audit.log.list</field>
+        <field name="model">universal.approval.audit.log</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="create_date"/>
+                <field name="request_id"/>
+                <field name="event"/>
+                <field name="user_id"/>
+                <field name="message"/>
+                <field name="ip_address"/>
+                <field name="device"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_audit_log_form" model="ir.ui.view">
+        <field name="name">universal.approval.audit.log.form</field>
+        <field name="model">universal.approval.audit.log</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="request_id"/>
+                        <field name="line_id"/>
+                        <field name="event"/>
+                        <field name="user_id"/>
+                        <field name="ip_address"/>
+                        <field name="device"/>
+                    </group>
+                    <field name="message"/>
+                    <field name="payload_json"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_quota_list" model="ir.ui.view">
+        <field name="name">universal.approval.quota.list</field>
+        <field name="model">universal.approval.quota</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="period"/>
+                <field name="amount_limit"/>
+                <field name="currency_id"/>
+                <field name="company_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_quota_form" model="ir.ui.view">
+        <field name="name">universal.approval.quota.form</field>
+        <field name="model">universal.approval.quota</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="user_id"/>
+                            <field name="model_ids" widget="many2many_tags"/>
+                            <field name="company_id"/>
+                        </group>
+                        <group>
+                            <field name="period"/>
+                            <field name="amount_limit"/>
+                            <field name="currency_id"/>
+                            <field name="warning_threshold"/>
+                            <field name="escalation_user_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_anomaly_rule_list" model="ir.ui.view">
+        <field name="name">universal.approval.anomaly.rule.list</field>
+        <field name="model">universal.approval.anomaly.rule</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="model_id"/>
+                <field name="amount_field_id"/>
+                <field name="percent_threshold"/>
+                <field name="lookback_days"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_anomaly_rule_form" model="ir.ui.view">
+        <field name="name">universal.approval.anomaly.rule.form</field>
+        <field name="model">universal.approval.anomaly.rule</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="model_id"/>
+                            <field name="amount_field_id"/>
+                            <field name="partner_field_id"/>
+                        </group>
+                        <group>
+                            <field name="lookback_days"/>
+                            <field name="percent_threshold"/>
+                            <field name="min_sample_size"/>
+                            <field name="warning_message"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
+
+

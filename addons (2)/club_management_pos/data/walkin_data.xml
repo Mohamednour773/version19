@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Partner category for walk-in customers created at the POS counter.
+         noupdate="1" so manual renames survive module upgrades. -->
+    <record id="category_walkin" model="res.partner.category">
+        <field name="name">Walk-in</field>
+        <field name="color">4</field>
+    </record>
+</odoo>

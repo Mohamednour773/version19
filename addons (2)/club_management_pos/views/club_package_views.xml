@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add "Available in POS" checkbox to the club.package form view -->
+    <record id="view_club_package_form_pos" model="ir.ui.view">
+        <field name="name">club.package.form.pos</field>
+        <field name="model">club.package</field>
+        <field name="inherit_id" ref="club_management_system_final.view_club_package_form"/>
+        <field name="arch" type="xml">
+            <!-- Insert POS group before the notebook (safe selector, no @string) -->
+            <xpath expr="//notebook" position="before">
+                <group string="Point of Sale">
+                    <field name="available_in_pos"/>
+                    <div colspan="2"
+                         invisible="not available_in_pos or product_id"
+                         class="alert alert-warning o_field_widget mb0"
+                         role="alert">
+                        ⚠️ This package is marked as available in POS but has no
+                        linked product. It will not appear in any POS session until
+                        a product is set.
+                    </div>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

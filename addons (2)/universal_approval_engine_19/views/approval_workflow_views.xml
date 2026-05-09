@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_approval_workflow_list" model="ir.ui.view">
+        <field name="name">universal.approval.workflow.list</field>
+        <field name="model">universal.approval.workflow</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="model_id"/>
+                <field name="mode"/>
+                <field name="routing_type"/>
+                <field name="company_id"/>
+                <field name="version"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_workflow_form" model="ir.ui.view">
+        <field name="name">universal.approval.workflow.form</field>
+        <field name="model">universal.approval.workflow</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_create_context_action" type="object" string="Create Request Action" class="btn-primary"/>
+                    <button name="action_bump_version" type="object" string="New Version"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="active"/>
+                            <field name="sequence"/>
+                            <field name="company_id"/>
+                            <field name="model_id"/>
+                            <field name="mode"/>
+                            <field name="routing_type"/>
+                        </group>
+                        <group>
+                            <field name="version"/>
+                            <field name="effective_from"/>
+                            <field name="effective_to"/>
+                            <field name="trigger_domain" placeholder="[('amount_total', '&gt;', 5000)]"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Stages">
+                            <field name="stage_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="routing_type"/>
+                                    <field name="approval_policy"/>
+                                    <field name="approver_mode"/>
+                                    <field name="user_ids" widget="many2many_tags"/>
+                                    <field name="group_ids" widget="many2many_tags"/>
+                                    <field name="approver_field_id"/>
+                                    <field name="condition_domain"/>
+                                    <field name="urgent_sla_hours"/>
+                                    <field name="normal_sla_hours"/>
+                                    <field name="low_sla_hours"/>
+                                </list>
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name="name"/>
+                                            <field name="sequence"/>
+                                            <field name="active"/>
+                                            <field name="routing_type"/>
+                                            <field name="approval_policy"/>
+                                            <field name="min_approvals"/>
+                                        </group>
+                                        <group>
+                                            <field name="approver_mode"/>
+                                            <field name="user_ids" widget="many2many_tags"/>
+                                            <field name="group_ids" widget="many2many_tags"/>
+                                            <field name="approver_field_id"/>
+                                            <field name="hierarchy_depth"/>
+                                        </group>
+                                    </group>
+                                    <group string="Conditions and SLA">
+                                        <field name="condition_domain"/>
+                                        <field name="urgent_sla_hours"/>
+                                        <field name="normal_sla_hours"/>
+                                        <field name="low_sla_hours"/>
+                                        <field name="require_comment_on_approval"/>
+                                        <field name="require_comment_on_rejection"/>
+                                        <field name="allow_forwarding"/>
+                                    </group>
+                                    <group string="Conditional Mandatory Fields">
+                                        <field name="mandatory_field_ids" widget="many2many_tags"/>
+                                    </group>
+                                    <field name="note"/>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Document Control">
+                            <group>
+                                <group>
+                                    <field name="lock_confirm"/>
+                                    <field name="state_field_id"/>
+                                    <field name="draft_state_value"/>
+                                    <field name="pending_state_value"/>
+                                    <field name="approved_state_value"/>
+                                    <field name="rejected_state_value"/>
+                                    <field name="cancelled_state_value"/>
+                                    <field name="returned_state_value"/>
+                                </group>
+                                <group>
+                                    <field name="confirm_method"/>
+                                    <field name="auto_confirm_after_approval"/>
+                                    <field name="rejection_behavior"/>
+                                    <field name="post_rejection_policy"/>
+                                    <field name="reapproval_policy"/>
+                                    <field name="allow_withdraw"/>
+                                    <field name="allow_override"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Smart Fields">
+                            <group>
+                                <field name="amount_field_id"/>
+                                <field name="currency_field_id"/>
+                                <field name="priority_field_id"/>
+                                <field name="owner_field_id"/>
+                                <field name="partner_field_id"/>
+                                <field name="tracked_field_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+                        <page string="Matrix">
+                            <field name="matrix_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="approver_id"/>
+                                    <field name="min_amount"/>
+                                    <field name="max_amount"/>
+                                    <field name="unlimited_amount"/>
+                                    <field name="currency_id"/>
+                                    <field name="condition_domain"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Pre-Checks">
+                            <field name="precheck_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="check_type"/>
+                                    <field name="field_id"/>
+                                    <field name="min_attachment_count"/>
+                                    <field name="condition_domain"/>
+                                    <field name="blocking"/>
+                                    <field name="message"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Escalation">
+                            <field name="escalation_rule_ids">
+                                <list editable="bottom">
+                                    <field name="level"/>
+                                    <field name="name"/>
+                                    <field name="after_hours"/>
+                                    <field name="action"/>
+                                    <field name="allow_escalated_approval"/>
+                                    <field name="notify_user_ids" widget="many2many_tags"/>
+                                    <field name="channel_ids" widget="many2many_tags"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_workflow_search" model="ir.ui.view">
+        <field name="name">universal.approval.workflow.search</field>
+        <field name="model">universal.approval.workflow</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="model_id"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <group>
+                    <filter name="group_model" string="Model" context="{'group_by': 'model_id'}"/>
+                    <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>
+

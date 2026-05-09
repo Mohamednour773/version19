@@ -1,0 +1,118 @@
+.club-customer-info-card {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 6px 0;
+    font-size: 0.85rem;
+
+    .club-info-loading {
+        color: #6c757d;
+        text-align: center;
+        padding: 6px 0;
+    }
+
+    .club-info-alerts {
+        margin-bottom: 6px;
+
+        .club-alert-item {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            padding: 3px 8px;
+            margin-bottom: 3px;
+            font-size: 0.8rem;
+            color: #664d03;
+        }
+    }
+
+    .club-memberships-list {
+        .club-memberships-header {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 4px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .club-membership-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 0;
+            border-bottom: 1px solid #e9ecef;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            .club-pkg-name {
+                font-weight: 500;
+                flex: 1;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .club-pkg-detail {
+                color: #6c757d;
+                font-size: 0.78rem;
+                white-space: nowrap;
+            }
+
+            .club-state-badge {
+                font-size: 0.7rem;
+                padding: 1px 5px;
+                border-radius: 10px;
+                font-weight: 500;
+                white-space: nowrap;
+
+                &.badge-confirmed {
+                    background: #cfe2ff;
+                    color: #084298;
+                }
+
+                &.badge-active {
+                    background: #d1e7dd;
+                    color: #0a3622;
+                }
+
+                &.badge-suspended {
+                    background: #fff3cd;
+                    color: #664d03;
+                }
+
+                &.badge-expired,
+                &.badge-cancelled {
+                    background: #f8d7da;
+                    color: #842029;
+                }
+            }
+        }
+    }
+
+    .club-no-memberships {
+        color: #856404;
+        font-size: 0.82rem;
+        padding: 4px 0;
+    }
+
+    .club-checkin-section {
+        margin-top: 8px;
+        text-align: right;
+
+        .club-checkin-btn {
+            font-size: 0.8rem;
+            padding: 3px 10px;
+        }
+    }
+
+    .club-info-empty {
+        color: #adb5bd;
+        font-size: 0.8rem;
+        text-align: center;
+        padding: 4px 0;
+    }
+}
