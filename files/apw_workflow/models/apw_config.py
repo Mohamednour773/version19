@@ -16,7 +16,7 @@ class ApwConfig(models.Model):
 
     model_id = fields.Many2one(
         'ir.model', string='Target Model', required=True,
-        ondelete='set null', domain=[('transient', '=', False)],
+        ondelete='cascade', domain=[('transient', '=', False)],
     )
     model_name = fields.Char(
         related='model_id.model', string='Model Technical Name',
@@ -48,10 +48,7 @@ class ApwConfig(models.Model):
     request_count = fields.Integer(compute='_compute_counts', string='# Requests', store=True)
     pending_count = fields.Integer(compute='_compute_counts', string='# Pending', store=True)
 
-    _sql_constraints = [
-        ('unique_model', 'UNIQUE(model_id)',
-         'A workflow configuration already exists for this model.')
-    ]
+
 
     @api.depends('stage_ids', 'request_ids', 'request_ids.state')
     def _compute_counts(self):
@@ -61,6 +58,19 @@ class ApwConfig(models.Model):
             rec.pending_count = len(rec.request_ids.filtered(
                 lambda r: r.state in ('pending', 'in_progress')
             ))
+
+    @api.constrains('model_id')
+    def _check_unique_model(self):
+        for rec in self:
+            if rec.model_id:
+                duplicate = self.search([
+                    ('model_id', '=', rec.model_id.id),
+                    ('id', '!=', rec.id),
+                ])
+                if duplicate:
+                    raise ValidationError(
+                        _('A workflow configuration already exists for model "%s".') % rec.model_id.name
+                    )
 
     # ── Field injection ──────────────────────────────────────────────
 
