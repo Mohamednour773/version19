@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError, UserError
+from odoo.exceptions import ValidationError
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -27,12 +27,10 @@ class ApwConfig(models.Model):
     confirm_method = fields.Char(
         string='Confirm Method (on approval)',
         placeholder='e.g. action_confirm',
-        help='Method to call on the document when all approvals are granted.'
     )
     cancel_method = fields.Char(
         string='Cancel Method (on refusal)',
         placeholder='e.g. action_cancel',
-        help='Method to call on the document when an approval is refused.'
     )
 
     injected_view_id = fields.Many2one(
@@ -68,9 +66,9 @@ class ApwConfig(models.Model):
 
     def _ensure_custom_fields(self):
         """
-        Add x_apw_state and x_apw_waiting directly onto the target model
-        via ir.model.fields (same as Studio custom fields).
-        No inheritance, no new models — the fields live on the original table.
+        Add x_apw_state (Char) and x_apw_waiting (Char) directly onto
+        the target model via ir.model.fields — same as Studio custom fields.
+        We use Char for state to avoid selection_ids complexity.
         """
         self.ensure_one()
         IrField = self.env['ir.model.fields'].sudo()
@@ -81,14 +79,7 @@ class ApwConfig(models.Model):
                 'name': 'x_apw_state',
                 'field_description': 'Approval Status',
                 'model_id': target.id,
-                'ttype': 'selection',
-                'selection_ids': [
-                    (0, 0, {'value': 'none',        'name': 'No Approval',  'sequence': 1}),
-                    (0, 0, {'value': 'pending',      'name': 'Pending',      'sequence': 2}),
-                    (0, 0, {'value': 'in_progress',  'name': 'In Progress',  'sequence': 3}),
-                    (0, 0, {'value': 'approved',     'name': 'Approved',     'sequence': 4}),
-                    (0, 0, {'value': 'refused',      'name': 'Refused',      'sequence': 5}),
-                ],
+                'ttype': 'char',
                 'store': True,
                 'copied': False,
                 'readonly': True,
@@ -110,8 +101,11 @@ class ApwConfig(models.Model):
                 ('name', '=', fdef['name']),
             ], limit=1)
             if not existing:
-                IrField.create(fdef)
-                _logger.info('APW: added field %s to model %s', fdef['name'], self.model_name)
+                try:
+                    IrField.create(fdef)
+                    _logger.info('APW: added field %s to %s', fdef['name'], self.model_name)
+                except Exception as e:
+                    _logger.warning('APW: could not add field %s: %s', fdef['name'], e)
 
     # ── View injection ───────────────────────────────────────────────
 
@@ -123,44 +117,8 @@ class ApwConfig(models.Model):
             ('mode', '=', 'primary'),
         ], order='priority asc', limit=1)
 
-    def _build_injection_arch(self):
-        """
-        Inject into the target model's own form view:
-          • A "Request Approval" button in the header
-          • A status bar showing x_apw_state + x_apw_waiting
-        The buttons call server actions bound to the model (not a wizard).
-        """
-        self.ensure_one()
-        submit_action_id = self._get_or_create_submit_action()
-        view_action_id   = self._get_or_create_view_action()
-
-        arch = """<data>
-  <xpath expr="//header" position="inside">
-    <button name="%(submit)d" string="Request Approval"
-            type="action" class="btn-warning"
-            invisible="x_apw_state in ('pending','in_progress','approved')"/>
-  </xpath>
-  <xpath expr="//sheet" position="before">
-    <div class="apw-status-bar o_field_widget"
-         style="background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:6px 16px;display:flex;align-items:center;gap:12px;"
-         invisible="x_apw_state == 'none'">
-      <field name="x_apw_state" readonly="1"/>
-      <span invisible="x_apw_waiting == ''">
-        — Waiting on: <field name="x_apw_waiting" readonly="1"/>
-      </span>
-      <button name="%(view)d" string="View Approvals"
-              type="action" class="btn-link btn-sm"
-              invisible="x_apw_state == 'none'"/>
-    </div>
-  </xpath>
-</data>""" % {'submit': submit_action_id, 'view': view_action_id}
-        return arch
-
     def _get_or_create_submit_action(self):
-        """
-        Create/find an ir.actions.server on the target model that submits
-        for APW approval. The action lives on the target model — no foreign class needed.
-        """
+        """Server action on the target model: submit for APW approval."""
         self.ensure_one()
         action_name = 'APW Submit: %s' % self.model_name
         IrAction = self.env['ir.actions.server'].sudo()
@@ -169,25 +127,25 @@ class ApwConfig(models.Model):
             ('name', '=', action_name),
         ], limit=1)
 
-        code = (
-            "config = env['apw.config'].get_config_for_model(record._name)\n"
-            "if not config:\n"
-            "    raise UserError('No APW workflow configured for this model.')\n"
-            "existing = env['apw.request'].search([\n"
-            "    ('res_model', '=', record._name),\n"
-            "    ('res_id', '=', record.id),\n"
-            "    ('state', 'in', ['draft', 'pending', 'in_progress']),\n"
-            "], limit=1)\n"
-            "if existing:\n"
-            "    raise UserError('Active approval request already exists: ' + existing.name)\n"
-            "req = env['apw.request'].create({\n"
-            "    'config_id': config.id,\n"
-            "    'res_model': record._name,\n"
-            "    'res_id': record.id,\n"
-            "    'requester_id': env.user.id,\n"
-            "})\n"
-            "req.action_submit()\n"
-        )
+        code = "\n".join([
+            "config = env['apw.config'].get_config_for_model(record._name)",
+            "if not config:",
+            "    raise UserError('No APW workflow configured for this model.')",
+            "existing = env['apw.request'].search([",
+            "    ('res_model', '=', record._name),",
+            "    ('res_id', '=', record.id),",
+            "    ('state', 'in', ['draft', 'pending', 'in_progress']),",
+            "], limit=1)",
+            "if existing:",
+            "    raise UserError('Active approval request already exists: ' + existing.name)",
+            "req = env['apw.request'].create({",
+            "    'config_id': config.id,",
+            "    'res_model': record._name,",
+            "    'res_id': record.id,",
+            "    'requester_id': env.user.id,",
+            "})",
+            "req.action_submit()",
+        ])
 
         if not action:
             action = IrAction.create({
@@ -201,24 +159,24 @@ class ApwConfig(models.Model):
         return action.id
 
     def _get_or_create_view_action(self):
-        """ir.actions.server that opens the approval requests for this record."""
+        """Server action on the target model: view approval requests."""
         self.ensure_one()
-        action_name = 'APW View Approvals: %s' % self.model_name
+        action_name = 'APW View: %s' % self.model_name
         IrAction = self.env['ir.actions.server'].sudo()
         action = IrAction.search([
             ('model_id', '=', self.model_id.id),
             ('name', '=', action_name),
         ], limit=1)
 
-        code = (
-            "action = {\n"
-            "    'type': 'ir.actions.act_window',\n"
-            "    'name': 'Approval Requests',\n"
-            "    'res_model': 'apw.request',\n"
-            "    'view_mode': 'list,form',\n"
-            "    'domain': [('res_model', '=', record._name), ('res_id', '=', record.id)],\n"
-            "}\n"
-        )
+        code = "\n".join([
+            "action = {",
+            "    'type': 'ir.actions.act_window',",
+            "    'name': 'Approval Requests',",
+            "    'res_model': 'apw.request',",
+            "    'view_mode': 'list,form',",
+            "    'domain': [('res_model', '=', record._name), ('res_id', '=', record.id)],",
+            "}",
+        ])
 
         if not action:
             action = IrAction.create({
@@ -231,12 +189,29 @@ class ApwConfig(models.Model):
             action.write({'code': code})
         return action.id
 
+    def _build_injection_arch(self, submit_id, view_id):
+        return (
+            '<data>'
+            '<xpath expr="//header" position="inside">'
+            '<button name="%d" string="Request Approval" type="action" class="btn-warning"'
+            ' invisible="x_apw_state in (\'pending\',\'in_progress\',\'approved\')"/>'
+            '</xpath>'
+            '<xpath expr="//sheet" position="before">'
+            '<div style="background:#fff3cd;border-bottom:1px solid #ffc107;'
+            'padding:6px 16px;display:flex;align-items:center;gap:12px;"'
+            ' invisible="x_apw_state == \'\' or x_apw_state == \'none\'">'
+            '<strong>Approval Status:</strong>'
+            '<field name="x_apw_state" readonly="1"/>'
+            '<span invisible="x_apw_waiting == \'\'">'
+            ' — Waiting on: <field name="x_apw_waiting" readonly="1"/>'
+            '</span>'
+            '<button name="%d" string="View Approvals" type="action" class="btn-link btn-sm"/>'
+            '</div>'
+            '</xpath>'
+            '</data>'
+        ) % (submit_id, view_id)
+
     def action_inject_view(self):
-        """
-        One-click setup:
-          1. Add x_apw_state + x_apw_waiting to the target model
-          2. Inject button + badge into the target model's own form view
-        """
         self.ensure_one()
         if not self.model_name:
             raise ValidationError(_('Please select a target model first.'))
@@ -244,15 +219,18 @@ class ApwConfig(models.Model):
         parent_view = self._get_primary_form_view()
         if not parent_view:
             raise ValidationError(_(
-                'No primary form view found for model "%s".\n'
-                'Cannot inject automatically — please add the button manually.'
+                'No primary form view found for model "%s".'
             ) % self.model_name)
 
         # 1. Add custom fields to the target model
         self._ensure_custom_fields()
 
-        # 2. Build and create/update the inherited view
-        arch = self._build_injection_arch()
+        # 2. Create server actions
+        submit_id = self._get_or_create_submit_action()
+        view_id   = self._get_or_create_view_action()
+
+        # 3. Build and apply inherited view
+        arch = self._build_injection_arch(submit_id, view_id)
         if self.injected_view_id:
             self.injected_view_id.sudo().write({'arch': arch})
         else:
@@ -269,14 +247,13 @@ class ApwConfig(models.Model):
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'message': _('✅ Approval controls injected into %s form successfully!') % self.model_id.name,
+                'message': _('Approval button injected into %s successfully!') % self.model_id.name,
                 'type': 'success',
                 'sticky': False,
             }
         }
 
     def action_remove_injection(self):
-        """Remove the injected view (custom fields are kept — safe)."""
         self.ensure_one()
         if self.injected_view_id:
             self.injected_view_id.sudo().unlink()
