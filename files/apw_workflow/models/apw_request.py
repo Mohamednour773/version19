@@ -56,8 +56,8 @@ class ApwRequest(models.Model):
     date_approved = fields.Datetime(string='Approved On')
     date_refused = fields.Datetime(string='Refused On')
 
-    waiting_on = fields.Char(compute='_compute_waiting_on', string='Waiting On', store=False)
-    progress_percent = fields.Float(compute='_compute_progress', string='Progress (%)')
+    waiting_on = fields.Char(compute='_compute_waiting_on', string='Waiting On', store=True)
+    progress_percent = fields.Float(compute='_compute_progress', string='Progress (%)', store=True)
 
     @api.depends('res_model', 'res_id')
     def _compute_res_name(self):

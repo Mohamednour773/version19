@@ -59,12 +59,12 @@ class ApwConfig(models.Model):
 
     # Stages
     stage_ids = fields.One2many('apw.stage', 'config_id', string='Approval Stages', copy=True)
-    stage_count = fields.Integer(compute='_compute_counts', string='# Stages')
+    stage_count = fields.Integer(compute='_compute_counts', string='# Stages', store=True)
 
     # Statistics
     request_ids = fields.One2many('apw.request', 'config_id', string='Requests')
-    request_count = fields.Integer(compute='_compute_counts', string='# Requests')
-    pending_count = fields.Integer(compute='_compute_counts', string='# Pending')
+    request_count = fields.Integer(compute='_compute_counts', string='# Requests', store=True)
+    pending_count = fields.Integer(compute='_compute_counts', string='# Pending', store=True)
 
     _sql_constraints = [
         ('unique_model', 'UNIQUE(model_id)',

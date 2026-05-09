@@ -60,7 +60,7 @@ class ApwStage(models.Model):
 
     # Display
     approver_display = fields.Char(
-        compute='_compute_approver_display', string='Approver'
+        compute='_compute_approver_display', string='Approver', store=True
     )
 
     @api.depends('approver_type', 'approver_user_id', 'approver_group_id', 'approver_field_id')
