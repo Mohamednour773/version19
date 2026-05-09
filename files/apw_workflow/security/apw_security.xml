@@ -2,20 +2,15 @@
 <odoo>
     <data noupdate="1">
 
-        <record id="module_category_apw" model="ir.module.category">
-            <field name="name">APW Approvals</field>
-            <field name="sequence">101</field>
-        </record>
-
+        <!-- Odoo 19: res.groups no longer has category_id.
+             Groups are defined without a category. -->
         <record id="group_apw_user" model="res.groups">
-            <field name="name">User</field>
-            <field name="category_id" ref="module_category_apw"/>
+            <field name="name">APW Approvals / User</field>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
         <record id="group_apw_manager" model="res.groups">
-            <field name="name">Manager</field>
-            <field name="category_id" ref="module_category_apw"/>
+            <field name="name">APW Approvals / Manager</field>
             <field name="implied_ids" eval="[(4, ref('group_apw_user'))]"/>
             <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
