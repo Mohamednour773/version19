@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── Refuse Wizard ─────────────────────────────────────────── -->
+    <record id="view_approval_refuse_wizard_form" model="ir.ui.view">
+        <field name="name">approval.refuse.wizard.form</field>
+        <field name="model">approval.refuse.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Refuse Approval">
+                <div class="alert alert-danger" role="alert">
+                    <strong>You are about to refuse this approval.</strong>
+                    This action will reject the entire approval request
+                    and notify the requester.
+                </div>
+                <group>
+                    <field name="res_name" readonly="1" string="Document"/>
+                    <field name="stage_name" readonly="1" string="Stage"/>
+                </group>
+                <group>
+                    <field name="note"
+                           placeholder="Please explain why you are refusing this approval..."
+                           required="1"
+                           nolabel="1"
+                           style="min-height: 100px;"/>
+                </group>
+                <footer>
+                    <button name="action_confirm_refuse"
+                            string="Confirm Refusal"
+                            type="object"
+                            class="btn-danger"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Action Blocked Wizard ────────────────────────────────── -->
+    <record id="view_approval_action_wizard_form" model="ir.ui.view">
+        <field name="name">approval.action.wizard.form</field>
+        <field name="model">approval.action.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Action Blocked">
+                <div class="alert alert-warning" role="alert">
+                    <i class="fa fa-lock"/> <strong>This action is blocked.</strong>
+                </div>
+                <group>
+                    <field name="message" readonly="1" nolabel="1" widget="html"/>
+                </group>
+                <group string="Approval Details" invisible="not request_id">
+                    <field name="request_id" readonly="1"/>
+                    <field name="stage_name" readonly="1" string="Current Stage"/>
+                    <field name="waiting_on" readonly="1"/>
+                </group>
+                <footer>
+                    <button name="action_view_request"
+                            string="View Approval Request"
+                            type="object"
+                            class="btn-primary"
+                            invisible="not request_id"/>
+                    <button string="Close"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

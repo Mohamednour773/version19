@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── List View ─────────────────────────────────────────────── -->
+    <record id="view_approval_request_list" model="ir.ui.view">
+        <field name="name">approval.request.list</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <list string="Approval Requests"
+                  decoration-success="state == 'approved'"
+                  decoration-danger="state == 'refused'"
+                  decoration-warning="state == 'in_progress'"
+                  decoration-info="state == 'pending'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name" string="Reference"/>
+                <field name="res_name" string="Document"/>
+                <field name="workflow_config_id" string="Workflow"/>
+                <field name="requester_id" string="Requested By"/>
+                <field name="current_stage_id" string="Current Stage"/>
+                <field name="waiting_on" string="Waiting On"/>
+                <field name="progress_percent" string="Progress" widget="progressbar"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'approved'"
+                       decoration-danger="state == 'refused'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-info="state in ('pending', 'draft')"
+                       decoration-secondary="state == 'cancelled'"/>
+                <field name="date_submitted" string="Submitted"/>
+                <field name="date_approved" string="Approved"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── Form View ─────────────────────────────────────────────── -->
+    <record id="view_approval_request_form" model="ir.ui.view">
+        <field name="name">approval.request.form</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <form string="Approval Request">
+                <header>
+                    <button name="action_submit"
+                            string="Submit for Approval"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state in ('approved', 'refused', 'cancelled')"
+                            confirm="Are you sure you want to cancel this approval request?"/>
+                    <button name="action_reset_to_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state != 'cancelled'"/>
+                    <button name="action_open_document"
+                            string="Open Document"
+                            type="object"
+                            class="btn-secondary"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,pending,in_progress,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <h2>
+                            <field name="res_name" readonly="1"/>
+                        </h2>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="o_field_widget" invisible="state == 'draft'">
+                        <div class="approval-progress-container" style="margin: 12px 0;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span style="font-weight:600; color:#555;">Approval Progress</span>
+                                <field name="progress_percent" readonly="1"
+                                       widget="float"
+                                       options="{'digits': [0,0]}"
+                                       string=""/> <span style="color:#888;">%</span>
+                            </div>
+                            <div style="background:#e8e8e8; border-radius:8px; height:10px; overflow:hidden;">
+                                <field name="progress_percent"
+                                       widget="progressbar"
+                                       options="{'editable': false, 'overflow': false}"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <group>
+                        <group string="Request Details">
+                            <field name="workflow_config_id" readonly="1"/>
+                            <field name="requester_id" readonly="1"/>
+                            <field name="date_submitted" readonly="1"/>
+                            <field name="date_approved" readonly="1"
+                                   invisible="not date_approved"/>
+                            <field name="date_refused" readonly="1"
+                                   invisible="not date_refused"/>
+                        </group>
+                        <group string="Current Status">
+                            <field name="current_stage_id" readonly="1"/>
+                            <field name="waiting_on" readonly="1"
+                                   invisible="state not in ('pending', 'in_progress')"/>
+                            <field name="res_model" readonly="1" string="Document Model"/>
+                            <field name="res_id" readonly="1" string="Document ID"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Approval Lines" name="lines">
+                            <field name="line_ids" readonly="1">
+                                <list decoration-success="state == 'approved'"
+                                      decoration-danger="state == 'refused'"
+                                      decoration-info="state == 'pending'"
+                                      decoration-muted="state == 'cancelled'">
+                                    <field name="stage_sequence" string="#" width="40px"/>
+                                    <field name="stage_name" string="Stage"/>
+                                    <field name="approver_id" string="Approver"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'approved'"
+                                           decoration-danger="state == 'refused'"
+                                           decoration-info="state == 'pending'"
+                                           decoration-secondary="state == 'cancelled'"/>
+                                    <field name="date_approved" string="Decision Date"/>
+                                    <field name="note" string="Comment"/>
+                                    <!-- Approve/Refuse buttons in the list -->
+                                    <button name="action_approve"
+                                            string="Approve"
+                                            type="object"
+                                            class="btn-success btn-sm"
+                                            invisible="state != 'pending'"
+                                            icon="fa-check"/>
+                                    <button name="action_refuse"
+                                            string="Refuse"
+                                            type="object"
+                                            class="btn-danger btn-sm"
+                                            invisible="state != 'pending'"
+                                            icon="fa-times"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Kanban View ──────────────────────────────────────────── -->
+    <record id="view_approval_request_kanban" model="ir.ui.view">
+        <field name="name">approval.request.kanban</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="res_name"/>
+                <field name="workflow_config_id"/>
+                <field name="requester_id"/>
+                <field name="current_stage_id"/>
+                <field name="waiting_on"/>
+                <field name="progress_percent"/>
+                <field name="state"/>
+                <field name="date_submitted"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="res_name"/>
+                                    </strong>
+                                    <span class="o_kanban_record_subtitle text-muted">
+                                        <field name="name"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div><strong>Workflow:</strong> <field name="workflow_config_id"/></div>
+                                <div t-if="record.current_stage_id.value">
+                                    <strong>Stage:</strong>
+                                    <field name="current_stage_id"/>
+                                </div>
+                                <div t-if="record.waiting_on.value">
+                                    <strong>Waiting on:</strong>
+                                    <field name="waiting_on"/>
+                                </div>
+                                <div class="mt-2">
+                                    <field name="progress_percent" widget="progressbar"/>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <field name="requester_id" widget="many2one_avatar_user"/>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="date_submitted" widget="date"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ─── Search View ──────────────────────────────────────────── -->
+    <record id="view_approval_request_search" model="ir.ui.view">
+        <field name="name">approval.request.search</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <search string="Search Approval Requests">
+                <field name="name"/>
+                <field name="res_name"/>
+                <field name="requester_id"/>
+                <field name="workflow_config_id"/>
+                <separator/>
+                <filter name="my_approvals" string="My Pending Approvals"
+                        domain="[('line_ids.approver_id', '=', uid),
+                                 ('line_ids.state', '=', 'pending'),
+                                 ('state', 'in', ('pending','in_progress'))]"/>
+                <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                <filter name="in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="refused" string="Refused" domain="[('state', '=', 'refused')]"/>
+                <separator/>
+                <filter name="my_requests" string="My Requests"
+                        domain="[('requester_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Workflow" name="group_workflow"
+                            context="{'group_by': 'workflow_config_id'}"/>
+                    <filter string="State" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Requester" name="group_requester"
+                            context="{'group_by': 'requester_id'}"/>
+                    <filter string="Current Stage" name="group_stage"
+                            context="{'group_by': 'current_stage_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ─── Action ───────────────────────────────────────────────── -->
+    <record id="action_approval_request" model="ir.actions.act_window">
+        <field name="name">Approval Requests</field>
+        <field name="res_model">approval.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="context">{'search_default_in_progress': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No approval requests yet!
+            </p>
+            <p>
+                Approval requests are created when users submit documents
+                for review. They will appear here once submitted.
+            </p>
+        </field>
+    </record>
+
+    <!-- My Pending Approvals action -->
+    <record id="action_my_pending_approvals" model="ir.actions.act_window">
+        <field name="name">My Pending Approvals</field>
+        <field name="res_model">approval.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[
+            ('line_ids.approver_id', '=', uid),
+            ('line_ids.state', '=', 'pending'),
+            ('state', 'in', ['pending', 'in_progress'])
+        ]</field>
+        <field name="context">{'search_default_my_approvals': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                You have no pending approvals!
+            </p>
+            <p>
+                Documents waiting for your approval will appear here.
+            </p>
+        </field>
+    </record>
+
+</odoo>

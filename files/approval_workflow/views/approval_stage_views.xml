@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── List View ─────────────────────────────────────────────── -->
+    <record id="view_approval_stage_list" model="ir.ui.view">
+        <field name="name">approval.stage.list</field>
+        <field name="model">approval.stage</field>
+        <field name="arch" type="xml">
+            <list string="Approval Stages" default_order="workflow_config_id, sequence">
+                <field name="sequence" widget="handle"/>
+                <field name="workflow_config_id"/>
+                <field name="name"/>
+                <field name="approver_type"/>
+                <field name="approver_display" string="Approver"/>
+                <field name="allow_self_approval"/>
+                <field name="auto_approve_if_approver_missing"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── Form View ─────────────────────────────────────────────── -->
+    <record id="view_approval_stage_form" model="ir.ui.view">
+        <field name="name">approval.stage.form</field>
+        <field name="model">approval.stage</field>
+        <field name="arch" type="xml">
+            <form string="Approval Stage">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Stage Name..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Stage Settings">
+                            <field name="workflow_config_id" options="{'no_create': True}"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group string="Approver">
+                            <field name="approver_type" widget="radio"/>
+                            <field name="approver_user_id"
+                                   invisible="approver_type != 'user'"
+                                   required="approver_type == 'user'"/>
+                            <field name="approver_group_id"
+                                   invisible="approver_type != 'group'"
+                                   required="approver_type == 'group'"/>
+                            <field name="approver_field_id"
+                                   invisible="approver_type != 'dynamic'"
+                                   required="approver_type == 'dynamic'"/>
+                            <field name="require_all_group_members"
+                                   invisible="approver_type != 'group'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Behavior">
+                            <field name="allow_self_approval"/>
+                            <field name="auto_approve_if_approver_missing"/>
+                            <field name="condition_domain"
+                                   placeholder="[] (always apply) or [('state','=','draft')]"/>
+                        </group>
+                        <group string="Instructions">
+                            <field name="description"
+                                   placeholder="What should the approver review?"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Action ───────────────────────────────────────────────── -->
+    <record id="action_approval_stage" model="ir.actions.act_window">
+        <field name="name">Approval Stages</field>
+        <field name="res_model">approval.stage</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

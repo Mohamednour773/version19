@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── Dashboard List: Pending Approval Lines ───────────────── -->
+    <record id="view_approval_line_dashboard_list" model="ir.ui.view">
+        <field name="name">approval.request.line.dashboard.list</field>
+        <field name="model">approval.request.line</field>
+        <field name="arch" type="xml">
+            <list string="Pending Approval Lines"
+                  decoration-warning="state == 'pending'"
+                  decoration-success="state == 'approved'"
+                  decoration-danger="state == 'refused'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="request_id" string="Request Ref"/>
+                <field name="res_name" string="Document"/>
+                <field name="workflow_config_id" string="Workflow"/>
+                <field name="stage_name" string="Stage"/>
+                <field name="stage_sequence" string="Seq" width="50px"/>
+                <field name="approver_id" string="Approver"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state == 'pending'"
+                       decoration-success="state == 'approved'"
+                       decoration-danger="state == 'refused'"
+                       decoration-secondary="state == 'cancelled'"/>
+                <field name="date_approved" string="Decision Date"/>
+                <field name="note" string="Comment" optional="show"/>
+                <button name="action_approve"
+                        string="Approve"
+                        type="object"
+                        class="btn-success btn-sm"
+                        invisible="state != 'pending'"
+                        icon="fa-check"
+                        title="Approve this item"/>
+                <button name="action_refuse"
+                        string="Refuse"
+                        type="object"
+                        class="btn-danger btn-sm"
+                        invisible="state != 'pending'"
+                        icon="fa-times"
+                        title="Refuse this item"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── Dashboard Search ────────────────────────────────────── -->
+    <record id="view_approval_line_dashboard_search" model="ir.ui.view">
+        <field name="name">approval.request.line.dashboard.search</field>
+        <field name="model">approval.request.line</field>
+        <field name="arch" type="xml">
+            <search string="Search Approval Lines">
+                <field name="res_name"/>
+                <field name="approver_id"/>
+                <field name="workflow_config_id"/>
+                <separator/>
+                <filter name="my_pending" string="Assigned to Me (Pending)"
+                        domain="[('approver_id', '=', uid), ('state', '=', 'pending')]"/>
+                <filter name="all_pending" string="All Pending"
+                        domain="[('state', '=', 'pending')]"/>
+                <filter name="approved" string="Approved"
+                        domain="[('state', '=', 'approved')]"/>
+                <filter name="refused" string="Refused"
+                        domain="[('state', '=', 'refused')]"/>
+                <separator/>
+                <filter name="active_requests" string="Active Requests Only"
+                        domain="[('request_id.state', 'in', ['pending', 'in_progress'])]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Workflow" name="group_workflow"
+                            context="{'group_by': 'workflow_config_id'}"/>
+                    <filter string="Stage" name="group_stage"
+                            context="{'group_by': 'stage_name'}"/>
+                    <filter string="Approver" name="group_approver"
+                            context="{'group_by': 'approver_id'}"/>
+                    <filter string="Decision" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Document" name="group_document"
+                            context="{'group_by': 'res_name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ─── Dashboard Action (All Pending) ──────────────────────── -->
+    <record id="action_approval_dashboard" model="ir.actions.act_window">
+        <field name="name">Approval Dashboard</field>
+        <field name="res_model">approval.request.line</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[
+            ('state', '=', 'pending'),
+            ('request_id.state', 'in', ['pending', 'in_progress'])
+        ]</field>
+        <field name="context">{'search_default_active_requests': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No pending approvals — great!
+            </p>
+            <p>
+                All pending approval actions across all workflows are shown here.
+                Use this view to quickly see what needs your attention.
+            </p>
+        </field>
+    </record>
+
+    <!-- ─── My Approvals Dashboard ──────────────────────────────── -->
+    <record id="action_my_approval_dashboard" model="ir.actions.act_window">
+        <field name="name">My Approval Queue</field>
+        <field name="res_model">approval.request.line</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[
+            ('approver_id', '=', uid),
+            ('state', '=', 'pending'),
+            ('request_id.state', 'in', ['pending', 'in_progress'])
+        ]</field>
+        <field name="context">{'search_default_my_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Your approval queue is empty!
+            </p>
+            <p>
+                Items waiting specifically for your approval appear here.
+                You can approve or refuse directly from this list.
+            </p>
+        </field>
+    </record>
+
+</odoo>

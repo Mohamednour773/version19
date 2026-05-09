@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ─── Root Menu ─────────────────────────────────────────────── -->
+    <menuitem id="menu_approval_root"
+              name="Approvals"
+              sequence="90"
+              web_icon="approval_workflow,static/src/img/icon.png"
+              groups="approval_workflow.group_approval_user"/>
+
+    <!-- ─── My Work ───────────────────────────────────────────────── -->
+    <menuitem id="menu_approval_my_work"
+              name="My Work"
+              parent="menu_approval_root"
+              sequence="10"/>
+
+    <menuitem id="menu_my_approval_queue"
+              name="My Approval Queue"
+              parent="menu_approval_my_work"
+              action="action_my_approval_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_my_pending_approvals"
+              name="My Pending Requests"
+              parent="menu_approval_my_work"
+              action="action_my_pending_approvals"
+              sequence="20"/>
+
+    <!-- ─── All Approvals ─────────────────────────────────────────── -->
+    <menuitem id="menu_approval_all"
+              name="All Approvals"
+              parent="menu_approval_root"
+              sequence="20"/>
+
+    <menuitem id="menu_approval_dashboard"
+              name="Pending Approvals"
+              parent="menu_approval_all"
+              action="action_approval_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_approval_requests"
+              name="All Requests"
+              parent="menu_approval_all"
+              action="action_approval_request"
+              sequence="20"/>
+
+    <!-- ─── Configuration (Managers only) ────────────────────────── -->
+    <menuitem id="menu_approval_config"
+              name="Configuration"
+              parent="menu_approval_root"
+              sequence="100"
+              groups="approval_workflow.group_approval_manager"/>
+
+    <menuitem id="menu_approval_workflow_config"
+              name="Workflow Configurations"
+              parent="menu_approval_config"
+              action="action_approval_workflow_config"
+              sequence="10"
+              groups="approval_workflow.group_approval_manager"/>
+
+    <menuitem id="menu_approval_stages"
+              name="All Stages"
+              parent="menu_approval_config"
+              action="action_approval_stage"
+              sequence="20"
+              groups="approval_workflow.group_approval_manager"/>
+
+</odoo>
