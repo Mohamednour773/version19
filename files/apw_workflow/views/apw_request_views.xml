@@ -12,10 +12,11 @@
                   decoration-info="state == 'pending'"
                   decoration-muted="state == 'cancelled'">
                 <field name="name"/>
-                <field name="res_name" string="Document"/>
-                <field name="config_id" string="Workflow"/>
+                <field name="res_name"   string="Document"/>
+                <field name="res_model"  string="Model"/>
+                <field name="config_id"  string="Workflow"/>
                 <field name="requester_id"/>
-                <field name="current_stage_id" string="Current Stage"/>
+                <field name="current_stage_id" string="Stage"/>
                 <field name="waiting_on"/>
                 <field name="state"/>
                 <field name="date_submitted"/>
@@ -39,46 +40,44 @@
                     <button name="action_reset_to_draft" string="Reset to Draft"
                             type="object" invisible="state != 'cancelled'"/>
                     <button name="action_open_document" string="Open Document"
-                            type="object" class="btn-secondary"/>
+                            type="object"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,pending,in_progress,approved"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
                         <h1><field name="name" readonly="1"/></h1>
-                        <h2 class="text-muted"><field name="res_name" readonly="1"/></h2>
+                        <h2><field name="res_name" readonly="1"/></h2>
                     </div>
                     <group>
                         <group string="Request Details">
-                            <field name="config_id" readonly="1"/>
+                            <field name="config_id"    readonly="1"/>
+                            <field name="res_model"    readonly="1" string="Model"/>
                             <field name="requester_id" readonly="1"/>
                             <field name="date_submitted" readonly="1"/>
-                            <field name="date_approved" readonly="1"
-                                   invisible="not date_approved"/>
-                            <field name="date_refused" readonly="1"
-                                   invisible="not date_refused"/>
+                            <field name="date_approved"  readonly="1" invisible="not date_approved"/>
+                            <field name="date_refused"   readonly="1" invisible="not date_refused"/>
                         </group>
                         <group string="Current Status">
                             <field name="current_stage_id" readonly="1"/>
-                            <field name="waiting_on" readonly="1"
+                            <field name="waiting_on"       readonly="1"
                                    invisible="state not in ('pending','in_progress')"/>
                             <field name="progress_percent" readonly="1"/>
-                            <field name="res_model" readonly="1" string="Model"/>
                         </group>
                     </group>
                     <notebook>
-                        <page string="Approval Lines" name="lines">
+                        <page string="Approval Lines">
                             <field name="line_ids" readonly="1">
                                 <list decoration-success="state == 'approved'"
                                       decoration-danger="state == 'refused'"
                                       decoration-info="state == 'pending'"
                                       decoration-muted="state == 'cancelled'">
                                     <field name="stage_sequence" string="#"/>
-                                    <field name="stage_name" string="Stage"/>
-                                    <field name="approver_id"/>
-                                    <field name="state"/>
-                                    <field name="date_decided" string="Decision Date"/>
-                                    <field name="note" string="Comment"/>
+                                    <field name="stage_name"  string="Stage"/>
+                                    <field name="approver_id" string="Approver"/>
+                                    <field name="state"       string="Decision"/>
+                                    <field name="date_decided" string="Date"/>
+                                    <field name="note"        string="Comment"/>
                                     <button name="action_approve" string="Approve"
                                             type="object"
                                             invisible="state != 'pending'"/>
@@ -105,12 +104,12 @@
     </record>
 
     <record id="action_apw_my_pending" model="ir.actions.act_window">
-        <field name="name">My Pending Requests</field>
+        <field name="name">My Submitted Requests</field>
         <field name="res_model">apw.request</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('requester_id','=',uid),('state','in',['pending','in_progress'])]</field>
         <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">No pending requests you submitted.</p>
+            <p class="o_view_nocontent_smiling_face">No pending requests.</p>
         </field>
     </record>
 
