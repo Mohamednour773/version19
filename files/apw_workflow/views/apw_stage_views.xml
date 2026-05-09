@@ -32,7 +32,7 @@
                             <field name="sequence"/>
                         </group>
                         <group string="Approver">
-                            <field name="approver_type" widget="radio"/>
+                            <field name="approver_type"/>
                             <field name="approver_user_id"
                                    invisible="approver_type != 'user'"
                                    required="approver_type == 'user'"/>
@@ -50,12 +50,10 @@
                         <group string="Behaviour">
                             <field name="allow_self_approval"/>
                             <field name="auto_approve_if_missing"/>
-                            <field name="condition_domain"
-                                   placeholder="[] (always apply)"/>
+                            <field name="condition_domain"/>
                         </group>
                         <group string="Instructions for Approver">
-                            <field name="description" nolabel="1"
-                                   placeholder="What should the approver review?"/>
+                            <field name="description" nolabel="1"/>
                         </group>
                     </group>
                 </sheet>

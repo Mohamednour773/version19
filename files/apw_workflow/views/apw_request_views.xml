@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ─── List ──────────────────────────────────────────────────── -->
     <record id="view_apw_request_list" model="ir.ui.view">
         <field name="name">apw.request.list</field>
         <field name="model">apw.request</field>
@@ -18,19 +17,12 @@
                 <field name="requester_id"/>
                 <field name="current_stage_id" string="Current Stage"/>
                 <field name="waiting_on"/>
-                <field name="progress_percent" string="Progress" widget="progressbar"/>
-                <field name="state" widget="badge"
-                       decoration-success="state == 'approved'"
-                       decoration-danger="state == 'refused'"
-                       decoration-warning="state == 'in_progress'"
-                       decoration-info="state in ('pending','draft')"
-                       decoration-secondary="state == 'cancelled'"/>
+                <field name="state"/>
                 <field name="date_submitted"/>
             </list>
         </field>
     </record>
 
-    <!-- ─── Form ──────────────────────────────────────────────────── -->
     <record id="view_apw_request_form" model="ir.ui.view">
         <field name="name">apw.request.form</field>
         <field name="model">apw.request</field>
@@ -70,8 +62,7 @@
                             <field name="current_stage_id" readonly="1"/>
                             <field name="waiting_on" readonly="1"
                                    invisible="state not in ('pending','in_progress')"/>
-                            <field name="progress_percent" readonly="1"
-                                   widget="progressbar"/>
+                            <field name="progress_percent" readonly="1"/>
                             <field name="res_model" readonly="1" string="Model"/>
                         </group>
                     </group>
@@ -82,22 +73,18 @@
                                       decoration-danger="state == 'refused'"
                                       decoration-info="state == 'pending'"
                                       decoration-muted="state == 'cancelled'">
-                                    <field name="stage_sequence" string="#" width="40px"/>
+                                    <field name="stage_sequence" string="#"/>
                                     <field name="stage_name" string="Stage"/>
                                     <field name="approver_id"/>
-                                    <field name="state" widget="badge"
-                                           decoration-success="state == 'approved'"
-                                           decoration-danger="state == 'refused'"
-                                           decoration-info="state == 'pending'"
-                                           decoration-secondary="state == 'cancelled'"/>
+                                    <field name="state"/>
                                     <field name="date_decided" string="Decision Date"/>
                                     <field name="note" string="Comment"/>
                                     <button name="action_approve" string="Approve"
-                                            type="object" class="btn-success btn-sm"
-                                            invisible="state != 'pending'" icon="fa-check"/>
+                                            type="object"
+                                            invisible="state != 'pending'"/>
                                     <button name="action_refuse" string="Refuse"
-                                            type="object" class="btn-danger btn-sm"
-                                            invisible="state != 'pending'" icon="fa-times"/>
+                                            type="object"
+                                            invisible="state != 'pending'"/>
                                 </list>
                             </field>
                         </page>
@@ -108,9 +95,6 @@
         </field>
     </record>
 
-    <!-- Search view omitted; Odoo auto-generates one. -->
-
-    <!-- ─── Actions ───────────────────────────────────────────────── -->
     <record id="action_apw_request" model="ir.actions.act_window">
         <field name="name">APW Approval Requests</field>
         <field name="res_model">apw.request</field>

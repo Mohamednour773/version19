@@ -11,8 +11,6 @@
                 <field name="stage_count" string="Stages"/>
                 <field name="pending_count" string="Pending"/>
                 <field name="request_count" string="Requests"/>
-                <field name="block_write" widget="boolean_toggle"/>
-                <field name="block_unlink" widget="boolean_toggle"/>
                 <field name="active" column_invisible="True"/>
             </list>
         </field>
@@ -61,7 +59,7 @@
                     <group>
                         <group string="General">
                             <field name="model_name" readonly="1"/>
-                            <field name="active" widget="boolean_toggle"/>
+                            <field name="active"/>
                             <field name="description"/>
                         </group>
                         <group string="Email Notifications">
@@ -69,10 +67,9 @@
                             <field name="notify_next_approver"/>
                         </group>
                     </group>
-
                     <notebook>
                         <page string="Approval Stages" name="stages">
-                            <field name="stage_ids" widget="one2many">
+                            <field name="stage_ids">
                                 <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
@@ -91,12 +88,7 @@
                                     <field name="auto_approve_if_missing"/>
                                 </list>
                             </field>
-                            <div class="alert alert-info" invisible="stage_count &gt; 0">
-                                <strong>No stages defined yet.</strong>
-                                Add approval stages above — they are processed top to bottom.
-                            </div>
                         </page>
-
                         <page string="Action Blocking" name="blocking">
                             <group>
                                 <group string="Block These Actions While Approval is Pending">
@@ -112,14 +104,6 @@
                                            placeholder="[('amount_total', '&gt;', 1000)]"/>
                                 </group>
                             </group>
-                            <div class="alert alert-warning mt-3">
-                                <strong>Integration:</strong>
-                                To enable blocking on your target model, either inherit
-                                <code>apw.mixin</code> and call
-                                <code>self._check_apw_block('method_name')</code>,
-                                or use <code>self.env['apw.enforcer'].check_and_block(...)</code>
-                                in a bridge module.
-                            </div>
                         </page>
                     </notebook>
                 </sheet>
@@ -136,10 +120,6 @@
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first APW workflow configuration!
-            </p>
-            <p>
-                Select a model, define sequential approval stages, and configure
-                which actions are blocked while approval is pending.
             </p>
         </field>
     </record>
