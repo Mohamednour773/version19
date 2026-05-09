@@ -2,8 +2,8 @@
 <odoo>
     <data noupdate="1">
 
-        <!-- Odoo 19: res.groups no longer has category_id.
-             Groups are defined without a category. -->
+        <!-- Odoo 19 removed category_id and users from res.groups.
+             Only name and implied_ids are valid here. -->
         <record id="group_apw_user" model="res.groups">
             <field name="name">APW Approvals / User</field>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
@@ -12,7 +12,6 @@
         <record id="group_apw_manager" model="res.groups">
             <field name="name">APW Approvals / Manager</field>
             <field name="implied_ids" eval="[(4, ref('group_apw_user'))]"/>
-            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
 
     </data>
