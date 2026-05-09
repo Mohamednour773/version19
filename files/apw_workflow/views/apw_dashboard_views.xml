@@ -42,14 +42,14 @@
                 <field name="approver_id"/>
                 <field name="config_id"/>
                 <separator/>
-                <filter name="my_pending" string="Assigned to Me (Pending)"
+                <filter name="my_pending" string="Assigned to Me"
                         domain="[('approver_id','=',uid),('state','=','pending')]"/>
                 <filter name="all_pending" string="All Pending"
                         domain="[('state','=','pending')]"/>
-                <filter name="active_requests" string="Active Requests Only"
-                        domain="[('request_id.state','in',['pending','in_progress'])]"/>
-                <filter name="approved" string="Approved" domain="[('state','=','approved')]"/>
-                <filter name="refused" string="Refused" domain="[('state','=','refused')]"/>
+                <filter name="state_approved" string="Approved"
+                        domain="[('state','=','approved')]"/>
+                <filter name="state_refused" string="Refused"
+                        domain="[('state','=','refused')]"/>
                 <group expand="0" string="Group By">
                     <filter string="Workflow" name="grp_wf"
                             context="{'group_by':'config_id'}"/>
@@ -68,11 +68,7 @@
         <field name="name">APW Pending Approvals</field>
         <field name="res_model">apw.request.line</field>
         <field name="view_mode">list</field>
-        <field name="domain">[
-            ('state','=','pending'),
-            ('request_id.state','in',['pending','in_progress'])
-        ]</field>
-        <field name="context">{'search_default_active_requests': 1}</field>
+        <field name="domain">[('state','=','pending')]</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">No pending approvals — great!</p>
         </field>
@@ -82,12 +78,7 @@
         <field name="name">My APW Approval Queue</field>
         <field name="res_model">apw.request.line</field>
         <field name="view_mode">list</field>
-        <field name="domain">[
-            ('approver_id','=',uid),
-            ('state','=','pending'),
-            ('request_id.state','in',['pending','in_progress'])
-        ]</field>
-        <field name="context">{'search_default_my_pending': 1}</field>
+        <field name="domain">[('approver_id','=',uid),('state','=','pending')]</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Your approval queue is empty!</p>
         </field>

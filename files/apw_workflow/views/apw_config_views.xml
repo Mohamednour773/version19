@@ -134,7 +134,6 @@
             <search string="Search APW Workflows">
                 <field name="name"/>
                 <field name="model_id"/>
-                <filter name="archived" string="Archived" domain="[('active','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Model" name="grp_model" context="{'group_by':'model_id'}"/>
                 </group>

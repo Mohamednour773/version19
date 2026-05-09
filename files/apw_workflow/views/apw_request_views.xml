@@ -56,7 +56,6 @@
                         <h1><field name="name" readonly="1"/></h1>
                         <h2 class="text-muted"><field name="res_name" readonly="1"/></h2>
                     </div>
-
                     <group>
                         <group string="Request Details">
                             <field name="config_id" readonly="1"/>
@@ -76,7 +75,6 @@
                             <field name="res_model" readonly="1" string="Model"/>
                         </group>
                     </group>
-
                     <notebook>
                         <page string="Approval Lines" name="lines">
                             <field name="line_ids" readonly="1">
@@ -110,60 +108,6 @@
         </field>
     </record>
 
-    <!-- ─── Kanban ────────────────────────────────────────────────── -->
-    <record id="view_apw_request_kanban" model="ir.ui.view">
-        <field name="name">apw.request.kanban</field>
-        <field name="model">apw.request</field>
-        <field name="arch" type="xml">
-            <kanban default_group_by="state" class="o_kanban_small_column">
-                <field name="name"/>
-                <field name="res_name"/>
-                <field name="config_id"/>
-                <field name="requester_id"/>
-                <field name="current_stage_id"/>
-                <field name="waiting_on"/>
-                <field name="progress_percent"/>
-                <field name="state"/>
-                <templates>
-                    <t t-name="card">
-                        <div class="oe_kanban_global_click">
-                            <div class="o_kanban_record_top">
-                                <div class="o_kanban_record_headings">
-                                    <strong class="o_kanban_record_title">
-                                        <field name="res_name"/>
-                                    </strong>
-                                    <span class="o_kanban_record_subtitle text-muted">
-                                        <field name="name"/>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="o_kanban_record_body">
-                                <div><b>Workflow:</b> <field name="config_id"/></div>
-                                <div t-if="record.current_stage_id.value">
-                                    <b>Stage:</b> <field name="current_stage_id"/>
-                                </div>
-                                <div t-if="record.waiting_on.value">
-                                    <b>Waiting on:</b> <field name="waiting_on"/>
-                                </div>
-                                <div class="mt-2">
-                                    <field name="progress_percent" widget="progressbar"/>
-                                </div>
-                            </div>
-                            <div class="o_kanban_record_bottom">
-                                <div class="oe_kanban_bottom_left">
-                                    <field name="requester_id" widget="many2one_avatar_user"/>
-                                </div>
-                                <div class="oe_kanban_bottom_right">
-                                    <field name="date_submitted" widget="date"/>
-                                </div>
-                            </div>
-                        </div>
-                    </t>
-                </templates>
-            </kanban>
-        </field>
-    </record>
-
     <!-- ─── Search ────────────────────────────────────────────────── -->
     <record id="view_apw_request_search" model="ir.ui.view">
         <field name="name">apw.request.search</field>
@@ -175,17 +119,13 @@
                 <field name="requester_id"/>
                 <field name="config_id"/>
                 <separator/>
-                <filter name="my_approvals" string="My Pending Approvals"
-                        domain="[('line_ids.approver_id','=',uid),
-                                 ('line_ids.state','=','pending'),
-                                 ('state','in',['pending','in_progress'])]"/>
-                <filter name="in_progress" string="In Progress"
-                        domain="[('state','=','in_progress')]"/>
-                <filter name="pending" string="Pending"
+                <filter name="state_pending" string="Pending"
                         domain="[('state','=','pending')]"/>
-                <filter name="approved" string="Approved"
+                <filter name="state_in_progress" string="In Progress"
+                        domain="[('state','=','in_progress')]"/>
+                <filter name="state_approved" string="Approved"
                         domain="[('state','=','approved')]"/>
-                <filter name="refused" string="Refused"
+                <filter name="state_refused" string="Refused"
                         domain="[('state','=','refused')]"/>
                 <separator/>
                 <filter name="my_requests" string="My Requests"
@@ -206,8 +146,7 @@
     <record id="action_apw_request" model="ir.actions.act_window">
         <field name="name">APW Approval Requests</field>
         <field name="res_model">apw.request</field>
-        <field name="view_mode">list,kanban,form</field>
-        <field name="context">{'search_default_in_progress': 1}</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">No approval requests yet!</p>
         </field>
@@ -216,11 +155,8 @@
     <record id="action_apw_my_pending" model="ir.actions.act_window">
         <field name="name">My Pending Requests</field>
         <field name="res_model">apw.request</field>
-        <field name="view_mode">list,kanban,form</field>
-        <field name="domain">[
-            ('requester_id','=',uid),
-            ('state','in',['pending','in_progress'])
-        ]</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('requester_id','=',uid),('state','in',['pending','in_progress'])]</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">No pending requests you submitted.</p>
         </field>
