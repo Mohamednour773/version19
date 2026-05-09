@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="pos_airport_currency_19.PaymentScreenDue" t-inherit="point_of_sale.PaymentScreenDue" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'total')]/PriceFormatter" position="replace">
+            <t t-if="currentOrder.airportUsesForeignCurrency()">
+                <PriceFormatter price="currentOrder.getAirportDisplayTotalDue()" />
+            </t>
+            <t t-else="">
+                <PriceFormatter price="this.env.utils.formatCurrency(currentOrder.totalDue)" />
+            </t>
+        </xpath>
+    </t>
+
+    <t t-name="pos_airport_currency_19.PaymentLineAmounts" t-inherit="point_of_sale.PaymentScreenPaymentLines" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'payment-amount')]/PriceFormatter" position="replace">
+            <t t-if="line.airportUsesForeignCurrency &amp;&amp; line.airportUsesForeignCurrency()">
+                <div class="pos-airport-payment-amount">
+                    <PriceFormatter price="line.getAirportDisplayAmount()" />
+                    <small t-if="line.getAirportBaseEquivalentLabel()" class="text-muted d-block">
+                        <t t-esc="line.getAirportBaseEquivalentLabel()" />
+                    </small>
+                </div>
+            </t>
+            <t t-else="">
+                <PriceFormatter price="env.utils.formatCurrency(line.getAmount())" />
+            </t>
+        </xpath>
+    </t>
+
+    <t t-name="pos_airport_currency_19.PaymentMethodCurrency" t-inherit="point_of_sale.PaymentScreenMethods" t-inherit-mode="extension">
+        <xpath expr="//span[contains(@class, 'payment-name')]" position="after">
+            <small t-if="paymentMethod.airport_currency_id" class="text-muted">
+                <t t-esc="paymentMethod.airport_currency_id.name" />
+            </small>
+        </xpath>
+    </t>
+
+    <t t-name="pos_airport_currency_19.ReceiptSubtotal" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+        <xpath expr="//span[@t-out='formatCurrency(order.priceExcl)']" position="replace">
+            <span t-if="order.airportUsesForeignCurrency()" t-out="order.getAirportDisplayAmount(order.priceExcl)" class="ms-auto font-monospace"/>
+            <span t-else="" t-out="formatCurrency(order.priceExcl)" class="ms-auto font-monospace"/>
+        </xpath>
+        <xpath expr="//span[@t-out='formatCurrency(tax_group.tax_amount_currency)']" position="replace">
+            <span t-if="order.airportUsesForeignCurrency()" t-out="order.getAirportDisplayAmount(tax_group.tax_amount_currency)" class="ms-auto font-monospace"/>
+            <span t-else="" t-out="formatCurrency(tax_group.tax_amount_currency)" class="ms-auto font-monospace"/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'paymentlines')]/span[contains(@class, 'pos-receipt-right-align')]" position="replace">
+            <span t-if="line.airportUsesForeignCurrency &amp;&amp; line.airportUsesForeignCurrency()" t-out="line.getAirportDisplayAmount()" class="pos-receipt-right-align font-monospace"/>
+            <span t-else="" t-out="formatCurrency(line.getAmount())" class="pos-receipt-right-align font-monospace"/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'pos-receipt-amount') and contains(@class, 'receipt-total')]" position="after">
+            <div t-if="order.config.airport_show_base_equivalent &amp;&amp; order.airportUsesForeignCurrency()" class="pos-receipt-amount pos-airport-base-equivalent">
+                <span>Accounting equivalent</span>
+                <span t-out="order.getAirportDisplayBaseEquivalent()" class="pos-receipt-right-align font-monospace"/>
+            </div>
+        </xpath>
+    </t>
+
+    <t t-name="pos_airport_currency_19.ClosePosPopupForeignCash" t-inherit="point_of_sale.ClosePosPopup" t-inherit-mode="extension">
+        <xpath expr="//div[@t-if='props.default_cash_details.payment_amount']" position="after">
+            <t t-foreach="props.default_cash_details.airport_currency_summary || []" t-as="currency" t-key="currency.currency">
+                <div class="d-flex align-items-center justify-content-between text-muted border-start ps-2 pos-airport-closing-line">
+                    <span>
+                        <t t-esc="currency.currency"/> tendered
+                    </span>
+                    <span>
+                        <t t-esc="currency.foreign_amount.toFixed(2)"/> <t t-esc="currency.symbol || currency.currency"/>
+                    </span>
+                </div>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-name="pos_airport_currency_19.ClosePosPopupForeignNonCash" t-inherit="point_of_sale.ClosePosPopup" t-inherit-mode="extension">
+        <xpath expr="//div[@t-foreach='props.non_cash_payment_methods']/div[contains(@class, 'fs-3')]" position="after">
+            <t t-foreach="pm.airport_currency_summary || []" t-as="currency" t-key="currency.currency">
+                <div class="d-flex align-items-center justify-content-between text-muted border-start ps-2 pos-airport-closing-line">
+                    <span>
+                        <t t-esc="currency.currency"/> tendered
+                    </span>
+                    <span>
+                        <t t-esc="currency.foreign_amount.toFixed(2)"/> <t t-esc="currency.symbol || currency.currency"/>
+                    </span>
+                </div>
+            </t>
+        </xpath>
+    </t>
+</templates>

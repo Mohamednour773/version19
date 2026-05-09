@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pos_config_view_form_airport_currency" model="ir.ui.view">
+        <field name="name">pos.config.form.airport.currency</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet//div[contains(concat(' ', normalize-space(@class), ' '), ' o_settings_container ') and not(@id='restaurant_on_create')][1]" position="inside">
+                <setting string="Airport Multi-Currency" help="Use foreign-currency pricelists in POS while posting accounting amounts in the POS currency.">
+                    <field name="airport_currency_mode" readonly="has_active_session"/>
+                    <div class="content-group mt16" invisible="not airport_currency_mode">
+                        <div class="row">
+                            <label string="Payment follows pricelist" for="airport_auto_payment_currency" class="col-lg-5 o_light_label"/>
+                            <field name="airport_auto_payment_currency" readonly="has_active_session"/>
+                        </div>
+                        <div class="row">
+                            <label string="Show base equivalent on receipt" for="airport_show_base_equivalent" class="col-lg-5 o_light_label"/>
+                            <field name="airport_show_base_equivalent"/>
+                        </div>
+                    </div>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

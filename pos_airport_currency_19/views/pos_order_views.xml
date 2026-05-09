@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pos_order_view_form_airport_currency" model="ir.ui.view">
+        <field name="name">pos.order.form.airport.currency</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_total']" position="after">
+                <field name="airport_currency_id" readonly="1"/>
+                <field name="airport_amount_total" readonly="1"/>
+                <field name="airport_amount_paid" readonly="1"/>
+                <field name="airport_exchange_rate" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='price_subtotal_incl']" position="after">
+                <field name="airport_currency_id" optional="hide"/>
+                <field name="airport_price_unit" optional="hide"/>
+                <field name="airport_price_subtotal_incl" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

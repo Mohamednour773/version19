@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pos_session_view_form_airport_currency" model="ir.ui.view">
+        <field name="name">pos.session.form.airport.currency</field>
+        <field name="model">pos.session</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='cash_register_balance_end_real']" position="after">
+                <field name="airport_currency_payment_summary" readonly="1" widget="json"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

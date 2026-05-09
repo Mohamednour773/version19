@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_airport_currency" model="ir.ui.view">
+        <field name="name">res.config.settings.form.airport.currency</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//setting[@id='multiple_prices_setting']/div[contains(concat(' ', normalize-space(@class), ' '), ' content-group ')]/div[1]" position="before">
+                <div class="row mt16">
+                    <label string="Airport Multi-Currency" for="pos_airport_currency_mode" class="col-lg-3 o_light_label"/>
+                    <field name="pos_airport_currency_mode" readonly="pos_has_active_session"/>
+                </div>
+                <div class="row mt16" invisible="not pos_airport_currency_mode">
+                    <label string="Payment follows pricelist" for="pos_airport_auto_payment_currency" class="col-lg-3 o_light_label"/>
+                    <field name="pos_airport_auto_payment_currency" readonly="pos_has_active_session"/>
+                </div>
+                <div class="row mt16" invisible="not pos_airport_currency_mode">
+                    <label string="Receipt base equivalent" for="pos_airport_show_base_equivalent" class="col-lg-3 o_light_label"/>
+                    <field name="pos_airport_show_base_equivalent"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
