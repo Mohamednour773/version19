@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_apw_root"
+              name="APW Approvals"
+              sequence="91"
+              groups="apw_workflow.group_apw_user"/>
+
+    <menuitem id="menu_apw_my_work"
+              name="My Work"
+              parent="menu_apw_root"
+              sequence="10"/>
+
+    <menuitem id="menu_apw_my_queue"
+              name="My Approval Queue"
+              parent="menu_apw_my_work"
+              action="action_apw_my_queue"
+              sequence="10"/>
+
+    <menuitem id="menu_apw_my_pending"
+              name="My Submitted Requests"
+              parent="menu_apw_my_work"
+              action="action_apw_my_pending"
+              sequence="20"/>
+
+    <menuitem id="menu_apw_all"
+              name="All Approvals"
+              parent="menu_apw_root"
+              sequence="20"/>
+
+    <menuitem id="menu_apw_dashboard"
+              name="Pending Approvals"
+              parent="menu_apw_all"
+              action="action_apw_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_apw_requests"
+              name="All Requests"
+              parent="menu_apw_all"
+              action="action_apw_request"
+              sequence="20"/>
+
+    <menuitem id="menu_apw_config"
+              name="Configuration"
+              parent="menu_apw_root"
+              sequence="100"
+              groups="apw_workflow.group_apw_manager"/>
+
+    <menuitem id="menu_apw_workflow_config"
+              name="Workflow Configurations"
+              parent="menu_apw_config"
+              action="action_apw_config"
+              sequence="10"
+              groups="apw_workflow.group_apw_manager"/>
+
+    <menuitem id="menu_apw_stages"
+              name="All Stages"
+              parent="menu_apw_config"
+              action="action_apw_stage"
+              sequence="20"
+              groups="apw_workflow.group_apw_manager"/>
+
+</odoo>

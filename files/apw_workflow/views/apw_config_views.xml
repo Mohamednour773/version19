@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ─── List View ─────────────────────────────────────────────── -->
-    <record id="view_approval_workflow_config_list" model="ir.ui.view">
-        <field name="name">approval.workflow.config.list</field>
-        <field name="model">approval.workflow.config</field>
+    <record id="view_apw_config_list" model="ir.ui.view">
+        <field name="name">apw.config.list</field>
+        <field name="model">apw.config</field>
         <field name="arch" type="xml">
-            <list string="Approval Workflow Configurations" decoration-muted="not active">
+            <list string="APW Workflow Configurations" decoration-muted="not active">
                 <field name="name"/>
                 <field name="model_id"/>
                 <field name="stage_count" string="Stages"/>
                 <field name="pending_count" string="Pending"/>
-                <field name="request_count" string="Total Requests"/>
+                <field name="request_count" string="Requests"/>
                 <field name="block_write" widget="boolean_toggle"/>
                 <field name="block_unlink" widget="boolean_toggle"/>
                 <field name="active" column_invisible="True"/>
@@ -19,53 +18,40 @@
         </field>
     </record>
 
-    <!-- ─── Form View ─────────────────────────────────────────────── -->
-    <record id="view_approval_workflow_config_form" model="ir.ui.view">
-        <field name="name">approval.workflow.config.form</field>
-        <field name="model">approval.workflow.config</field>
+    <record id="view_apw_config_form" model="ir.ui.view">
+        <field name="name">apw.config.form</field>
+        <field name="model">apw.config</field>
         <field name="arch" type="xml">
-            <form string="Approval Workflow Configuration">
-                <header>
-                    <button name="action_view_requests"
-                            string="View Requests"
-                            type="object"
-                            class="btn-secondary"
-                            invisible="request_count == 0"/>
-                </header>
+            <form string="APW Workflow Configuration">
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_view_requests"
-                                type="object"
-                                class="oe_stat_button"
-                                icon="fa-check-circle">
+                        <button name="action_view_requests" type="object"
+                                class="oe_stat_button" icon="fa-check-circle">
                             <div class="o_stat_info">
                                 <field name="pending_count" class="o_stat_value"/>
                                 <span class="o_stat_text">Pending</span>
                             </div>
                         </button>
-                        <button name="action_view_requests"
-                                type="object"
-                                class="oe_stat_button"
-                                icon="fa-list">
+                        <button name="action_view_requests" type="object"
+                                class="oe_stat_button" icon="fa-list">
                             <div class="o_stat_info">
                                 <field name="request_count" class="o_stat_value"/>
                                 <span class="o_stat_text">Requests</span>
                             </div>
                         </button>
-                        <button name="action_view_stages"
-                                type="object"
-                                class="oe_stat_button"
-                                icon="fa-sitemap">
+                        <button name="action_view_stages" type="object"
+                                class="oe_stat_button" icon="fa-sitemap">
                             <div class="o_stat_info">
                                 <field name="stage_count" class="o_stat_value"/>
                                 <span class="o_stat_text">Stages</span>
                             </div>
                         </button>
                     </div>
-                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                            invisible="active"/>
                     <div class="oe_title">
                         <h1>
-                            <field name="name" placeholder="Workflow Name..." style="font-size: 1.8rem;"/>
+                            <field name="name" placeholder="Workflow Name..."/>
                         </h1>
                         <h2>
                             <field name="model_id" placeholder="Select target model..."
@@ -76,9 +62,9 @@
                         <group string="General">
                             <field name="model_name" readonly="1"/>
                             <field name="active" widget="boolean_toggle"/>
-                            <field name="description" placeholder="Describe what this workflow is for..."/>
+                            <field name="description"/>
                         </group>
-                        <group string="Notifications">
+                        <group string="Email Notifications">
                             <field name="notify_requester"/>
                             <field name="notify_next_approver"/>
                         </group>
@@ -87,7 +73,7 @@
                     <notebook>
                         <page string="Approval Stages" name="stages">
                             <field name="stage_ids" widget="one2many">
-                                <list editable="bottom" decoration-muted="False">
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
                                     <field name="approver_type"/>
@@ -97,18 +83,17 @@
                                            invisible="approver_type != 'group'"/>
                                     <field name="approver_field_id"
                                            invisible="approver_type != 'dynamic'"/>
-                                    <field name="approver_display" readonly="1" string="Resolved Approver"/>
+                                    <field name="approver_display" readonly="1"
+                                           string="Resolved As"/>
                                     <field name="require_all_group_members"
                                            invisible="approver_type != 'group'"/>
                                     <field name="allow_self_approval"/>
-                                    <field name="auto_approve_if_approver_missing"/>
+                                    <field name="auto_approve_if_missing"/>
                                 </list>
                             </field>
-                            <div class="alert alert-info" role="alert"
-                                 invisible="stage_count &gt; 0">
-                                <strong>No stages defined.</strong>
-                                Add approval stages above. They will be processed
-                                in order from top to bottom.
+                            <div class="alert alert-info" invisible="stage_count &gt; 0">
+                                <strong>No stages defined yet.</strong>
+                                Add approval stages above — they are processed top to bottom.
                             </div>
                         </page>
 
@@ -121,19 +106,19 @@
                                     <field name="block_custom_actions"
                                            placeholder="action_confirm,action_validate"/>
                                 </group>
-                                <group string="Trigger Settings">
+                                <group string="Auto-trigger Settings">
                                     <field name="trigger_on_create"/>
                                     <field name="trigger_domain"
-                                           placeholder="e.g. [('amount_total', '&gt;', 1000)]"/>
+                                           placeholder="[('amount_total', '&gt;', 1000)]"/>
                                 </group>
                             </group>
-                            <div class="alert alert-warning mt-3" role="alert">
-                                <strong>Implementation Note:</strong>
-                                Action blocking is enforced via the <code>approval.mixin</code>
-                                abstract model. To enable blocking on a specific model,
-                                that model must inherit from <code>approval.mixin</code>,
-                                or you can use the provided server action hooks.
-                                See the module documentation for integration instructions.
+                            <div class="alert alert-warning mt-3">
+                                <strong>Integration:</strong>
+                                To enable blocking on your target model, either inherit
+                                <code>apw.mixin</code> and call
+                                <code>self._check_apw_block('method_name')</code>,
+                                or use <code>self.env['apw.enforcer'].check_and_block(...)</code>
+                                in a bridge module. See README for full instructions.
                             </div>
                         </page>
                     </notebook>
@@ -142,39 +127,36 @@
         </field>
     </record>
 
-    <!-- ─── Search View ──────────────────────────────────────────── -->
-    <record id="view_approval_workflow_config_search" model="ir.ui.view">
-        <field name="name">approval.workflow.config.search</field>
-        <field name="model">approval.workflow.config</field>
+    <record id="view_apw_config_search" model="ir.ui.view">
+        <field name="name">apw.config.search</field>
+        <field name="model">apw.config</field>
         <field name="arch" type="xml">
-            <search string="Search Workflows">
+            <search string="Search APW Workflows">
                 <field name="name"/>
                 <field name="model_id"/>
                 <filter name="active" string="Active" domain="[('active','=',True)]"/>
                 <filter name="archived" string="Archived" domain="[('active','=',False)]"/>
-                <filter name="has_pending" string="Has Pending Approvals"
-                        domain="[('pending_count', '&gt;', 0)]"/>
+                <filter name="has_pending" string="Has Pending"
+                        domain="[('pending_count','>',0)]"/>
                 <group expand="0" string="Group By">
-                    <filter string="Model" name="group_model" context="{'group_by': 'model_id'}"/>
+                    <filter string="Model" name="grp_model" context="{'group_by':'model_id'}"/>
                 </group>
             </search>
         </field>
     </record>
 
-    <!-- ─── Action ───────────────────────────────────────────────── -->
-    <record id="action_approval_workflow_config" model="ir.actions.act_window">
+    <record id="action_apw_config" model="ir.actions.act_window">
         <field name="name">Workflow Configurations</field>
-        <field name="res_model">approval.workflow.config</field>
+        <field name="res_model">apw.config</field>
         <field name="view_mode">list,form</field>
         <field name="context">{'search_default_active': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Create your first approval workflow!
+                Create your first APW workflow configuration!
             </p>
             <p>
-                Configure sequential approval workflows that can be attached
-                to any Odoo model. Define stages, approvers, and which actions
-                are blocked until all approvals are granted.
+                Select a model, define sequential approval stages, and configure
+                which actions are blocked while approval is pending.
             </p>
         </field>
     </record>

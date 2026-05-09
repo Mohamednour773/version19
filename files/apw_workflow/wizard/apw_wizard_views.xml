@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_apw_refuse_wizard_form" model="ir.ui.view">
+        <field name="name">apw.refuse.wizard.form</field>
+        <field name="model">apw.refuse.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Refuse Approval">
+                <div class="alert alert-danger">
+                    <strong>You are about to refuse this approval.</strong>
+                    This will reject the request and notify the requester.
+                </div>
+                <group>
+                    <field name="res_name" readonly="1" string="Document"/>
+                    <field name="stage_name" readonly="1" string="Stage"/>
+                </group>
+                <group>
+                    <field name="note"
+                           placeholder="Please explain why you are refusing..."
+                           nolabel="1" required="1"
+                           style="min-height:100px;"/>
+                </group>
+                <footer>
+                    <button name="action_confirm_refuse" string="Confirm Refusal"
+                            type="object" class="btn-danger"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,114 @@
+/* ================================================================
+   APW Approval Workflow Module — Styles
+   ================================================================ */
+
+.apw_status_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.apw_status_badge.state_none        { background: #f0f0f0; color: #888; }
+.apw_status_badge.state_pending     { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+.apw_status_badge.state_in_progress { background: #cce5ff; color: #004085; border: 1px solid #007bff; }
+.apw_status_badge.state_approved    { background: #d4edda; color: #155724; border: 1px solid #28a745; }
+.apw_status_badge.state_refused     { background: #f8d7da; color: #721c24; border: 1px solid #dc3545; }
+
+/* ── Stage step indicators ── */
+.apw_stage_steps {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin: 12px 0;
+    padding: 0;
+    list-style: none;
+}
+
+.apw_stage_steps .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+
+.apw_stage_steps .step::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: -50%;
+    width: 100%;
+    height: 2px;
+    background: #dee2e6;
+    z-index: 0;
+}
+
+.apw_stage_steps .step:first-child::before { display: none; }
+
+.apw_stage_steps .step .dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    z-index: 1;
+    border: 2px solid #dee2e6;
+    background: #fff;
+    color: #aaa;
+    transition: all 0.3s;
+}
+
+.apw_stage_steps .step.approved .dot  { background: #28a745; border-color: #28a745; color: #fff; }
+.apw_stage_steps .step.approved::before { background: #28a745; }
+.apw_stage_steps .step.current .dot   { background: #007bff; border-color: #007bff; color: #fff; box-shadow: 0 0 0 4px rgba(0,123,255,0.2); }
+.apw_stage_steps .step.refused .dot   { background: #dc3545; border-color: #dc3545; color: #fff; }
+
+.apw_stage_steps .step .label {
+    margin-top: 6px;
+    font-size: 11px;
+    color: #666;
+    text-align: center;
+    max-width: 80px;
+    word-break: break-word;
+}
+
+.apw_stage_steps .step.current .label { color: #007bff; font-weight: 600; }
+
+/* ── Pending dot animation ── */
+@keyframes apw_pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.apw_pending_dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffc107;
+    animation: apw_pulse 1.5s ease-in-out infinite;
+    margin-right: 4px;
+}
+
+/* ── Blocked-action banner ── */
+.o_apw_blocked_banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 1px solid #ffc107;
+    border-left: 4px solid #ff9800;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 8px 0 16px;
+    font-size: 13px;
+}

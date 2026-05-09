@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_apw_config_user,apw.config user,model_apw_config,apw_workflow.group_apw_user,1,0,0,0
+access_apw_config_manager,apw.config manager,model_apw_config,apw_workflow.group_apw_manager,1,1,1,1
+access_apw_stage_user,apw.stage user,model_apw_stage,apw_workflow.group_apw_user,1,0,0,0
+access_apw_stage_manager,apw.stage manager,model_apw_stage,apw_workflow.group_apw_manager,1,1,1,1
+access_apw_request_user,apw.request user,model_apw_request,apw_workflow.group_apw_user,1,1,1,0
+access_apw_request_manager,apw.request manager,model_apw_request,apw_workflow.group_apw_manager,1,1,1,1
+access_apw_request_line_user,apw.request.line user,model_apw_request_line,apw_workflow.group_apw_user,1,1,0,0
+access_apw_request_line_manager,apw.request.line manager,model_apw_request_line,apw_workflow.group_apw_manager,1,1,1,1
+access_apw_mixin_user,apw.mixin user,model_apw_mixin,apw_workflow.group_apw_user,1,0,0,0
+access_apw_enforcer_user,apw.enforcer user,model_apw_enforcer,apw_workflow.group_apw_user,1,0,0,0
+access_apw_refuse_wizard_user,apw.refuse.wizard user,model_apw_refuse_wizard,apw_workflow.group_apw_user,1,1,1,1
