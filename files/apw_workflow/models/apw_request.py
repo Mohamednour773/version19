@@ -7,38 +7,22 @@ _logger = logging.getLogger(__name__)
 
 
 class ApwRequest(models.Model):
-    """
-    A running instance of an APW approval workflow for a specific record.
-    Namespace: apw.request
-    """
     _name = 'apw.request'
     _description = 'APW Approval Request'
     _order = 'create_date desc'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    name = fields.Char(
-        string='Reference', required=True, copy=False,
-        readonly=True, default=lambda self: _('New')
-    )
-    config_id = fields.Many2one(
-        'apw.config', string='Workflow', required=True,
-        ondelete='cascade', index=True
-    )
+    name = fields.Char(string='Reference', required=True, copy=False,
+                       readonly=True, default=lambda self: _('New'))
+    config_id = fields.Many2one('apw.config', string='Workflow', required=True,
+                                ondelete='cascade', index=True)
 
-    # Polymorphic link to the source document
     res_model = fields.Char(string='Document Model', required=True, index=True)
     res_id = fields.Integer(string='Document ID', required=True, index=True)
-    res_name = fields.Char(
-        string='Document',
-        compute='_compute_res_name',
-        store=True
-    )
+    res_name = fields.Char(string='Document', compute='_compute_res_name', store=True)
 
-    requester_id = fields.Many2one(
-        'res.users', string='Requested By',
-        default=lambda self: self.env.user,
-        required=True, index=True
-    )
+    requester_id = fields.Many2one('res.users', string='Requested By',
+                                   default=lambda self: self.env.user, required=True, index=True)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('pending', 'Pending'),
@@ -49,7 +33,6 @@ class ApwRequest(models.Model):
     ], string='Status', default='draft', tracking=True, index=True)
 
     current_stage_id = fields.Many2one('apw.stage', string='Current Stage', index=True)
-
     line_ids = fields.One2many('apw.request.line', 'request_id', string='Approval Lines', copy=False)
 
     date_submitted = fields.Datetime(string='Submitted On')
@@ -64,8 +47,7 @@ class ApwRequest(models.Model):
         for rec in self:
             if rec.res_model and rec.res_id:
                 try:
-                    target = self.env[rec.res_model].browse(rec.res_id)
-                    rec.res_name = target.display_name or str(rec.res_id)
+                    rec.res_name = self.env[rec.res_model].browse(rec.res_id).display_name or str(rec.res_id)
                 except Exception:
                     rec.res_name = str(rec.res_id)
             else:
@@ -121,6 +103,7 @@ class ApwRequest(models.Model):
                 raise UserError(_('Cannot cancel a completed request.'))
             rec.line_ids.filtered(lambda l: l.state == 'pending').write({'state': 'cancelled'})
             rec.state = 'cancelled'
+            rec._refresh_document_state()
             rec.message_post(
                 body=_('Request cancelled by %s.') % self.env.user.name,
                 subtype_xmlid='mail.mt_note'
@@ -147,10 +130,8 @@ class ApwRequest(models.Model):
     # ── Internal helpers ─────────────────────────────────────────────
 
     def _initialize_lines(self):
-        """Create apw.request.line records for each applicable stage."""
         self.ensure_one()
         self.line_ids.unlink()
-
         try:
             target = self.env[self.res_model].browse(self.res_id)
         except Exception:
@@ -160,9 +141,7 @@ class ApwRequest(models.Model):
         for stage in self.config_id.stage_ids.sorted('sequence'):
             if not stage.is_applicable(target):
                 continue
-
             approvers = stage.resolve_approvers(target)
-
             if not approvers:
                 if stage.auto_approve_if_missing:
                     lines_vals.append({
@@ -174,9 +153,6 @@ class ApwRequest(models.Model):
                         'date_decided': fields.Datetime.now(),
                     })
                 continue
-
-            # For group OR logic — create one line per user; first to approve wins
-            # For group AND logic — create one line per user; all must approve
             for user in approvers:
                 lines_vals.append({
                     'request_id': self.id,
@@ -184,28 +160,21 @@ class ApwRequest(models.Model):
                     'approver_id': user.id,
                     'state': 'pending',
                 })
-
         if lines_vals:
             self.env['apw.request.line'].create(lines_vals)
 
     def _advance_to_next_stage(self):
-        """Move to the next blocking stage, or mark as fully approved."""
         self.ensure_one()
         stages_with_pending = (
-            self.line_ids
-            .filtered(lambda l: l.state == 'pending')
-            .mapped('stage_id')
-            .sorted('sequence')
+            self.line_ids.filtered(lambda l: l.state == 'pending')
+            .mapped('stage_id').sorted('sequence')
         )
-
         if not stages_with_pending:
             self._mark_approved()
             return
-
         next_stage = stages_with_pending[0]
         self.current_stage_id = next_stage
         self.state = 'in_progress'
-
         if self.config_id.notify_next_approver:
             pending_lines = self.line_ids.filtered(
                 lambda l: l.stage_id == next_stage and l.state == 'pending'
@@ -213,26 +182,22 @@ class ApwRequest(models.Model):
             self._notify_approvers(pending_lines)
 
     def _check_stage_completion(self):
-        """Called after a line is approved. Advance if the current stage is done."""
         self.ensure_one()
         stage = self.current_stage_id
         if not stage:
             return
-
         stage_lines = self.line_ids.filtered(lambda l: l.stage_id == stage)
         pending = stage_lines.filtered(lambda l: l.state == 'pending')
-
         if stage.approver_type == 'group' and not stage.require_all_group_members:
-            # OR logic: one approval is enough → cancel remaining lines
             if stage_lines.filtered(lambda l: l.state == 'approved'):
                 pending.write({'state': 'cancelled'})
                 self._advance_to_next_stage()
         else:
-            # AND logic: all must approve
             if not pending:
                 self._advance_to_next_stage()
 
     def _mark_approved(self):
+        """All stages approved — execute confirm_method on the document."""
         self.ensure_one()
         self.write({
             'state': 'approved',
@@ -243,10 +208,52 @@ class ApwRequest(models.Model):
             body=_('✅ All approvals granted. Document is fully approved.'),
             subtype_xmlid='mail.mt_note'
         )
+        # ── Execute the configured confirm method on the document ────
+        self._execute_document_method(self.config_id.confirm_method)
+        self._refresh_document_state()
         if self.config_id.notify_requester:
-            self._notify_requester(_('Approved'), _(
-                'Your request for <b>%s</b> has been fully approved.'
-            ) % self.res_name)
+            self._notify_requester(_('Approved'),
+                _('Your request for <b>%s</b> has been fully approved.') % self.res_name)
+
+    def _mark_refused(self, note=''):
+        """Refused — execute cancel_method on the document."""
+        self.ensure_one()
+        # ── Execute the configured cancel method on the document ─────
+        self._execute_document_method(self.config_id.cancel_method)
+        self._refresh_document_state()
+        if self.config_id.notify_requester:
+            self._notify_requester(_('Refused'),
+                _('Your request for <b>%s</b> was refused. Reason: %s') % (
+                    self.res_name, note or _('No reason given')))
+
+    def _execute_document_method(self, method_name):
+        """Call a method on the linked document, safely."""
+        if not method_name:
+            return
+        method_name = method_name.strip()
+        if not method_name:
+            return
+        try:
+            target = self.env[self.res_model].browse(self.res_id)
+            if hasattr(target, method_name):
+                getattr(target.sudo(), method_name)()
+                _logger.info('APW: called %s.%s() after approval', self.res_model, method_name)
+            else:
+                _logger.warning(
+                    'APW: method %s not found on model %s', method_name, self.res_model
+                )
+        except Exception as e:
+            _logger.error('APW: error calling %s on %s: %s', method_name, self.res_model, e)
+
+    def _refresh_document_state(self):
+        """Trigger recompute of apw_approval_state on the linked document if it has the field."""
+        try:
+            target = self.env[self.res_model].browse(self.res_id)
+            if hasattr(target, '_compute_apw_approval_state'):
+                target._compute_apw_approval_state()
+                target.invalidate_recordset(['apw_approval_state', 'apw_approval_waiting'])
+        except Exception:
+            pass
 
     def _notify_approvers(self, lines):
         for line in lines:
@@ -256,8 +263,7 @@ class ApwRequest(models.Model):
                     subject=_('Approval Required: %s') % self.res_name,
                     body=_(
                         'Hello %s,<br/><br/>'
-                        'Your approval is required for <b>%s</b> (Stage: <b>%s</b>).<br/>'
-                        'Please review and approve or refuse the request.'
+                        'Your approval is required for <b>%s</b> (Stage: <b>%s</b>).'
                     ) % (line.approver_id.name, self.res_name, line.stage_id.name),
                     email_layout_xmlid='mail.mail_notification_light',
                 )
@@ -281,18 +287,12 @@ class ApwRequest(models.Model):
 
 
 class ApwRequestLine(models.Model):
-    """
-    One approver decision within an apw.request.
-    Namespace: apw.request.line
-    """
     _name = 'apw.request.line'
     _description = 'APW Approval Request Line'
     _order = 'stage_id, id'
 
-    request_id = fields.Many2one(
-        'apw.request', string='Request', required=True,
-        ondelete='cascade', index=True
-    )
+    request_id = fields.Many2one('apw.request', string='Request', required=True,
+                                 ondelete='cascade', index=True)
     stage_id = fields.Many2one('apw.stage', string='Stage', required=True, ondelete='cascade')
     stage_sequence = fields.Integer(related='stage_id.sequence', string='Seq', store=True)
     stage_name = fields.Char(related='stage_id.name', string='Stage Name', store=True)
@@ -308,7 +308,6 @@ class ApwRequestLine(models.Model):
     note = fields.Text(string='Comment')
     date_decided = fields.Datetime(string='Decision Date')
 
-    # Denormalized for dashboard queries
     config_id = fields.Many2one(related='request_id.config_id', store=True, string='Workflow')
     res_model = fields.Char(related='request_id.res_model', store=True, string='Model')
     res_id = fields.Integer(related='request_id.res_id', store=True, string='Record ID')
@@ -322,12 +321,11 @@ class ApwRequestLine(models.Model):
             raise UserError(_('The request is not in an approvable state.'))
         if self.request_id.current_stage_id != self.stage_id:
             raise UserError(_(
-                'Stage "%s" is not yet active. Please wait for earlier stages to complete.'
+                'Stage "%s" is not yet active.'
             ) % self.stage_id.name)
         stage = self.stage_id
         if not stage.allow_self_approval and self.env.user == self.request_id.requester_id:
             raise UserError(_('Self-approval is not allowed at stage "%s".') % stage.name)
-        # Authorization check
         if self.approver_id != self.env.user:
             if stage.approver_type == 'group' and stage.approver_group_id:
                 if self.env.user not in stage.approver_group_id.users:
@@ -369,9 +367,5 @@ class ApwRequestLine(models.Model):
                 self.stage_id.name, self.env.user.name, note or _('No reason given')),
             subtype_xmlid='mail.mt_note'
         )
-        if req.config_id.notify_requester:
-            req._notify_requester(
-                _('Refused'),
-                _('Your request for <b>%s</b> was refused at stage <b>%s</b>.<br/>Reason: %s') % (
-                    req.res_name, self.stage_id.name, note or _('No reason given'))
-            )
+        # Execute cancel method on the document
+        req._mark_refused(note=note)

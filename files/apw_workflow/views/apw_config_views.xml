@@ -11,6 +11,7 @@
                 <field name="stage_count" string="Stages"/>
                 <field name="pending_count" string="Pending"/>
                 <field name="request_count" string="Requests"/>
+                <field name="confirm_method" string="Confirm Action"/>
                 <field name="active" column_invisible="True"/>
             </list>
         </field>
@@ -21,6 +22,23 @@
         <field name="model">apw.config</field>
         <field name="arch" type="xml">
             <form string="APW Workflow Configuration">
+                <header>
+                    <button name="action_inject_view"
+                            string="Inject Approval Button into Form"
+                            type="object"
+                            class="btn-primary"
+                            invisible="not model_id or injected_view_id != False"/>
+                    <button name="action_inject_view"
+                            string="Re-inject Button"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="not model_id or not injected_view_id"/>
+                    <button name="action_remove_injection"
+                            string="Remove Button from Form"
+                            type="object"
+                            invisible="not injected_view_id"
+                            confirm="Remove the approval button from the target model's form view?"/>
+                </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_view_requests" type="object"
@@ -56,17 +74,39 @@
                                    options="{'no_create': True, 'no_open': True}"/>
                         </h2>
                     </div>
+
+                    <div class="alert alert-success" invisible="not injected_view_id">
+                        ✅ Approval button is injected into the target model's form view.
+                        Users will see a "Request Approval" button and live status badge directly on the document.
+                    </div>
+                    <div class="alert alert-warning" invisible="not model_id or injected_view_id != False">
+                        ⚠️ Click "Inject Approval Button into Form" to automatically add the approval button
+                        and status badge to the target model's form view. No code changes required.
+                    </div>
+
                     <group>
                         <group string="General">
                             <field name="model_name" readonly="1"/>
                             <field name="active"/>
                             <field name="description"/>
                         </group>
+                        <group string="Actions After Decision">
+                            <field name="confirm_method"
+                                   placeholder="e.g. action_confirm"/>
+                            <field name="cancel_method"
+                                   placeholder="e.g. action_cancel"/>
+                        </group>
+                    </group>
+                    <group>
                         <group string="Email Notifications">
                             <field name="notify_requester"/>
                             <field name="notify_next_approver"/>
                         </group>
+                        <group string="Injected View">
+                            <field name="injected_view_id" readonly="1"/>
+                        </group>
                     </group>
+
                     <notebook>
                         <page string="Approval Stages" name="stages">
                             <field name="stage_ids">
@@ -82,36 +122,16 @@
                                            invisible="approver_type != 'dynamic'"/>
                                     <field name="approver_display" readonly="1"
                                            string="Resolved As"/>
-                                    <field name="require_all_group_members"
-                                           invisible="approver_type != 'group'"/>
                                     <field name="allow_self_approval"/>
                                     <field name="auto_approve_if_missing"/>
                                 </list>
                             </field>
-                        </page>
-                        <page string="Action Blocking" name="blocking">
-                            <group>
-                                <group string="Block These Actions While Approval is Pending">
-                                    <field name="block_write"/>
-                                    <field name="block_unlink"/>
-                                    <field name="block_create"/>
-                                    <field name="block_custom_actions"
-                                           placeholder="action_confirm,action_validate"/>
-                                </group>
-                                <group string="Auto-trigger Settings">
-                                    <field name="trigger_on_create"/>
-                                    <field name="trigger_domain"
-                                           placeholder="[('amount_total', '&gt;', 1000)]"/>
-                                </group>
-                            </group>
                         </page>
                     </notebook>
                 </sheet>
             </form>
         </field>
     </record>
-
-    <!-- Search view intentionally omitted; Odoo generates a default. -->
 
     <record id="action_apw_config" model="ir.actions.act_window">
         <field name="name">Workflow Configurations</field>
@@ -120,6 +140,11 @@
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first APW workflow configuration!
+            </p>
+            <p>
+                Select a model, add approval stages, then click
+                "Inject Approval Button" to add the approve/refuse controls
+                directly to that model's form view.
             </p>
         </field>
     </record>
