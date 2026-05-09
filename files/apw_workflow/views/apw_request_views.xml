@@ -108,39 +108,7 @@
         </field>
     </record>
 
-    <!-- ─── Search ────────────────────────────────────────────────── -->
-    <record id="view_apw_request_search" model="ir.ui.view">
-        <field name="name">apw.request.search</field>
-        <field name="model">apw.request</field>
-        <field name="arch" type="xml">
-            <search string="Search APW Requests">
-                <field name="name"/>
-                <field name="res_name"/>
-                <field name="requester_id"/>
-                <field name="config_id"/>
-                <separator/>
-                <filter name="state_pending" string="Pending"
-                        domain="[('state','=','pending')]"/>
-                <filter name="state_in_progress" string="In Progress"
-                        domain="[('state','=','in_progress')]"/>
-                <filter name="state_approved" string="Approved"
-                        domain="[('state','=','approved')]"/>
-                <filter name="state_refused" string="Refused"
-                        domain="[('state','=','refused')]"/>
-                <separator/>
-                <filter name="my_requests" string="My Requests"
-                        domain="[('requester_id','=',uid)]"/>
-                <group expand="0" string="Group By">
-                    <filter string="Workflow" name="grp_wf"
-                            context="{'group_by':'config_id'}"/>
-                    <filter string="State" name="grp_state"
-                            context="{'group_by':'state'}"/>
-                    <filter string="Requester" name="grp_req"
-                            context="{'group_by':'requester_id'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
+    <!-- Search view omitted; Odoo auto-generates one. -->
 
     <!-- ─── Actions ───────────────────────────────────────────────── -->
     <record id="action_apw_request" model="ir.actions.act_window">

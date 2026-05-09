@@ -33,36 +33,7 @@
         </field>
     </record>
 
-    <record id="view_apw_line_dashboard_search" model="ir.ui.view">
-        <field name="name">apw.request.line.dashboard.search</field>
-        <field name="model">apw.request.line</field>
-        <field name="arch" type="xml">
-            <search string="Search Approval Lines">
-                <field name="res_name"/>
-                <field name="approver_id"/>
-                <field name="config_id"/>
-                <separator/>
-                <filter name="my_pending" string="Assigned to Me"
-                        domain="[('approver_id','=',uid),('state','=','pending')]"/>
-                <filter name="all_pending" string="All Pending"
-                        domain="[('state','=','pending')]"/>
-                <filter name="state_approved" string="Approved"
-                        domain="[('state','=','approved')]"/>
-                <filter name="state_refused" string="Refused"
-                        domain="[('state','=','refused')]"/>
-                <group expand="0" string="Group By">
-                    <filter string="Workflow" name="grp_wf"
-                            context="{'group_by':'config_id'}"/>
-                    <filter string="Stage" name="grp_stage"
-                            context="{'group_by':'stage_name'}"/>
-                    <filter string="Approver" name="grp_approver"
-                            context="{'group_by':'approver_id'}"/>
-                    <filter string="State" name="grp_state"
-                            context="{'group_by':'state'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
+    <!-- Search view omitted; Odoo auto-generates one. -->
 
     <record id="action_apw_dashboard" model="ir.actions.act_window">
         <field name="name">APW Pending Approvals</field>
