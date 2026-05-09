@@ -136,8 +136,6 @@
                 <field name="model_id"/>
                 <filter name="active" string="Active" domain="[('active','=',True)]"/>
                 <filter name="archived" string="Archived" domain="[('active','=',False)]"/>
-                <filter name="has_pending" string="Has Pending"
-                        domain="[('pending_count','>',0)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Model" name="grp_model" context="{'group_by':'model_id'}"/>
                 </group>
