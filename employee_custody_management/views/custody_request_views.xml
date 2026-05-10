@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_custody_request_list" model="ir.ui.view">
+        <field name="name">custody.request.list</field>
+        <field name="model">custody.request</field>
+        <field name="arch" type="xml">
+            <list string="Custody Requests"
+                  decoration-info="state == 'draft'"
+                  decoration-warning="state in ('submitted', 'partially_settled')"
+                  decoration-success="state == 'settled'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="request_date"/>
+                <field name="expected_settlement_date"/>
+                <field name="employee_id"/>
+                <field name="category_id"/>
+                <field name="amount" widget="monetary"/>
+                <field name="settled_amount" widget="monetary"/>
+                <field name="remaining_amount" widget="monetary"/>
+                <field name="currency_id" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state in ('submitted', 'partially_settled')"
+                       decoration-success="state == 'settled'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_custody_request_form" model="ir.ui.view">
+        <field name="name">custody.request.form</field>
+        <field name="model">custody.request</field>
+        <field name="arch" type="xml">
+            <form string="Custody Request">
+                <header>
+                    <button name="action_submit" type="object" string="Submit" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve" class="oe_highlight" groups="employee_custody_management.group_custody_approver" invisible="state != 'submitted'"/>
+                    <button name="action_issue" type="object" string="Issue" class="oe_highlight" groups="employee_custody_management.group_custody_manager" invisible="state != 'approved'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('settled', 'cancelled')"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,issued,partially_settled,settled"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_payment" type="object" class="oe_stat_button" icon="fa-credit-card" invisible="not payment_id">
+                            <span class="o_stat_text">Payment</span>
+                        </button>
+                        <button name="action_view_move" type="object" class="oe_stat_button" icon="fa-bars" invisible="not move_id">
+                            <span class="o_stat_text">Journal Entry</span>
+                        </button>
+                        <button name="action_view_settlements" type="object" class="oe_stat_button" icon="fa-check-square-o" invisible="settlement_count == 0">
+                            <field name="settlement_count" widget="statinfo" string="Settlements"/>
+                        </button>
+                        <button name="action_view_custody_payments" type="object" class="oe_stat_button" icon="fa-money" invisible="custody_payment_count == 0">
+                            <field name="custody_payment_count" widget="statinfo" string="Payments"/>
+                        </button>
+                        <button name="action_view_vendor_bills" type="object" class="oe_stat_button" icon="fa-file-text-o" invisible="linked_vendor_bill_count == 0">
+                            <field name="linked_vendor_bill_count" widget="statinfo" string="Vendor Bills"/>
+                        </button>
+                    </div>
+                    <field name="settlement_count" invisible="1"/>
+                    <field name="custody_payment_count" invisible="1"/>
+                    <field name="linked_vendor_bill_count" invisible="1"/>
+                    <field name="payment_id" invisible="1"/>
+                    <field name="move_id" invisible="1"/>
+                    <field name="partner_id" invisible="1"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id" readonly="state not in ('draft', 'submitted')"/>
+                            <field name="category_id" readonly="state not in ('draft', 'submitted')"/>
+                            <field name="request_date" readonly="state != 'draft'"/>
+                            <field name="expected_settlement_date" readonly="state in ('issued', 'partially_settled', 'settled', 'cancelled')"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="approver_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'"/>
+                            <field name="currency_id" readonly="state != 'draft'"/>
+                            <field name="amount" widget="monetary" readonly="state != 'draft'"/>
+                            <field name="settled_amount" widget="monetary" readonly="1"/>
+                            <field name="remaining_amount" widget="monetary" readonly="1"/>
+                            <field name="journal_id" readonly="state != 'draft'"/>
+                            <field name="custody_account_id" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" readonly="state != 'draft'" placeholder="Business reason and planned custody use."/>
+                        </page>
+                        <page string="Analytic">
+                            <field name="analytic_precision" invisible="1"/>
+                            <field name="analytic_distribution" widget="analytic_distribution" readonly="state not in ('draft', 'submitted')"/>
+                        </page>
+                        <page string="Settlements" invisible="not settlement_ids">
+                            <field name="settlement_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="settlement_date"/>
+                                    <field name="total_settled"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_custody_request_search" model="ir.ui.view">
+        <field name="name">custody.request.search</field>
+        <field name="model">custody.request</field>
+        <field name="arch" type="xml">
+            <search string="Custody Requests">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="category_id"/>
+                <filter name="open" string="Open" domain="[('state', 'in', ('issued', 'partially_settled'))]"/>
+                <filter name="overdue" string="Overdue" domain="[('state', 'in', ('issued', 'partially_settled')), ('expected_settlement_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="settled" string="Settled" domain="[('state', '=', 'settled')]"/>
+                <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                <filter name="group_category" string="Category" context="{'group_by': 'category_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_custody_request" model="ir.actions.act_window">
+        <field name="name">Custody Requests</field>
+        <field name="res_model">custody.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create the first employee custody request</p>
+            <p>Issue petty cash to employees, then settle it through vendor bill payments, expenses, or cash returns.</p>
+        </field>
+    </record>
+</odoo>

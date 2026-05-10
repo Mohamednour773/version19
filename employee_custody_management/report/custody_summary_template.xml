@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_custody_summary">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page" t-att-dir="'rtl' if (env.lang or '').startswith('ar') else 'ltr'">
+                    <h2>Custody Summary</h2>
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th class="text-end">Issued</th>
+                                <th class="text-end">Settled</th>
+                                <th class="text-end">Closing Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="docs" t-as="employee">
+                                <td><span t-out="employee.name"/></td>
+                                <td class="text-end"><span t-out="format_amount(employee.total_custody_issued, employee.company_id.currency_id)"/></td>
+                                <td class="text-end"><span t-out="format_amount(employee.total_custody_settled, employee.company_id.currency_id)"/></td>
+                                <td class="text-end"><span t-out="format_amount(employee.custody_balance_company_currency, employee.company_id.currency_id)"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

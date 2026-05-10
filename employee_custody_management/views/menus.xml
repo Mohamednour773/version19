@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_employee_custody_root"
+              name="Employee Custody"
+              parent="account.menu_finance"
+              sequence="28"
+              groups="employee_custody_management.group_custody_user"/>
+
+    <menuitem id="menu_custody_requests"
+              name="Custody Requests"
+              parent="menu_employee_custody_root"
+              action="action_custody_request"
+              sequence="10"/>
+
+    <menuitem id="menu_custody_settlements"
+              name="Settlements"
+              parent="menu_employee_custody_root"
+              action="action_custody_settlement"
+              sequence="20"/>
+
+    <menuitem id="menu_custody_reports"
+              name="Reports"
+              parent="menu_employee_custody_root"
+              sequence="80"/>
+
+    <menuitem id="menu_custody_categories"
+              name="Categories"
+              parent="menu_employee_custody_root"
+              action="action_custody_category"
+              groups="employee_custody_management.group_custody_admin"
+              sequence="90"/>
+
+    <record id="action_custody_partner_ledger_lines" model="ir.actions.act_window">
+        <field name="name">Custody Partner Ledger Lines</field>
+        <field name="res_model">account.move.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('partner_id.is_custody_holder', '=', True), ('parent_state', '=', 'posted')]</field>
+        <field name="context">{'search_default_custody_holders': 1, 'group_by': 'partner_id'}</field>
+    </record>
+
+    <menuitem id="menu_custody_partner_ledger"
+              name="Custody Ledger"
+              parent="menu_custody_reports"
+              action="action_custody_partner_ledger_lines"
+              sequence="10"/>
+</odoo>

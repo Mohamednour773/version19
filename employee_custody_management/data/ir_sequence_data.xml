@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_custody_request" model="ir.sequence">
+        <field name="name">Custody Request</field>
+        <field name="code">custody.request.seq</field>
+        <field name="prefix">CR/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="implementation">no_gap</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_custody_settlement" model="ir.sequence">
+        <field name="name">Custody Settlement</field>
+        <field name="code">custody.settlement.seq</field>
+        <field name="prefix">CS/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="implementation">no_gap</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

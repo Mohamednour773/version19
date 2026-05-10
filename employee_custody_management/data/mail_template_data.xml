@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="email_template_custody_request_submitted" model="mail.template">
+        <field name="name">Custody Request Submitted</field>
+        <field name="model_id" ref="model_custody_request"/>
+        <field name="subject">Custody request {{ object.name }} is awaiting approval</field>
+        <field name="email_from">{{ object.company_id.email or user.email }}</field>
+        <field name="email_to">{{ object.approver_id.email or object.company_id.email }}</field>
+        <field name="body_html" type="html">
+            <p>Custody request <strong><t t-out="object.name"/></strong> for <t t-out="object.employee_id.name"/> has been submitted.</p>
+            <p>Amount: <t t-out="object.amount"/> <t t-out="object.currency_id.name"/></p>
+        </field>
+    </record>
+
+    <record id="email_template_custody_request_approved" model="mail.template">
+        <field name="name">Custody Request Approved</field>
+        <field name="model_id" ref="model_custody_request"/>
+        <field name="subject">Custody request {{ object.name }} approved</field>
+        <field name="email_from">{{ object.company_id.email or user.email }}</field>
+        <field name="email_to">{{ object.user_id.email or object.employee_id.work_email }}</field>
+        <field name="body_html" type="html">
+            <p>Custody request <strong><t t-out="object.name"/></strong> has been approved.</p>
+        </field>
+    </record>
+
+    <record id="email_template_custody_request_rejected" model="mail.template">
+        <field name="name">Custody Request Rejected</field>
+        <field name="model_id" ref="model_custody_request"/>
+        <field name="subject">Custody request {{ object.name }} rejected</field>
+        <field name="email_from">{{ object.company_id.email or user.email }}</field>
+        <field name="email_to">{{ object.user_id.email or object.employee_id.work_email }}</field>
+        <field name="body_html" type="html">
+            <p>Custody request <strong><t t-out="object.name"/></strong> was rejected or cancelled.</p>
+        </field>
+    </record>
+
+    <record id="email_template_custody_overdue" model="mail.template">
+        <field name="name">Custody Overdue Reminder</field>
+        <field name="model_id" ref="model_custody_request"/>
+        <field name="subject">Custody request {{ object.name }} is overdue</field>
+        <field name="email_from">{{ object.company_id.email or user.email }}</field>
+        <field name="email_to">{{ object.employee_id.work_email or object.user_id.email }}</field>
+        <field name="body_html" type="html">
+            <p>Custody request <strong><t t-out="object.name"/></strong> is overdue for settlement.</p>
+            <p>Remaining amount: <t t-out="object.remaining_amount"/> <t t-out="object.currency_id.name"/></p>
+        </field>
+    </record>
+
+    <record id="ir_cron_custody_overdue_check" model="ir.cron">
+        <field name="name">Employee Custody: Overdue Reminder</field>
+        <field name="model_id" ref="model_custody_request"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_send_overdue_notifications()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="custody_category_office_supplies" model="custody.category">
+        <field name="name">Office Supplies</field>
+        <field name="code">OFF</field>
+        <field name="disbursement_limit">20000</field>
+        <field name="description">Petty cash for office supplies and small administrative purchases.</field>
+    </record>
+
+    <record id="custody_category_travel" model="custody.category">
+        <field name="name">Travel</field>
+        <field name="code">TRV</field>
+        <field name="disbursement_limit">30000</field>
+        <field name="description">Travel advances, transportation, and accommodation expenses.</field>
+    </record>
+
+    <record id="custody_category_operations" model="custody.category">
+        <field name="name">Operations</field>
+        <field name="code">OPS</field>
+        <field name="disbursement_limit">50000</field>
+        <field name="description">Operational custody for field and branch expenses.</field>
+    </record>
+</odoo>

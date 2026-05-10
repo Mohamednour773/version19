@@ -1,0 +1,798 @@
+# Arabic translations for Employee Custody & Petty Cash Management.
+msgid ""
+msgstr ""
+"Project-Id-Version: employee_custody_management 19.0.1.0.0\n"
+"Report-Msgid-Bugs-To: support@example.com\n"
+"POT-Creation-Date: 2026-05-09 00:00+0000\n"
+"PO-Revision-Date: 2026-05-09 00:00+0000\n"
+"Last-Translator: Mostafa / Codex\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+msgid "%(employee)s already has open custody %(request)s. Settle it before issuing a new custody."
+msgstr "لدى %(employee)s عهدة مفتوحة %(request)s. قم بتسويتها قبل إصدار عهدة جديدة."
+
+msgid "%(employee)s does not have enough custody balance. Available: %(balance).2f; payment: %(amount).2f."
+msgstr "رصيد العهدة لدى %(employee)s غير كاف. المتاح: %(balance).2f؛ قيمة الدفع: %(amount).2f."
+
+msgid "%(employee)s is not allowed to receive custody for category %(category)s."
+msgstr "غير مسموح للموظف %(employee)s باستلام عهدة لتصنيف %(category)s."
+
+msgid "%s (Custody)"
+msgstr "%s (عهدة)"
+
+msgid ""
+"<p>Custody request <strong><t t-out=\"object.name\"/></strong> for <t t-out=\"object.employee_id.name\"/> has been submitted.</p>\n"
+"            <p>Amount: <t t-out=\"object.amount\"/> <t t-out=\"object.currency_id.name\"/></p>\n"
+"        "
+msgstr ""
+"<p>تم تقديم طلب العهدة <strong><t t-out=\"object.name\"/></strong> للموظف <t t-out=\"object.employee_id.name\"/>.</p>\n"
+"            <p>المبلغ: <t t-out=\"object.amount\"/> <t t-out=\"object.currency_id.name\"/></p>\n"
+"        "
+
+msgid ""
+"<p>Custody request <strong><t t-out=\"object.name\"/></strong> has been approved.</p>\n"
+"        "
+msgstr ""
+"<p>تم اعتماد طلب العهدة <strong><t t-out=\"object.name\"/></strong>.</p>\n"
+"        "
+
+msgid ""
+"<p>Custody request <strong><t t-out=\"object.name\"/></strong> is overdue for settlement.</p>\n"
+"            <p>Remaining amount: <t t-out=\"object.remaining_amount\"/> <t t-out=\"object.currency_id.name\"/></p>\n"
+"        "
+msgstr ""
+"<p>طلب العهدة <strong><t t-out=\"object.name\"/></strong> متأخر عن التسوية.</p>\n"
+"            <p>المبلغ المتبقي: <t t-out=\"object.remaining_amount\"/> <t t-out=\"object.currency_id.name\"/></p>\n"
+"        "
+
+msgid ""
+"<p>Custody request <strong><t t-out=\"object.name\"/></strong> was rejected or cancelled.</p>\n"
+"        "
+msgstr ""
+"<p>تم رفض أو إلغاء طلب العهدة <strong><t t-out=\"object.name\"/></strong>.</p>\n"
+"        "
+
+msgid "<span class=\"o_stat_text\">Custody Ledger</span>"
+msgstr "<span class=\"o_stat_text\">دفتر العهدة</span>"
+
+msgid "<span class=\"o_stat_text\">Journal Entry</span>"
+msgstr "<span class=\"o_stat_text\">قيد اليومية</span>"
+
+msgid "<span class=\"o_stat_text\">Payment</span>"
+msgstr "<span class=\"o_stat_text\">الدفع</span>"
+
+msgid "<span class=\"o_stat_text\">Settle</span>"
+msgstr "<span class=\"o_stat_text\">تسوية</span>"
+
+msgid "<strong>Company:</strong>"
+msgstr "<strong>الشركة:</strong>"
+
+msgid "<strong>Employee:</strong>"
+msgstr "<strong>الموظف:</strong>"
+
+msgid "A custody journal must be a Cash or Bank journal."
+msgstr "يجب أن يكون دفتر يومية العهدة من نوع نقدية أو بنك."
+
+msgid "Accountant<br/><br/>________________"
+msgstr "المحاسب<br/><br/>________________"
+
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
+
+msgid "Active"
+msgstr "نشط"
+
+msgid "Activities"
+msgstr "الأنشطة"
+
+msgid "Activity Exception Decoration"
+msgstr "تنسيق استثناء النشاط"
+
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+msgid "Add at least one settlement line before posting."
+msgstr "أضف سطر تسوية واحدًا على الأقل قبل الترحيل."
+
+msgid "Add at least one settlement line."
+msgstr "أضف سطر تسوية واحدًا على الأقل."
+
+msgid "Allowed Custody Categories"
+msgstr "تصنيفات العهدة المسموح بها"
+
+msgid "Amount"
+msgstr "المبلغ"
+
+msgid "Analytic"
+msgstr "تحليلي"
+
+msgid "Analytic Distribution"
+msgstr "التوزيع التحليلي"
+
+msgid "Approve"
+msgstr "اعتماد"
+
+msgid "Approved"
+msgstr "معتمد"
+
+msgid "Approver"
+msgstr "المعتمد"
+
+msgid "Archived"
+msgstr "مؤرشف"
+
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+msgid "Block issuing a new custody to an employee while another custody remains open."
+msgstr "منع إصدار عهدة جديدة للموظف بينما توجد عهدة أخرى مفتوحة."
+
+msgid "Business reason and planned custody use."
+msgstr "سبب العمل والاستخدام المخطط للعهدة."
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Cancelled"
+msgstr "ملغى"
+
+msgid "Categories"
+msgstr "التصنيفات"
+
+msgid "Category"
+msgstr "التصنيف"
+
+msgid "Closing Balance"
+msgstr "رصيد الإقفال"
+
+msgid "Code"
+msgstr "الكود"
+
+msgid "Companies"
+msgstr "الشركات"
+
+msgid "Company"
+msgstr "الشركة"
+
+msgid "Company Currency"
+msgstr "عملة الشركة"
+
+msgid "Config Settings"
+msgstr "إعدادات الضبط"
+
+msgid "Configure an accounting journal before posting custody settlements."
+msgstr "قم بتهيئة دفتر يومية محاسبي قبل ترحيل تسويات العهدة."
+
+msgid "Configure the Custody Receivable account in Accounting Settings before issuing."
+msgstr "قم بتهيئة حساب عهدة الموظفين المدينة في إعدادات المحاسبة قبل الإصدار."
+
+msgid "Configure the Custody Receivable account in Accounting Settings first."
+msgstr "قم أولًا بتهيئة حساب عهدة الموظفين المدينة في إعدادات المحاسبة."
+
+msgid "Configure the Custody Receivable account in Accounting Settings."
+msgstr "قم بتهيئة حساب عهدة الموظفين المدينة في إعدادات المحاسبة."
+
+msgid "Configure the Employee Custody Receivable account for %(company)s before enabling a custody journal."
+msgstr "قم بتهيئة حساب عهدة الموظفين المدينة لشركة %(company)s قبل تفعيل دفتر يومية العهدة."
+
+msgid "Configure the shared receivable account and default custody journal."
+msgstr "تهيئة حساب الذمم المدينة المشترك ودفتر يومية العهدة الافتراضي."
+
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+msgid "Control first-time limits and whether employees must settle before new custody."
+msgstr "التحكم في حدود العهدة الأولى وما إذا كان يجب على الموظفين التسوية قبل عهدة جديدة."
+
+msgid "Create Settlements"
+msgstr "إنشاء التسويات"
+
+msgid "Create the first employee custody request"
+msgstr "إنشاء أول طلب عهدة موظف"
+
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+msgid "Credit"
+msgstr "دائن"
+
+msgid "Currency"
+msgstr "العملة"
+
+msgid "Custody"
+msgstr "العهدة"
+
+msgid "Custody Accounting"
+msgstr "محاسبة العهدة"
+
+msgid "Custody Administrator"
+msgstr "مسؤول العهدة"
+
+msgid "Custody Approver"
+msgstr "معتمد العهدة"
+
+msgid "Custody Balance"
+msgstr "رصيد العهدة"
+
+msgid "Custody Balance (Company Currency)"
+msgstr "رصيد العهدة (عملة الشركة)"
+
+msgid "Custody Balance After"
+msgstr "رصيد العهدة بعد الدفع"
+
+msgid "Custody Balance Before"
+msgstr "رصيد العهدة قبل الدفع"
+
+msgid "Custody Categories"
+msgstr "تصنيفات العهدة"
+
+msgid "Custody Category"
+msgstr "تصنيف العهدة"
+
+msgid "Custody Employees"
+msgstr "موظفو العهدة"
+
+msgid "Custody Holder"
+msgstr "حامل العهدة"
+
+msgid "Custody Journal"
+msgstr "دفتر يومية العهدة"
+
+msgid "Custody Journal Entry"
+msgstr "قيد يومية العهدة"
+
+msgid "Custody Ledger"
+msgstr "دفتر العهدة"
+
+msgid "Custody Ledger - %s"
+msgstr "دفتر العهدة - %s"
+
+msgid "Custody Manager"
+msgstr "مدير العهدة"
+
+msgid "Custody Overdue Reminder"
+msgstr "تذكير بتأخر العهدة"
+
+msgid "Custody Paid Amount"
+msgstr "المبلغ المدفوع من العهدة"
+
+msgid "Custody Partner Ledger Lines"
+msgstr "سطور دفتر الأستاذ لشريك العهدة"
+
+msgid "Custody Payment"
+msgstr "دفع من العهدة"
+
+msgid "Custody Payment - %(employee)s - %(reference)s"
+msgstr "دفع من العهدة - %(employee)s - %(reference)s"
+
+msgid "Custody Payment Count"
+msgstr "عدد مدفوعات العهدة"
+
+msgid "Custody Payments"
+msgstr "مدفوعات العهدة"
+
+msgid "Custody Policy"
+msgstr "سياسة العهدة"
+
+msgid "Custody Receivable Account"
+msgstr "حساب عهدة الموظفين المدينة"
+
+msgid "Custody Request"
+msgstr "طلب صرف عهدة"
+
+msgid "Custody Request Approved"
+msgstr "تم اعتماد طلب العهدة"
+
+msgid "Custody Request Rejected"
+msgstr "تم رفض طلب العهدة"
+
+msgid "Custody Request Submitted"
+msgstr "تم تقديم طلب العهدة"
+
+msgid "Custody Requests"
+msgstr "طلبات صرف العهدة"
+
+msgid "Custody Settlement"
+msgstr "تسوية العهدة"
+
+msgid "Custody Settlement - %s"
+msgstr "تسوية العهدة - %s"
+
+msgid "Custody Settlement Line"
+msgstr "سطر تسوية العهدة"
+
+msgid "Custody Settlement Wizard"
+msgstr "معالج تسوية العهدة"
+
+msgid "Custody Settlement Wizard Line"
+msgstr "سطر معالج تسوية العهدة"
+
+msgid "Custody Settlements"
+msgstr "تسويات العهدة"
+
+msgid "Custody Statement"
+msgstr "كشف العهدة"
+
+msgid "Custody Summary"
+msgstr "ملخص العهدة"
+
+msgid "Custody User"
+msgstr "مستخدم العهدة"
+
+msgid "Custody Vendor Payments"
+msgstr "مدفوعات الموردين من العهدة"
+
+msgid "Custody expense"
+msgstr "مصروف عهدة"
+
+msgid "Custody journals can only be used for outbound vendor bill payments."
+msgstr "لا يمكن استخدام دفاتر يومية العهدة إلا لمدفوعات فواتير الموردين الصادرة."
+
+msgid "Custody journals can only be used for outbound vendor payments."
+msgstr "لا يمكن استخدام دفاتر يومية العهدة إلا لمدفوعات الموردين الصادرة."
+
+msgid "Custody payment for %s"
+msgstr "دفع من العهدة مقابل %s"
+
+msgid "Custody request {{ object.name }} approved"
+msgstr "تم اعتماد طلب العهدة {{ object.name }}"
+
+msgid "Custody request {{ object.name }} is awaiting approval"
+msgstr "طلب العهدة {{ object.name }} بانتظار الاعتماد"
+
+msgid "Custody request {{ object.name }} is overdue"
+msgstr "طلب العهدة {{ object.name }} متأخر"
+
+msgid "Custody request {{ object.name }} rejected"
+msgstr "تم رفض طلب العهدة {{ object.name }}"
+
+msgid "Custody settlement"
+msgstr "تسوية العهدة"
+
+msgid "Date"
+msgstr "التاريخ"
+
+msgid "Debit"
+msgstr "مدين"
+
+msgid "Default Analytic Account"
+msgstr "الحساب التحليلي الافتراضي"
+
+msgid "Default Custody Journal"
+msgstr "دفتر يومية العهدة الافتراضي"
+
+msgid "Default journal used when paying vendor bills from employee custody."
+msgstr "دفتر اليومية الافتراضي المستخدم عند دفع فواتير الموردين من عهدة الموظف."
+
+msgid "Describe allowed custody use for this category."
+msgstr "صف الاستخدامات المسموح بها للعهدة في هذا التصنيف."
+
+msgid "Description"
+msgstr "الوصف"
+
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+msgid "Draft"
+msgstr "مسودة"
+
+msgid "Employee"
+msgstr "الموظف"
+
+msgid "Employee Custody"
+msgstr "عهدة الموظفين"
+
+msgid "Employee Custody Receivable Account"
+msgstr "حساب عهدة الموظفين المدينة"
+
+msgid "Employee Custody: Overdue Reminder"
+msgstr "عهدة الموظفين: تذكير بالتأخير"
+
+msgid "Employee<br/><br/>________________"
+msgstr "الموظف<br/><br/>________________"
+
+msgid "Enable this employee to receive and settle company custody/petty cash."
+msgstr "تمكين هذا الموظف من استلام وتسوية عهدة الشركة أو النثرية."
+
+msgid "Expected Settlement Date"
+msgstr "تاريخ التسوية المتوقع"
+
+msgid "Expense"
+msgstr "مصروف"
+
+msgid "Expense Account"
+msgstr "حساب المصروف"
+
+msgid "First-Time Custody Limit"
+msgstr "حد العهدة لأول مرة"
+
+msgid "Followers"
+msgstr "المتابعون"
+
+msgid "Followers (Partners)"
+msgstr "المتابعون (الشركاء)"
+
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font Awesome مثل fa-tasks"
+
+msgid "Funding Journal"
+msgstr "دفتر يومية التمويل"
+
+msgid "Has Message"
+msgstr "لديه رسالة"
+
+msgid "ID"
+msgstr "المعرف"
+
+msgid "Icon"
+msgstr "الأيقونة"
+
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة للإشارة إلى نشاط استثنائي."
+
+msgid "If checked, new messages require your attention."
+msgstr "عند التحديد، توجد رسائل جديدة تتطلب انتباهك."
+
+msgid "If checked, some messages have a delivery error."
+msgstr "عند التحديد، توجد رسائل بها خطأ في التسليم."
+
+msgid "Is Follower"
+msgstr "متابع"
+
+msgid "Issuance Payment"
+msgstr "دفعة إصدار العهدة"
+
+msgid "Issue"
+msgstr "إصدار"
+
+msgid "Issue petty cash to employees, then settle it through vendor bill payments, expenses, or cash returns."
+msgstr "صرف النثرية للموظفين ثم تسويتها من خلال مدفوعات فواتير الموردين أو المصروفات أو رد النقدية."
+
+msgid "Issued"
+msgstr "مصروفة"
+
+msgid "Issuing this custody would exceed the %(category)s limit. Current balance: %(balance).2f; requested amount: %(amount).2f."
+msgstr "إصدار هذه العهدة سيتجاوز حد %(category)s. الرصيد الحالي: %(balance).2f؛ المبلغ المطلوب: %(amount).2f."
+
+msgid "Journal"
+msgstr "دفتر اليومية"
+
+msgid "Journal Entry"
+msgstr "قيد اليومية"
+
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+msgid "Linked Vendor Bill Count"
+msgstr "عدد فواتير الموردين المرتبطة"
+
+msgid "Linked Vendor Bills"
+msgstr "فواتير الموردين المرتبطة"
+
+msgid "Manager<br/><br/>________________"
+msgstr "المدير<br/><br/>________________"
+
+msgid "Marks partners used only to track employee custody balances."
+msgstr "يحدد الشركاء المستخدمين فقط لتتبع أرصدة عهد الموظفين."
+
+msgid "Maximum allowed open custody balance after issuing this category. Leave zero for no limit."
+msgstr "أقصى رصيد عهدة مفتوح مسموح به بعد إصدار هذا التصنيف. اتركه صفرًا بدون حد."
+
+msgid "Maximum amount allowed for the first custody issued to an employee."
+msgstr "أقصى مبلغ مسموح به لأول عهدة تصدر للموظف."
+
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+msgid "Messages"
+msgstr "الرسائل"
+
+msgid "My Activity Deadline"
+msgstr "موعد نشاطي النهائي"
+
+msgid "Name"
+msgstr "الاسم"
+
+msgid "Next Activity Deadline"
+msgstr "الموعد النهائي للنشاط التالي"
+
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراء"
+
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي بها خطأ في التسليم"
+
+msgid "Office Supplies"
+msgstr "مستلزمات مكتبية"
+
+msgid "Only custody approvers can approve custody requests."
+msgstr "لا يمكن اعتماد طلبات العهدة إلا بواسطة معتمدي العهدة."
+
+msgid "Open"
+msgstr "مفتوح"
+
+msgid "Open Custody"
+msgstr "عهدة مفتوحة"
+
+msgid "Open Custody Request Count"
+msgstr "عدد طلبات العهدة المفتوحة"
+
+msgid "Open Custody Requests"
+msgstr "طلبات العهدة المفتوحة"
+
+msgid "Operational custody for field and branch expenses."
+msgstr "عهدة تشغيلية لمصروفات الميدان والفروع."
+
+msgid "Operations"
+msgstr "العمليات"
+
+msgid "Overdue"
+msgstr "متأخر"
+
+msgid "Partially Settled"
+msgstr "مسواة جزئيًا"
+
+msgid "Pay"
+msgstr "دفع"
+
+msgid "Payments"
+msgstr "المدفوعات"
+
+msgid "Petty cash for office supplies and small administrative purchases."
+msgstr "نثرية للمستلزمات المكتبية والمشتريات الإدارية الصغيرة."
+
+msgid "Post"
+msgstr "ترحيل"
+
+msgid "Posted"
+msgstr "مرحّل"
+
+msgid "Receiving Journal"
+msgstr "دفتر يومية الاستلام"
+
+msgid "Reference"
+msgstr "المرجع"
+
+msgid "Remaining Amount"
+msgstr "المبلغ المتبقي"
+
+msgid "Reports"
+msgstr "التقارير"
+
+msgid "Request"
+msgstr "الطلب"
+
+msgid "Request Date"
+msgstr "تاريخ الطلب"
+
+msgid "Requester"
+msgstr "طالب العهدة"
+
+msgid "Require Settlement Before New Custody"
+msgstr "اشتراط التسوية قبل عهدة جديدة"
+
+msgid "Reset to Draft"
+msgstr "إعادة إلى مسودة"
+
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+msgid "Return Cash"
+msgstr "رد نقدية"
+
+msgid "Return remaining custody for %s"
+msgstr "رد باقي العهدة مقابل %s"
+
+msgid "Returned custody cash"
+msgstr "نقدية عهدة مرتدة"
+
+msgid "Running Balance"
+msgstr "الرصيد الجاري"
+
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسائل النصية"
+
+msgid "Select a posted vendor bill for vendor-bill settlement lines."
+msgstr "اختر فاتورة مورد مرحلة لسطور تسوية فواتير الموردين."
+
+msgid "Select a receiving cash/bank journal for return-cash settlement lines."
+msgstr "اختر دفتر يومية نقدية/بنك مستلم لسطور تسوية رد النقدية."
+
+msgid "Select an employee marked as a custody holder."
+msgstr "اختر موظفًا محددًا كحامل عهدة."
+
+msgid "Select an expense account for expense settlement lines."
+msgstr "اختر حساب مصروف لسطور تسوية المصروفات."
+
+msgid "Select the custody holder before creating the payment."
+msgstr "اختر حامل العهدة قبل إنشاء الدفع."
+
+msgid "Select the custody-holding employee before confirming this payment."
+msgstr "اختر الموظف حامل العهدة قبل تأكيد هذا الدفع."
+
+msgid "Select the employee holding the custody before confirming the payment."
+msgstr "اختر الموظف حامل العهدة قبل تأكيد الدفع."
+
+msgid "Select the vendor as the payment partner and the employee as the custody holder."
+msgstr "اختر المورد كشريك الدفع والموظف كحامل للعهدة."
+
+msgid "Sequence"
+msgstr "التسلسل"
+
+msgid "Settle Custody"
+msgstr "تسوية العهدة"
+
+msgid "Settled"
+msgstr "مسواة"
+
+msgid "Settled Amount"
+msgstr "المبلغ المسوى"
+
+msgid "Settled custody requests cannot be cancelled. Reverse their settlement instead."
+msgstr "لا يمكن إلغاء طلبات العهدة المسواة. قم بعكس تسويتها بدلًا من ذلك."
+
+msgid "Settlement"
+msgstr "التسوية"
+
+msgid "Settlement Count"
+msgstr "عدد التسويات"
+
+msgid "Settlement Date"
+msgstr "تاريخ التسوية"
+
+msgid "Settlement Journal Entry"
+msgstr "قيد يومية التسوية"
+
+msgid "Settlement Lines"
+msgstr "سطور التسوية"
+
+msgid "Settlement line amounts must be greater than zero."
+msgstr "يجب أن تكون مبالغ سطور التسوية أكبر من صفر."
+
+msgid "Settlements"
+msgstr "التسويات"
+
+msgid "Shared receivable account used to track employee custody balances by partner."
+msgstr "حساب ذمم مدينة مشترك يستخدم لتتبع أرصدة عهد الموظفين حسب الشريك."
+
+msgid "Single Disbursement Limit"
+msgstr "حد الصرف الواحد"
+
+msgid "State"
+msgstr "الحالة"
+
+msgid "Status"
+msgstr "الحالة"
+
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الحالة بناءً على الأنشطة\n"
+"متأخر: تاريخ الاستحقاق مضى بالفعل\n"
+"اليوم: تاريخ النشاط هو اليوم\n"
+"مخطط: أنشطة مستقبلية."
+
+msgid "Submit"
+msgstr "تقديم"
+
+msgid "Submitted"
+msgstr "مقدم"
+
+msgid "The category code must be unique per company."
+msgstr "يجب أن يكون كود التصنيف فريدًا لكل شركة."
+
+msgid "The custody amount must be greater than zero."
+msgstr "يجب أن يكون مبلغ العهدة أكبر من صفر."
+
+msgid "The custody category limit cannot be negative."
+msgstr "لا يمكن أن يكون حد تصنيف العهدة سالبًا."
+
+msgid "The expected settlement date must be on or after the request date."
+msgstr "يجب أن يكون تاريخ التسوية المتوقع في تاريخ الطلب أو بعده."
+
+msgid "The first custody for %(employee)s cannot exceed %(limit).2f. Reduce the amount or change the company custody settings."
+msgstr "لا يمكن أن تتجاوز أول عهدة للموظف %(employee)s مبلغ %(limit).2f. خفّض المبلغ أو غيّر إعدادات عهدة الشركة."
+
+msgid "The funding journal %(journal)s has no outbound payment method. Add a manual outbound method to the journal first."
+msgstr "دفتر يومية التمويل %(journal)s لا يحتوي على طريقة دفع صادرة. أضف أولًا طريقة دفع صادرة يدوية إلى الدفتر."
+
+msgid "The linked custody request belongs to a different employee."
+msgstr "طلب العهدة المرتبط يخص موظفًا آخر."
+
+msgid "The partner %(partner)s is already used on customer/vendor invoices. Custody holders need a dedicated partner so the Partner Ledger remains auditable."
+msgstr "الشريك %(partner)s مستخدم بالفعل في فواتير العملاء/الموردين. يحتاج حاملو العهدة إلى شريك مخصص حتى يظل دفتر الأستاذ قابلًا للتدقيق."
+
+msgid "The partner %(partner)s is reserved for employee custody ledger tracking and cannot be used on customer or vendor invoices."
+msgstr "الشريك %(partner)s مخصص لتتبع دفتر عهد الموظفين ولا يمكن استخدامه في فواتير العملاء أو الموردين."
+
+msgid "The payment vendor cannot be the same partner as the custody holder. Select the vendor bill partner as Customer/Vendor and the employee only in Custody Holder."
+msgstr "لا يمكن أن يكون مورد الدفع هو نفس شريك حامل العهدة. اختر شريك فاتورة المورد كعميل/مورد، واختر الموظف فقط في حامل العهدة."
+
+msgid "The receiving journal must have a default cash/bank account."
+msgstr "يجب أن يحتوي دفتر يومية الاستلام على حساب نقدية/بنك افتراضي."
+
+msgid "The settlement amount %(amount).2f exceeds the remaining custody balance %(remaining).2f."
+msgstr "مبلغ التسوية %(amount).2f يتجاوز رصيد العهدة المتبقي %(remaining).2f."
+
+msgid "This custody has reconciled ledger entries. Unreconcile or settle it before cancelling."
+msgstr "تحتوي هذه العهدة على قيود دفتر أستاذ مسواة. قم بإلغاء التسوية أو تسويتها قبل الإلغاء."
+
+msgid "This settlement exceeds the remaining custody balance. Reduce the lines to %(remaining).2f."
+msgstr "هذه التسوية تتجاوز رصيد العهدة المتبقي. خفّض السطور إلى %(remaining).2f."
+
+msgid "Total Custody Issued"
+msgstr "إجمالي العهد المصروفة"
+
+msgid "Total Custody Settled"
+msgstr "إجمالي العهد المسواة"
+
+msgid "Total Settled"
+msgstr "إجمالي المسوى"
+
+msgid "Travel"
+msgstr "السفر"
+
+msgid "Travel advances, transportation, and accommodation expenses."
+msgstr "سلف السفر ومصروفات النقل والإقامة."
+
+msgid "Type"
+msgstr "النوع"
+
+msgid "Type of the exception activity on record."
+msgstr "نوع نشاط الاستثناء في السجل."
+
+msgid "Use this journal to pay vendor bills from employee custody balances."
+msgstr "استخدم دفتر اليومية هذا لدفع فواتير الموردين من أرصدة عهد الموظفين."
+
+msgid "Vendor Bill"
+msgstr "فاتورة مورد"
+
+msgid "Vendor Bills"
+msgstr "فواتير الموردين"
+
+msgid "Vendor Custody Payments"
+msgstr "مدفوعات الموردين من العهدة"
+
+msgid "Website Messages"
+msgstr "رسائل الموقع الإلكتروني"
+
+msgid "Website communication history"
+msgstr "سجل تواصل الموقع الإلكتروني"
+
+msgid "Wizard"
+msgstr "المعالج"
+
+msgid "Work Contact"
+msgstr "جهة اتصال العمل"
+
+msgid "You cannot disable custody tracking for %(employee)s while an open balance of %(amount).2f remains. Settle the custody first."
+msgstr "لا يمكنك تعطيل تتبع العهدة للموظف %(employee)s بينما يوجد رصيد مفتوح قدره %(amount).2f. قم بتسوية العهدة أولًا."

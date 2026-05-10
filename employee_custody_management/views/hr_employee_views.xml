@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_employee_form_custody" model="ir.ui.view">
+        <field name="name">hr.employee.form.custody</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_custody_requests" type="object" class="oe_stat_button" icon="fa-briefcase" invisible="not is_custody_holder">
+                    <field name="open_custody_request_count" widget="statinfo" string="Open Custody"/>
+                </button>
+                <button name="action_view_custody_ledger" type="object" class="oe_stat_button" icon="fa-list" invisible="not is_custody_holder">
+                    <span class="o_stat_text">Custody Ledger</span>
+                </button>
+                <button name="action_open_custody_settlement_wizard" type="object" class="oe_stat_button" icon="fa-check" groups="employee_custody_management.group_custody_manager" invisible="not is_custody_holder">
+                    <span class="o_stat_text">Settle</span>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Custody">
+                    <group>
+                        <group>
+                            <field name="is_custody_holder"/>
+                            <field name="work_contact_id" readonly="1"/>
+                            <field name="custody_category_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="custody_balance" widget="monetary" readonly="1"/>
+                            <field name="custody_balance_company_currency" widget="monetary" readonly="1"/>
+                            <field name="total_custody_issued" widget="monetary" readonly="1"/>
+                            <field name="total_custody_settled" widget="monetary" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

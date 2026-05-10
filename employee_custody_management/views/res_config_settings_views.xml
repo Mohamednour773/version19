@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_res_config_settings_custody" model="ir.ui.view">
+        <field name="name">res.config.settings.form.custody</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='account']" position="inside">
+                <block title="Employee Custody" name="employee_custody_setting_container">
+                    <setting string="Custody Accounting" company_dependent="1" help="Configure the shared receivable account and default custody journal.">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="custody_receivable_account_id" class="col-lg-4 o_light_label"/>
+                                <field name="custody_receivable_account_id" options="{'no_create': True}"/>
+                            </div>
+                            <div class="row">
+                                <label for="custody_default_journal_id" class="col-lg-4 o_light_label"/>
+                                <field name="custody_default_journal_id" options="{'no_create': True}"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting string="Custody Policy" company_dependent="1" help="Control first-time limits and whether employees must settle before new custody.">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="custody_first_time_limit" class="col-lg-4 o_light_label"/>
+                                <field name="custody_first_time_limit"/>
+                            </div>
+                            <div class="row">
+                                <label for="custody_require_settlement_before_new" class="col-lg-4 o_light_label"/>
+                                <field name="custody_require_settlement_before_new"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

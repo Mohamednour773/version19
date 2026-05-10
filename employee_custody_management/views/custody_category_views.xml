@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_custody_category_list" model="ir.ui.view">
+        <field name="name">custody.category.list</field>
+        <field name="model">custody.category</field>
+        <field name="arch" type="xml">
+            <list string="Custody Categories" sample="1">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="disbursement_limit" widget="monetary"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_custody_category_form" model="ir.ui.view">
+        <field name="name">custody.category.form</field>
+        <field name="model">custody.category</field>
+        <field name="arch" type="xml">
+            <form string="Custody Category">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="disbursement_limit" widget="monetary"/>
+                            <field name="analytic_account_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" nolabel="1" placeholder="Describe allowed custody use for this category."/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_custody_category_search" model="ir.ui.view">
+        <field name="name">custody.category.search</field>
+        <field name="model">custody.category</field>
+        <field name="arch" type="xml">
+            <search string="Custody Categories">
+                <field name="name"/>
+                <field name="code"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <filter name="group_company" string="Company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_custody_category" model="ir.actions.act_window">
+        <field name="name">Custody Categories</field>
+        <field name="res_model">custody.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+    </record>
+</odoo>

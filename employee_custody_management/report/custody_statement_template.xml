@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_custody_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="employee" t-value="doc.employee_id if doc._name == 'custody.request' else doc"/>
+                <t t-set="lines" t-value="employee._get_custody_statement_lines()"/>
+                <t t-call="web.external_layout">
+                    <div class="page" t-att-dir="'rtl' if (env.lang or '').startswith('ar') else 'ltr'">
+                        <h2>Custody Statement</h2>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Employee:</strong>
+                                <span t-out="employee.name"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Company:</strong>
+                                <span t-out="employee.company_id.name"/>
+                            </div>
+                        </div>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Reference</th>
+                                    <th>Description</th>
+                                    <th class="text-end">Debit</th>
+                                    <th class="text-end">Credit</th>
+                                    <th class="text-end">Running Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="lines" t-as="line">
+                                    <td><span t-out="line['date']"/></td>
+                                    <td><span t-out="line['reference']"/></td>
+                                    <td><span t-out="line['description']"/></td>
+                                    <td class="text-end"><span t-out="format_amount(line['debit'], employee.company_id.currency_id)"/></td>
+                                    <td class="text-end"><span t-out="format_amount(line['credit'], employee.company_id.currency_id)"/></td>
+                                    <td class="text-end"><span t-out="format_amount(line['balance'], employee.company_id.currency_id)"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="row mt-5 text-center">
+                            <div class="col-4">Employee<br/><br/>________________</div>
+                            <div class="col-4">Accountant<br/><br/>________________</div>
+                            <div class="col-4">Manager<br/><br/>________________</div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
