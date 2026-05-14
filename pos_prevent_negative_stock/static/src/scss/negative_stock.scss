@@ -1,0 +1,84 @@
+.negative-stock-popup {
+    .popup-header {
+        .negative-stock-title {
+            color: var(--o-danger, #dc3545);
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .negative-stock-info {
+        background: var(--o-gray-100, #f8f9fa);
+        border-radius: 8px;
+        padding: 16px;
+        margin: 8px 0;
+
+        .stock-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--o-gray-200, #e9ecef);
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            .stock-label {
+                color: var(--o-gray-600, #6c757d);
+                font-weight: 500;
+            }
+
+            .stock-value {
+                font-size: 1.05em;
+            }
+        }
+
+        .stock-deficit {
+            background: rgba(220, 53, 69, 0.08);
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 4px;
+        }
+    }
+
+    .override-pin-section,
+    .override-reason-section {
+        .override-pin-input,
+        .override-reason-input {
+            max-width: 300px;
+        }
+    }
+
+    .popup-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding-top: 12px;
+
+        .override-btn {
+            background: var(--o-warning, #ffc107);
+            border-color: var(--o-warning, #ffc107);
+            color: #212529;
+        }
+    }
+}
+
+[dir="rtl"] .negative-stock-popup {
+    .popup-header .negative-stock-title {
+        direction: rtl;
+        text-align: right;
+
+        i {
+            margin-left: 0.5rem;
+            margin-right: 0;
+        }
+    }
+
+    .negative-stock-info .stock-detail {
+        flex-direction: row-reverse;
+    }
+
+    .popup-footer {
+        flex-direction: row-reverse;
+    }
+}

@@ -1,0 +1,189 @@
+# Arabic translation for pos_prevent_negative_stock module.
+# Copyright (C) 2026 Mostafa — Odoo Functional Consultant
+# This file is distributed under the same license as the pos_prevent_negative_stock package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-01 00:00+0000\n"
+"PO-Revision-Date: 2026-01-01 00:00+0000\n"
+"Last-Translator: Mostafa\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+#. module: pos_prevent_negative_stock
+msgid "Prevent Negative Stock"
+msgstr "منع المخزون السالب"
+
+#. module: pos_prevent_negative_stock
+msgid "Stock Check Mode"
+msgstr "طريقة فحص المخزون"
+
+#. module: pos_prevent_negative_stock
+msgid "On Hand"
+msgstr "الكمية الفعلية"
+
+#. module: pos_prevent_negative_stock
+msgid "Available"
+msgstr "الرصيد المتاح"
+
+#. module: pos_prevent_negative_stock
+msgid "Forecasted"
+msgstr "الكمية المتوقعة"
+
+#. module: pos_prevent_negative_stock
+msgid "Allow Manager Override"
+msgstr "السماح بتجاوز المدير"
+
+#. module: pos_prevent_negative_stock
+msgid "Override Group"
+msgstr "مجموعة التجاوز"
+
+#. module: pos_prevent_negative_stock
+msgid "Excluded Categories"
+msgstr "الفئات المستثناة"
+
+#. module: pos_prevent_negative_stock
+msgid "Excluded Products"
+msgstr "المنتجات المستثناة"
+
+#. module: pos_prevent_negative_stock
+msgid "Block Unstorable Products"
+msgstr "حظر المنتجات غير المخزنية"
+
+#. module: pos_prevent_negative_stock
+msgid "Stock Refresh Interval (s)"
+msgstr "فترة تحديث المخزون (ثانية)"
+
+#. module: pos_prevent_negative_stock
+msgid "Require Override Reason"
+msgstr "طلب سبب التجاوز"
+
+#. module: pos_prevent_negative_stock
+msgid "Negative Stock Override"
+msgstr "تجاوز المخزون السالب"
+
+#. module: pos_prevent_negative_stock
+msgid "Override Approved By"
+msgstr "تمت الموافقة على التجاوز بواسطة"
+
+#. module: pos_prevent_negative_stock
+msgid "Override Reason"
+msgstr "سبب التجاوز"
+
+#. module: pos_prevent_negative_stock
+msgid "Has Stock Override"
+msgstr "يحتوي على تجاوز مخزون"
+
+#. module: pos_prevent_negative_stock
+msgid "Insufficient Stock"
+msgstr "مخزون غير كافٍ"
+
+#. module: pos_prevent_negative_stock
+msgid "Product"
+msgstr "المنتج"
+
+#. module: pos_prevent_negative_stock
+msgid "Available Quantity"
+msgstr "الكمية المتاحة"
+
+#. module: pos_prevent_negative_stock
+msgid "Requested Quantity"
+msgstr "الكمية المطلوبة"
+
+#. module: pos_prevent_negative_stock
+msgid "Deficit"
+msgstr "العجز"
+
+#. module: pos_prevent_negative_stock
+msgid "Manager PIN"
+msgstr "رقم التعريف الشخصي للمدير"
+
+#. module: pos_prevent_negative_stock
+msgid "Reason"
+msgstr "السبب"
+
+#. module: pos_prevent_negative_stock
+msgid "Enter override reason..."
+msgstr "أدخل سبب التجاوز..."
+
+#. module: pos_prevent_negative_stock
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: pos_prevent_negative_stock
+msgid "Manager Override"
+msgstr "تجاوز المدير"
+
+#. module: pos_prevent_negative_stock
+msgid "Confirm Override"
+msgstr "تأكيد التجاوز"
+
+#. module: pos_prevent_negative_stock
+msgid "Please enter a PIN."
+msgstr "يرجى إدخال رقم التعريف الشخصي."
+
+#. module: pos_prevent_negative_stock
+msgid "Please enter an override reason."
+msgstr "يرجى إدخال سبب التجاوز."
+
+#. module: pos_prevent_negative_stock
+msgid "Invalid PIN or insufficient permissions."
+msgstr "رقم التعريف الشخصي غير صالح أو صلاحيات غير كافية."
+
+#. module: pos_prevent_negative_stock
+msgid "Override applied by %s"
+msgstr "تم التجاوز بواسطة %s"
+
+#. module: pos_prevent_negative_stock
+msgid "Stock levels refreshed"
+msgstr "تم تحديث مستويات المخزون"
+
+#. module: pos_prevent_negative_stock
+msgid "Negative Stock Overrides"
+msgstr "تجاوزات المخزون السالب"
+
+#. module: pos_prevent_negative_stock
+msgid "POS Negative Stock Override"
+msgstr "تجاوز المخزون السالب في نقاط البيع"
+
+#. module: pos_prevent_negative_stock
+msgid "Insufficient stock for %(product)s. Available: %(available)s, Requested: %(requested)s. Order rejected by server."
+msgstr "مخزون غير كافٍ للمنتج %(product)s. المتاح: %(available)s، المطلوب: %(requested)s. تم رفض الطلب من الخادم."
+
+#. module: pos_prevent_negative_stock
+msgid "Negative stock override rejected: user %(user)s is not in the authorized override group."
+msgstr "رفض تجاوز المخزون السالب: المستخدم %(user)s ليس في مجموعة التجاوز المعتمدة."
+
+#. module: pos_prevent_negative_stock
+msgid "Stock Control — Negative Stock Prevention"
+msgstr "التحكم في المخزون — منع المخزون السالب"
+
+#. module: pos_prevent_negative_stock
+msgid "Overrides Only"
+msgstr "التجاوزات فقط"
+
+#. module: pos_prevent_negative_stock
+msgid "This Month"
+msgstr "هذا الشهر"
+
+#. module: pos_prevent_negative_stock
+msgid "Override Manager"
+msgstr "مدير التجاوز"
+
+#. module: pos_prevent_negative_stock
+msgid "Month"
+msgstr "الشهر"
+
+#. module: pos_prevent_negative_stock
+msgid "POS Config"
+msgstr "إعدادات نقطة البيع"
+
+#. module: pos_prevent_negative_stock
+msgid "Block POS sales when product stock would go negative"
+msgstr "حظر مبيعات نقاط البيع عندما يصبح مخزون المنتج سالباً"

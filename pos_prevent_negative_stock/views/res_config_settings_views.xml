@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_inherit_negative_stock" model="ir.ui.view">
+        <field name="name">res.config.settings.form.inherit.negative.stock</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='pos_inventory_section']" position="after">
+                <block title="Stock Control" id="pos_negative_stock_section">
+                    <setting string="Prevent Negative Stock"
+                             help="Block POS sales when product stock would go negative">
+                        <field name="pos_prevent_negative_stock"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

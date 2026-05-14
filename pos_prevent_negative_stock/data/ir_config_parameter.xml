@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="config_param_offline_buffer_pct" model="ir.config_parameter">
+            <field name="key">pos_negative_stock.offline_buffer_pct</field>
+            <field name="value">0</field>
+        </record>
+    </data>
+</odoo>

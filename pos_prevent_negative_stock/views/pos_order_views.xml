@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List view for override audit -->
+    <record id="pos_order_line_override_list" model="ir.ui.view">
+        <field name="name">pos.order.line.override.list</field>
+        <field name="model">pos.order.line</field>
+        <field name="arch" type="xml">
+            <list string="Negative Stock Overrides" create="0" edit="0">
+                <field name="order_id"/>
+                <field name="create_date" string="Date"/>
+                <field name="product_id"/>
+                <field name="qty"/>
+                <field name="price_subtotal"/>
+                <field name="override_user_id"/>
+                <field name="override_reason"/>
+                <field name="company_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Pivot view -->
+    <record id="pos_order_line_override_pivot" model="ir.ui.view">
+        <field name="name">pos.order.line.override.pivot</field>
+        <field name="model">pos.order.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Negative Stock Overrides">
+                <field name="create_date" type="row" interval="month"/>
+                <field name="product_id" type="row"/>
+                <field name="override_user_id" type="col"/>
+                <field name="qty" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="pos_order_line_override_search" model="ir.ui.view">
+        <field name="name">pos.order.line.override.search</field>
+        <field name="model">pos.order.line</field>
+        <field name="arch" type="xml">
+            <search string="Override Search">
+                <field name="product_id"/>
+                <field name="override_user_id"/>
+                <field name="order_id"/>
+                <filter name="filter_override"
+                        string="Overrides Only"
+                        domain="[('is_negative_override', '=', True)]"/>
+                <separator/>
+                <filter string="Date" name="filter_date" date="create_date"/>
+                <group>
+                    <filter string="Product" name="group_product"
+                            domain="[]" context="{'group_by': 'product_id'}"/>
+                    <filter string="Override Manager" name="group_override_user"
+                            domain="[]" context="{'group_by': 'override_user_id'}"/>
+                    <filter string="Date" name="group_month"
+                            domain="[]" context="{'group_by': 'create_date'}"/>
+                    <filter string="Order" name="group_order"
+                            domain="[]" context="{'group_by': 'order_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_pos_negative_stock_overrides" model="ir.actions.act_window">
+        <field name="name">Negative Stock Overrides</field>
+        <field name="res_model">pos.order.line</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="domain">[('is_negative_override', '=', True)]</field>
+        <field name="search_view_id" ref="pos_order_line_override_search"/>
+        <field name="context">{'search_default_filter_override': 1}</field>
+    </record>
+
+    <!-- Menu under POS > Reporting -->
+    <menuitem id="menu_pos_negative_stock_overrides"
+              name="Negative Stock Overrides"
+              parent="point_of_sale.menu_point_rep"
+              action="action_pos_negative_stock_overrides"
+              sequence="30"/>
+
+    <!-- Extend pos.order form to show override flag -->
+    <record id="pos_order_view_form_inherit_override" model="ir.ui.view">
+        <field name="name">pos.order.form.inherit.override</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='lines']/list" position="inside">
+                <field name="is_negative_override" optional="hide"/>
+                <field name="override_user_id" optional="hide"/>
+                <field name="override_reason" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

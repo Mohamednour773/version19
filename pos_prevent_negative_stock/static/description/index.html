@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html dir="ltr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <style>
+        :root {
+            --primary: #714B67;
+            --primary-light: #9B6F8F;
+            --accent: #00A09D;
+            --bg: #F9F9F9;
+            --card-bg: #FFFFFF;
+            --text: #2C2C2C;
+            --text-light: #666666;
+            --border: #E8E8E8;
+            --danger: #DC3545;
+            --warning: #FFC107;
+            --success: #28A745;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--text); line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+
+        /* Hero */
+        .hero { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; padding: 60px 20px; text-align: center; }
+        .hero h1 { font-size: 2.2em; margin-bottom: 16px; font-weight: 700; }
+        .hero p { font-size: 1.15em; opacity: 0.92; max-width: 650px; margin: 0 auto 24px; }
+        .hero-badges { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .badge { background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.85em; font-weight: 500; }
+
+        /* Features */
+        .features { padding: 50px 20px; background: var(--bg); }
+        .features h2 { text-align: center; font-size: 1.8em; margin-bottom: 40px; color: var(--primary); }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
+        .feature-card { background: var(--card-bg); border-radius: 12px; padding: 28px; border: 1px solid var(--border); transition: box-shadow 0.2s; }
+        .feature-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .feature-icon { font-size: 2em; margin-bottom: 12px; }
+        .feature-card h3 { font-size: 1.1em; margin-bottom: 8px; color: var(--primary); }
+        .feature-card p { font-size: 0.92em; color: var(--text-light); }
+
+        /* How it works */
+        .how-it-works { padding: 50px 20px; }
+        .how-it-works h2 { text-align: center; font-size: 1.8em; margin-bottom: 40px; color: var(--primary); }
+        .steps { display: flex; flex-direction: column; gap: 24px; max-width: 700px; margin: 0 auto; }
+        .step { display: flex; align-items: flex-start; gap: 20px; }
+        .step-num { background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+        .step-content h3 { font-size: 1.05em; margin-bottom: 4px; }
+        .step-content p { color: var(--text-light); font-size: 0.92em; }
+
+        /* FAQ */
+        .faq { padding: 50px 20px; background: var(--bg); }
+        .faq h2 { text-align: center; font-size: 1.8em; margin-bottom: 40px; color: var(--primary); }
+        .faq-item { max-width: 700px; margin: 0 auto 20px; background: var(--card-bg); border-radius: 10px; padding: 20px 24px; border: 1px solid var(--border); }
+        .faq-item h3 { font-size: 1em; margin-bottom: 8px; color: var(--primary); }
+        .faq-item p { font-size: 0.92em; color: var(--text-light); }
+
+        /* Compatibility */
+        .compat { padding: 40px 20px; text-align: center; }
+        .compat h2 { font-size: 1.5em; margin-bottom: 16px; color: var(--primary); }
+        .compat-badges { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .compat-badge { background: var(--accent); color: white; padding: 8px 20px; border-radius: 20px; font-size: 0.9em; font-weight: 500; }
+
+        /* Footer */
+        .footer { padding: 30px 20px; text-align: center; background: var(--primary); color: rgba(255,255,255,0.8); font-size: 0.85em; }
+    </style>
+</head>
+<body>
+
+<section class="hero">
+    <div class="container">
+        <h1>POS &mdash; Prevent Negative Stock Sales</h1>
+        <p>Stop phantom inventory and COGS distortion. Block POS sales when stock would go negative, with a flexible manager override and full audit trail.</p>
+        <div class="hero-badges">
+            <span class="badge">Odoo 19</span>
+            <span class="badge">Community + Enterprise</span>
+            <span class="badge">Arabic &amp; English</span>
+            <span class="badge">Server-Side Enforced</span>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2>Key Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">&#128683;</div>
+                <h3>Real-Time Stock Block</h3>
+                <p>Checks available quantity at product add, qty change, and payment validation. Three checkpoints, zero gaps.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128272;</div>
+                <h3>Manager Override with PIN</h3>
+                <p>Authorized managers can override the block with PIN authentication. Every override is logged with user, reason, and timestamp.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128202;</div>
+                <h3>Audit &amp; Reporting</h3>
+                <p>Dedicated reporting menu with tree, pivot, and export views. Filter overrides by date, cashier, manager, product, or POS config.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#9881;&#65039;</div>
+                <h3>Flexible Configuration</h3>
+                <p>Choose stock metric (on-hand, available, forecasted). Exclude categories or products. Set refresh intervals. Per-POS control.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128274;</div>
+                <h3>Server-Side Enforcement</h3>
+                <p>Even if frontend is bypassed (offline sync, API), the server validates stock before creating the order. No workarounds.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#127760;</div>
+                <h3>Arabic &amp; English</h3>
+                <p>Full RTL support with formal MSA accounting terminology. Ready for Egypt, KSA, and all Arabic-speaking markets.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="how-it-works">
+    <div class="container">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                    <h3>Enable per POS</h3>
+                    <p>Go to POS Configuration &gt; Inventory tab &gt; Stock Control section. Toggle &ldquo;Prevent Negative Stock&rdquo; on.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                    <h3>Cashier scans a product</h3>
+                    <p>The module instantly checks available quantity in the linked warehouse. If stock would go negative, a popup blocks the action.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                    <h3>Manager override (optional)</h3>
+                    <p>If enabled, the popup offers a Manager Override button. The manager enters their PIN and optionally a reason.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                    <h3>Server validates on sync</h3>
+                    <p>When the order syncs to the backend, the server re-validates stock. Unauthorized overrides are rejected with a clear error.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="faq">
+    <div class="container">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item">
+            <h3>Does it work offline?</h3>
+            <p>Yes. When offline, the POS uses the last loaded stock snapshot. An optional safety buffer percentage can be configured. The server re-validates when the order syncs.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Does it affect refund/return orders?</h3>
+            <p>No. Return lines (negative qty) are never blocked, since they increase stock. No false positives on returns.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Can I exclude service products?</h3>
+            <p>By default, only storable products are checked. You can also exclude specific products or entire categories via the configuration.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Is it multi-company safe?</h3>
+            <p>Yes. Stock checks are scoped to the POS warehouse. Override audit logs are company-isolated via record rules.</p>
+        </div>
+    </div>
+</section>
+
+<section class="compat">
+    <div class="container">
+        <h2>Compatibility</h2>
+        <div class="compat-badges">
+            <span class="compat-badge">Odoo 19 Community</span>
+            <span class="compat-badge">Odoo 19 Enterprise</span>
+            <span class="compat-badge">Multi-Company</span>
+            <span class="compat-badge">Multi-Warehouse</span>
+        </div>
+    </div>
+</section>
+
+<section class="footer">
+    <div class="container">
+        <p>&copy; 2026 Mostafa &mdash; Odoo Functional Consultant. All rights reserved.</p>
+    </div>
+</section>
+
+</body>
+</html>

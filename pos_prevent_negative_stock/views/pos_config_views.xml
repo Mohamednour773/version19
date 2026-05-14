@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="pos_config_view_form_inherit_negative_stock" model="ir.ui.view">
+        <field name="name">pos.config.form.inherit.negative.stock</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <div class="row mt16 o_settings_container"
+                     invisible="context.get('pos_config_create_mode', False)">
+                    <setting string="Prevent Negative Stock"
+                             help="Block POS sales when product stock would go negative">
+                        <field name="prevent_negative_stock"/>
+                        <div class="content-group mt16" invisible="not prevent_negative_stock">
+                            <div class="row">
+                                <div class="col-lg-4 o_light_label">
+                                    <label for="negative_stock_check_mode"/>
+                                </div>
+                                <div class="col-lg-8">
+                                    <field name="negative_stock_check_mode"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 o_light_label">
+                                    <label for="refresh_stock_interval"/>
+                                </div>
+                                <div class="col-lg-8">
+                                    <field name="refresh_stock_interval"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 o_light_label">
+                                    <label for="block_unstorable_products"/>
+                                </div>
+                                <div class="col-lg-8">
+                                    <field name="block_unstorable_products"/>
+                                </div>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting string="Manager Override"
+                             help="Allow managers to override the negative stock block via PIN"
+                             invisible="not prevent_negative_stock">
+                        <field name="allow_manager_override"/>
+                        <div class="content-group mt16" invisible="not allow_manager_override">
+                            <div class="row">
+                                <div class="col-lg-4 o_light_label">
+                                    <label for="override_user_group_id"/>
+                                </div>
+                                <div class="col-lg-8">
+                                    <field name="override_user_group_id"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 o_light_label">
+                                    <label for="require_override_reason"/>
+                                </div>
+                                <div class="col-lg-8">
+                                    <field name="require_override_reason"/>
+                                </div>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting string="Stock Check Exclusions"
+                             help="Products and categories exempt from the negative stock check"
+                             invisible="not prevent_negative_stock">
+                        <div class="content-group mt16">
+                            <div class="row">
+                                <div class="col-lg-4 o_light_label">
+                                    <label for="excluded_product_categ_ids"/>
+                                </div>
+                                <div class="col-lg-8">
+                                    <field name="excluded_product_categ_ids" widget="many2many_tags"/>
+                                </div>
+                            </div>
+                            <div class="row mt8">
+                                <div class="col-lg-4 o_light_label">
+                                    <label for="excluded_product_ids"/>
+                                </div>
+                                <div class="col-lg-8">
+                                    <field name="excluded_product_ids" widget="many2many_tags"/>
+                                </div>
+                            </div>
+                        </div>
+                    </setting>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="pos_prevent_negative_stock.NegativeStockPopup" owl="1">
+        <div class="popup negative-stock-popup">
+            <div class="popup-header">
+                <h3 class="popup-title negative-stock-title">
+                    <i class="fa fa-exclamation-triangle me-2"/>
+                    <t t-esc="props.title || _t('Insufficient Stock')"/>
+                </h3>
+            </div>
+            <div class="popup-body">
+                <div class="negative-stock-info">
+                    <div class="stock-detail">
+                        <span class="stock-label"><t t-esc="_t('Product')"/>:</span>
+                        <span class="stock-value fw-bold" t-esc="props.product.display_name"/>
+                    </div>
+                    <div class="stock-detail">
+                        <span class="stock-label"><t t-esc="_t('Available Quantity')"/>:</span>
+                        <span class="stock-value text-danger fw-bold" t-esc="props.available"/>
+                    </div>
+                    <div class="stock-detail">
+                        <span class="stock-label"><t t-esc="_t('Requested Quantity')"/>:</span>
+                        <span class="stock-value fw-bold" t-esc="props.requested"/>
+                    </div>
+                    <div class="stock-detail stock-deficit">
+                        <span class="stock-label"><t t-esc="_t('Deficit')"/>:</span>
+                        <span class="stock-value text-danger fw-bold"
+                              t-esc="(props.available - props.requested).toFixed(2)"/>
+                    </div>
+                </div>
+
+                <t t-if="state.showPin">
+                    <div class="override-pin-section mt-3">
+                        <label class="form-label"><t t-esc="_t('Manager PIN')"/>:</label>
+                        <input type="password" class="form-control override-pin-input"
+                               t-att-value="state.pin"
+                               t-on-input="onPinInput"
+                               t-on-keydown="onPinKeydown"
+                               placeholder="****"/>
+                        <t t-if="state.pinError">
+                            <div class="text-danger mt-1" t-esc="state.pinError"/>
+                        </t>
+                    </div>
+                    <t t-if="props.requireReason">
+                        <div class="override-reason-section mt-2">
+                            <label class="form-label"><t t-esc="_t('Reason')"/>:</label>
+                            <input type="text" class="form-control override-reason-input"
+                                   t-att-value="state.reason"
+                                   t-on-input="onReasonInput"
+                                   t-att-placeholder="_t('Enter override reason...')"/>
+                        </div>
+                    </t>
+                </t>
+            </div>
+            <div class="popup-footer">
+                <button class="btn btn-secondary cancel-btn" t-on-click="cancel">
+                    <t t-esc="_t('Cancel')"/>
+                </button>
+                <t t-if="!props.noOverride and !state.showPin">
+                    <button class="btn btn-warning override-btn" t-on-click="requestOverride">
+                        <i class="fa fa-lock me-1"/>
+                        <t t-esc="_t('Manager Override')"/>
+                    </button>
+                </t>
+                <t t-if="state.showPin">
+                    <button class="btn btn-primary confirm-override-btn" t-on-click="confirmOverride">
+                        <i class="fa fa-check me-1"/>
+                        <t t-esc="_t('Confirm Override')"/>
+                    </button>
+                </t>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,163 @@
+# Translation file for pos_prevent_negative_stock module.
+# Copyright (C) 2026 Mostafa — Odoo Functional Consultant
+# This file is distributed under the same license as the pos_prevent_negative_stock package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-01 00:00+0000\n"
+"PO-Revision-Date: 2026-01-01 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: pos_prevent_negative_stock
+msgid "Prevent Negative Stock"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Stock Check Mode"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "On Hand"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Available"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Forecasted"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Allow Manager Override"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Override Group"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Excluded Categories"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Excluded Products"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Block Unstorable Products"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Stock Refresh Interval (s)"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Require Override Reason"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Negative Stock Override"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Override Approved By"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Override Reason"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Has Stock Override"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Insufficient Stock"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Product"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Available Quantity"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Requested Quantity"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Deficit"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Manager PIN"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Reason"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Enter override reason..."
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Cancel"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Manager Override"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Confirm Override"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Please enter a PIN."
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Please enter an override reason."
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Invalid PIN or insufficient permissions."
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Override applied by %s"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Stock levels refreshed"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Negative Stock Overrides"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "POS Negative Stock Override"
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Insufficient stock for %(product)s. Available: %(available)s, Requested: %(requested)s. Order rejected by server."
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Negative stock override rejected: user %(user)s is not in the authorized override group."
+msgstr ""
+
+#. module: pos_prevent_negative_stock
+msgid "Stock Control — Negative Stock Prevention"
+msgstr ""
