@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_factory_loading_permit" model="ir.sequence">
+            <field name="name">Loading Permit | إذن تحميل</field>
+            <field name="code">factory.loading.permit</field>
+            <field name="prefix">LOAD/%(year)s/</field>
+            <field name="padding">5</field>
+        </record>
+        <record id="seq_factory_delivery_permit" model="ir.sequence">
+            <field name="name">Delivery Permit | إذن توريد</field>
+            <field name="code">factory.delivery.permit</field>
+            <field name="prefix">DEL/%(year)s/</field>
+            <field name="padding">5</field>
+        </record>
+        <record id="seq_factory_installation" model="ir.sequence">
+            <field name="name">Site Installation | تركيب موقع</field>
+            <field name="code">factory.installation</field>
+            <field name="prefix">INST/%(year)s/</field>
+            <field name="padding">5</field>
+        </record>
+    </data>
+</odoo>

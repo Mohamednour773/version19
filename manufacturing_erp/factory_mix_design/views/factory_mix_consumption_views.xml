@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_factory_mix_consumption_list" model="ir.ui.view">
+        <field name="name">factory.mix.consumption.list</field>
+        <field name="model">factory.mix.consumption</field>
+        <field name="arch" type="xml">
+            <list string="Mix Consumption Records | سجلات استهلاك الخلطة"
+                  decoration-warning="variance_percent > 5"
+                  decoration-success="state == 'confirmed'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="mix_id"/>
+                <field name="project_id"/>
+                <field name="sector_id"/>
+                <field name="produced_quantity" sum="Total Produced"/>
+                <field name="theoretical_cost" widget="monetary" sum="Theoretical"/>
+                <field name="actual_cost" widget="monetary" sum="Actual"/>
+                <field name="variance_amount" widget="monetary" sum="Variance"/>
+                <field name="variance_percent" widget="percentage"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_factory_mix_consumption_form" model="ir.ui.view">
+        <field name="name">factory.mix.consumption.form</field>
+        <field name="model">factory.mix.consumption</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_load_mix_lines" string="Load Mix Lines | تحميل بنود الخلطة"
+                            type="object" class="btn-secondary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_confirm" string="Confirm | تأكيد"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_cancel" string="Cancel | إلغاء"
+                            type="object"
+                            invisible="state == 'cancelled'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="mix_id"/>
+                            <field name="produced_quantity"/>
+                        </group>
+                        <group>
+                            <field name="project_id"/>
+                            <field name="sector_id"/>
+                            <field name="production_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Material Consumption | استهلاك الخامات">
+                            <field name="consumption_line_ids">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="uom_id"/>
+                                    <field name="theoretical_qty"/>
+                                    <field name="actual_qty"/>
+                                    <field name="waste_qty"/>
+                                    <field name="waste_percent"/>
+                                    <field name="unit_cost"/>
+                                    <field name="theoretical_cost" sum="Theoretical"/>
+                                    <field name="actual_cost" sum="Actual"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="theoretical_cost" widget="monetary"/>
+                                <field name="actual_cost" widget="monetary"/>
+                                <field name="variance_amount" widget="monetary"/>
+                                <field name="variance_percent" widget="percentage"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_factory_mix_consumption" model="ir.actions.act_window">
+        <field name="name">Mix Consumption | استهلاك الخلطات</field>
+        <field name="res_model">factory.mix.consumption</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

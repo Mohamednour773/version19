@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_factory_mold_report_list" model="ir.ui.view">
+        <field name="name">factory.mold.report.list</field>
+        <field name="model">factory.mold.report</field>
+        <field name="arch" type="xml">
+            <list string="Mold Utilization | استخدام القوالب"
+                  decoration-success="usage_percent &lt; 50"
+                  decoration-warning="usage_percent &gt;= 50 and usage_percent &lt; 80"
+                  decoration-danger="usage_percent &gt;= 80">
+                <field name="mold_id"/>
+                <field name="category_id"/>
+                <field name="mold_type"/>
+                <field name="manufacturing_cost" widget="monetary"/>
+                <field name="expected_uses"/>
+                <field name="actual_uses"/>
+                <field name="remaining_uses"/>
+                <field name="usage_percent" widget="progressbar"/>
+                <field name="cost_per_unit" widget="monetary"/>
+                <field name="cost_consumed" widget="monetary"/>
+                <field name="cost_remaining" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_factory_mold_report_pivot" model="ir.ui.view">
+        <field name="name">factory.mold.report.pivot</field>
+        <field name="model">factory.mold.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Mold Utilization | استخدام القوالب">
+                <field name="category_id" type="row"/>
+                <field name="manufacturing_cost" type="measure"/>
+                <field name="actual_uses" type="measure"/>
+                <field name="cost_consumed" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_factory_mold_report" model="ir.actions.act_window">
+        <field name="name">Mold Utilization | استخدام القوالب</field>
+        <field name="res_model">factory.mold.report</field>
+        <field name="view_mode">list,pivot</field>
+    </record>
+
+</odoo>

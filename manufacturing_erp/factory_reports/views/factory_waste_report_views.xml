@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_factory_waste_report_list" model="ir.ui.view">
+        <field name="name">factory.waste.report.list</field>
+        <field name="model">factory.waste.report</field>
+        <field name="arch" type="xml">
+            <list string="Waste Analysis | تحليل الهالك"
+                  decoration-success="waste_percent &lt; 3"
+                  decoration-warning="waste_percent &gt;= 3 and waste_percent &lt; 7"
+                  decoration-danger="waste_percent &gt;= 7">
+                <field name="production_id"/>
+                <field name="date_planned"/>
+                <field name="project_id"/>
+                <field name="sector_id"/>
+                <field name="product_id"/>
+                <field name="mix_id"/>
+                <field name="quantity_produced" sum="Total Produced"/>
+                <field name="quantity_waste" sum="Total Waste"/>
+                <field name="waste_percent" widget="percentage"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_factory_waste_report_pivot" model="ir.ui.view">
+        <field name="name">factory.waste.report.pivot</field>
+        <field name="model">factory.waste.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Waste Analysis | تحليل الهالك">
+                <field name="project_id" type="row"/>
+                <field name="quantity_produced" type="measure"/>
+                <field name="quantity_waste" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_factory_waste_report_graph" model="ir.ui.view">
+        <field name="name">factory.waste.report.graph</field>
+        <field name="model">factory.waste.report</field>
+        <field name="arch" type="xml">
+            <graph string="Waste by Product | الهالك حسب المنتج" type="bar">
+                <field name="product_id"/>
+                <field name="waste_percent" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_factory_waste_report" model="ir.actions.act_window">
+        <field name="name">Waste Analysis | تحليل الهالك</field>
+        <field name="res_model">factory.waste.report</field>
+        <field name="view_mode">list,pivot,graph</field>
+    </record>
+
+</odoo>

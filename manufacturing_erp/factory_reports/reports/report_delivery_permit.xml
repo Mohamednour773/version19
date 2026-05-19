@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_delivery_permit_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>
+                            <span>Delivery Permit | إذن التوريد</span>
+                            <span class="float-end" t-field="doc.name"/>
+                        </h2>
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <strong>Project | المشروع:</strong>
+                                <div t-field="doc.project_id"/>
+                            </div>
+                            <div class="col-3">
+                                <strong>Sector | القطاع:</strong>
+                                <div t-field="doc.sector_id"/>
+                            </div>
+                            <div class="col-3">
+                                <strong>Date | التاريخ:</strong>
+                                <div t-field="doc.date"/>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-6" t-if="doc.loading_permit_id">
+                                <strong>Loading Permit | إذن التحميل:</strong>
+                                <div t-field="doc.loading_permit_id"/>
+                            </div>
+                            <div class="col-6" t-if="doc.site_receiver">
+                                <strong>Site Receiver | المستلم بالموقع:</strong>
+                                <div t-field="doc.site_receiver"/>
+                                <div t-if="doc.site_receiver_phone" t-field="doc.site_receiver_phone"/>
+                            </div>
+                        </div>
+
+                        <table class="table table-sm mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Product | المنتج</th>
+                                    <th class="text-end">Loaded | المحمَّل</th>
+                                    <th class="text-end">Delivered | الموَرَّد</th>
+                                    <th class="text-end">Damaged | التالف</th>
+                                    <th>UoM | الوحدة</th>
+                                    <th>Notes | ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.line_ids" t-as="line">
+                                    <td t-field="line.product_id"/>
+                                    <td class="text-end" t-field="line.quantity_loaded"/>
+                                    <td class="text-end" t-field="line.quantity_delivered"/>
+                                    <td class="text-end" t-field="line.quantity_damaged"/>
+                                    <td t-field="line.uom_id"/>
+                                    <td t-field="line.damage_notes"/>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-active">
+                                    <th>Totals | الإجماليات</th>
+                                    <th/>
+                                    <th class="text-end" t-field="doc.total_delivered"/>
+                                    <th class="text-end" t-field="doc.total_damaged"/>
+                                    <th colspan="2"/>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="row mt-5">
+                            <div class="col-6">
+                                <strong>Receiver Signature | توقيع المستلم</strong>
+                                <div style="border-top: 1px solid #000; margin-top: 40px;"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Delivered By | تسليم</strong>
+                                <div style="border-top: 1px solid #000; margin-top: 40px;"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

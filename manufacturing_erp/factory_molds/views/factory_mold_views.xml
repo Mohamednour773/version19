@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Kanban View | كانبان -->
+    <record id="view_factory_mold_kanban" model="ir.ui.view">
+        <field name="name">factory.mold.kanban</field>
+        <field name="model">factory.mold</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" sample="1">
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex">
+                            <field name="image" widget="image" class="o_kanban_image_fill" options="{'img_class': 'object-fit-cover'}" alt="Mold"/>
+                            <div class="ms-2 flex-grow-1">
+                                <field name="code" class="fw-bolder fs-5"/>
+                                <field name="name"/>
+                                <div class="text-muted">
+                                    <field name="category_id"/>
+                                </div>
+                                <div class="mt-2">
+                                    <span>Uses: </span>
+                                    <field name="actual_uses"/> / <field name="expected_uses"/>
+                                </div>
+                                <field name="usage_percent" widget="progressbar"/>
+                                <div class="mt-1">
+                                    <field name="cost_per_unit" widget="monetary"/>
+                                    <field name="currency_id" invisible="1"/> / unit
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- List View | قائمة -->
+    <record id="view_factory_mold_list" model="ir.ui.view">
+        <field name="name">factory.mold.list</field>
+        <field name="model">factory.mold</field>
+        <field name="arch" type="xml">
+            <list string="Molds | القوالب"
+                  decoration-success="state == 'available'"
+                  decoration-info="state == 'in_use'"
+                  decoration-warning="state == 'maintenance'"
+                  decoration-danger="state in ('damaged','retired')"
+                  decoration-muted="state == 'draft'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="mold_type"/>
+                <field name="product_id" optional="show"/>
+                <field name="manufacturing_cost" sum="Total Investment"/>
+                <field name="actual_uses"/>
+                <field name="expected_uses"/>
+                <field name="usage_percent" widget="progressbar"/>
+                <field name="cost_per_unit" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="cost_consumed" widget="monetary" optional="hide"/>
+                <field name="cost_remaining" widget="monetary" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'available'"
+                       decoration-info="state == 'in_use'"
+                       decoration-warning="state == 'maintenance'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View | استمارة -->
+    <record id="view_factory_mold_form" model="ir.ui.view">
+        <field name="name">factory.mold.form</field>
+        <field name="model">factory.mold</field>
+        <field name="arch" type="xml">
+            <form string="Mold | القالب">
+                <header>
+                    <button name="action_set_manufacturing" string="Start Manufacturing | بدء التصنيع"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_set_available" string="Mark Available | متاح"
+                            type="object" class="btn-primary"
+                            invisible="state not in ('manufacturing','maintenance','in_use')"/>
+                    <button name="action_set_in_use" string="Set In Use | تحت الاستخدام"
+                            type="object"
+                            invisible="state != 'available'"/>
+                    <button name="action_set_maintenance" string="Send to Maintenance | إرسال للصيانة"
+                            type="object"
+                            invisible="state not in ('available','in_use')"/>
+                    <button name="action_retire" string="Retire | تقاعد"
+                            type="object"
+                            invisible="state in ('retired','draft')"
+                            confirm="Are you sure you want to retire this mold? | هل أنت متأكد من تقاعد هذا القالب؟"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,manufacturing,available,in_use,retired"/>
+                </header>
+                <sheet>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_usages" type="object" class="oe_stat_button" icon="fa-history">
+                            <field name="usage_count" widget="statinfo" string="Usages | استخدامات"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Mold Name | اسم القالب"/></h1>
+                        <h3><field name="code" readonly="1"/></h3>
+                    </div>
+                    <group>
+                        <group string="Identification | التعريف">
+                            <field name="category_id"/>
+                            <field name="mold_type"/>
+                            <field name="product_id" options="{'no_create': True}"/>
+                            <field name="output_quantity"/>
+                            <field name="construction_date"/>
+                            <field name="location_id"/>
+                        </group>
+                        <group string="Cost &amp; Lifespan | التكلفة والعمر">
+                            <field name="manufacturing_cost"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amortization_method"/>
+                            <field name="expected_uses"/>
+                            <field name="expected_life_months" invisible="amortization_method != 'time'"/>
+                        </group>
+                    </group>
+                    <group string="Cost Allocation | توزيع التكلفة">
+                        <group>
+                            <field name="cost_per_use" widget="monetary"/>
+                            <field name="cost_per_unit" widget="monetary"/>
+                        </group>
+                        <group>
+                            <field name="cost_consumed" widget="monetary"/>
+                            <field name="cost_remaining" widget="monetary"/>
+                        </group>
+                    </group>
+                    <group string="Usage Statistics | إحصائيات الاستخدام">
+                        <group>
+                            <field name="actual_uses"/>
+                            <field name="remaining_uses"/>
+                            <field name="usage_percent" widget="progressbar"/>
+                        </group>
+                        <group>
+                            <field name="first_use_date"/>
+                            <field name="last_use_date"/>
+                            <field name="retirement_date" invisible="state != 'retired'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Projects &amp; Sectors | المشاريع والقطاعات">
+                            <field name="project_ids" widget="many2many_tags"/>
+                            <separator/>
+                            <field name="sector_ids" readonly="1">
+                                <list>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="project_id"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Usage History | سجل الاستخدام">
+                            <field name="usage_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="usage_date"/>
+                                    <field name="project_id"/>
+                                    <field name="sector_id"/>
+                                    <field name="use_count"/>
+                                    <field name="produced_quantity"/>
+                                    <field name="total_cost" widget="monetary"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Accounting | المحاسبة" groups="account.group_account_user">
+                            <group>
+                                <field name="asset_account_id"/>
+                                <field name="expense_account_id"/>
+                                <field name="analytic_account_id"/>
+                            </group>
+                        </page>
+                        <page string="Description | الوصف">
+                            <field name="description" placeholder="Add description... | أضف وصفاً..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search | البحث -->
+    <record id="view_factory_mold_search" model="ir.ui.view">
+        <field name="name">factory.mold.search</field>
+        <field name="model">factory.mold</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category_id"/>
+                <field name="product_id"/>
+                <filter string="Available | متاح" name="available" domain="[('state','=','available')]"/>
+                <filter string="In Use | تحت الاستخدام" name="in_use" domain="[('state','=','in_use')]"/>
+                <filter string="Maintenance | صيانة" name="maintenance" domain="[('state','=','maintenance')]"/>
+                <filter string="Near End of Life | قارب على الانتهاء" name="near_end"
+                        domain="[('usage_percent','&gt;=', 80)]"/>
+                <separator/>
+                <filter string="Archived | مؤرشف" name="inactive" domain="[('active','=',False)]"/>
+                <group expand="0" string="Group By | تجميع">
+                    <filter string="Category | الفئة" name="g_cat" context="{'group_by': 'category_id'}"/>
+                    <filter string="Type | النوع" name="g_type" context="{'group_by': 'mold_type'}"/>
+                    <filter string="State | الحالة" name="g_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_factory_mold" model="ir.actions.act_window">
+        <field name="name">Molds | القوالب</field>
+        <field name="res_model">factory.mold</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_factory_mold_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add your first mold | أضف قالبك الأول</p>
+            <p>
+                Track molds with their manufacturing cost, lifespan, and amortized cost per produced unit.
+                <br/>
+                تتبع القوالب مع تكلفة التصنيع والعمر الافتراضي والتكلفة الموزعة على كل وحدة منتجة.
+            </p>
+        </field>
+    </record>
+
+</odoo>

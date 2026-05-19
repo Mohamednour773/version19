@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_factory_estimation_list" model="ir.ui.view">
+        <field name="name">factory.estimation.list</field>
+        <field name="model">factory.estimation</field>
+        <field name="arch" type="xml">
+            <list string="Estimations | المقايسات"
+                  decoration-success="state == 'won'"
+                  decoration-info="state == 'approved'"
+                  decoration-warning="state == 'submitted'"
+                  decoration-muted="state in ('lost','cancelled')">
+                <field name="name"/>
+                <field name="title"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="user_id"/>
+                <field name="total_cost" widget="monetary" optional="hide"/>
+                <field name="total_amount" widget="monetary" sum="Total"/>
+                <field name="margin_percent" widget="percentage" optional="show"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'won'"
+                       decoration-info="state == 'approved'"
+                       decoration-warning="state == 'submitted'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_factory_estimation_form" model="ir.ui.view">
+        <field name="name">factory.estimation.form</field>
+        <field name="model">factory.estimation</field>
+        <field name="arch" type="xml">
+            <form string="Project Estimation | مقايسة المشروع">
+                <header>
+                    <button name="action_submit" string="Submit | إرسال"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Approve | اعتماد"
+                            type="object" class="btn-primary"
+                            invisible="state != 'submitted'"
+                            groups="factory_base.group_factory_manager"/>
+                    <button name="action_create_project" string="Convert to Project | تحويل لمشروع"
+                            type="object" class="btn-primary"
+                            invisible="state != 'approved'"
+                            groups="factory_base.group_factory_manager"/>
+                    <button name="action_mark_lost" string="Mark Lost | خاسرة"
+                            type="object"
+                            invisible="state not in ('submitted','approved')"/>
+                    <button name="action_cancel" string="Cancel | إلغاء"
+                            type="object"
+                            invisible="state in ('won','cancelled')"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft | إعادة لمسودة"
+                            type="object"
+                            invisible="state not in ('cancelled','lost')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved,won"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_project" type="object"
+                                class="oe_stat_button" icon="fa-folder-open"
+                                invisible="not project_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">View Project | عرض المشروع</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <h2>
+                            <field name="title" placeholder="Project Title | عنوان المشروع"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="user_id"/>
+                            <field name="date"/>
+                            <field name="validity_date"/>
+                        </group>
+                        <group>
+                            <field name="expected_start_date"/>
+                            <field name="expected_end_date"/>
+                            <field name="delivery_duration_days"/>
+                            <field name="currency_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Cost Lines | بنود التكلفة">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="sector_name"/>
+                                    <field name="cost_category"/>
+                                    <field name="product_id"/>
+                                    <field name="description"/>
+                                    <field name="quantity"/>
+                                    <field name="uom_id"/>
+                                    <field name="unit_cost"/>
+                                    <field name="unit_price"/>
+                                    <field name="subtotal_cost" sum="Total Cost"/>
+                                    <field name="subtotal" sum="Total Price"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Cost Build-up | بناء التكلفة">
+                            <group>
+                                <group string="Subtotals | الفروع">
+                                    <field name="subtotal_materials" widget="monetary"/>
+                                    <field name="subtotal_molds" widget="monetary"/>
+                                    <field name="subtotal_labor" widget="monetary"/>
+                                    <field name="subtotal_installation" widget="monetary"/>
+                                    <field name="total_direct_cost" widget="monetary" class="oe_subtotal_footer_separator"/>
+                                </group>
+                                <group string="Add-ons | الإضافات">
+                                    <field name="overhead_percent"/>
+                                    <field name="subtotal_overheads" widget="monetary"/>
+                                    <field name="contingency_percent"/>
+                                    <field name="contingency_amount" widget="monetary"/>
+                                    <field name="total_cost" widget="monetary" class="oe_subtotal_footer_separator"/>
+                                    <field name="profit_percent"/>
+                                    <field name="profit_amount" widget="monetary"/>
+                                </group>
+                            </group>
+                            <group class="oe_subtotal_footer">
+                                <field name="total_amount" widget="monetary"/>
+                                <field name="margin_amount" widget="monetary"/>
+                                <field name="margin_percent" widget="percentage"/>
+                            </group>
+                        </page>
+                        <page string="Notes | ملاحظات">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_factory_estimation_search" model="ir.ui.view">
+        <field name="name">factory.estimation.search</field>
+        <field name="model">factory.estimation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="title"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <filter string="Draft | مسودة" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Submitted | مرسلة" name="submitted" domain="[('state','=','submitted')]"/>
+                <filter string="Approved | معتمدة" name="approved" domain="[('state','=','approved')]"/>
+                <filter string="Won | فائزة" name="won" domain="[('state','=','won')]"/>
+                <group expand="0" string="Group By | تجميع">
+                    <filter string="Customer | العميل" name="g_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Salesperson | المسؤول" name="g_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="State | الحالة" name="g_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_factory_estimation" model="ir.actions.act_window">
+        <field name="name">Estimations | المقايسات</field>
+        <field name="res_model">factory.estimation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

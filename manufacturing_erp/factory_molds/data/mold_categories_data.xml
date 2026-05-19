@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="mold_cat_panels" model="factory.mold.category">
+            <field name="name">Wall Panels | لوحات الحوائط</field>
+            <field name="code">PANELS</field>
+            <field name="default_expected_uses">50</field>
+        </record>
+
+        <record id="mold_cat_columns" model="factory.mold.category">
+            <field name="name">Columns | الأعمدة</field>
+            <field name="code">COLUMNS</field>
+            <field name="default_expected_uses">30</field>
+        </record>
+
+        <record id="mold_cat_decoration" model="factory.mold.category">
+            <field name="name">Decorative Elements | عناصر زخرفية</field>
+            <field name="code">DECOR</field>
+            <field name="default_expected_uses">100</field>
+        </record>
+
+        <record id="mold_cat_arches" model="factory.mold.category">
+            <field name="name">Arches | الأقواس</field>
+            <field name="code">ARCHES</field>
+            <field name="default_expected_uses">40</field>
+        </record>
+
+        <record id="mold_cat_beams" model="factory.mold.category">
+            <field name="name">Beams | الكمرات</field>
+            <field name="code">BEAMS</field>
+            <field name="default_expected_uses">25</field>
+        </record>
+
+    </data>
+</odoo>

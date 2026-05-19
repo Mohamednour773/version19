@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_factory_estimations"
+              name="Estimations | المقايسات"
+              parent="factory_base.menu_factory_operations"
+              action="action_factory_estimation"
+              sequence="5"/>
+
+</odoo>

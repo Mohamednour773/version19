@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_factory_profit_report,factory.profit.report,model_factory_profitability_report,factory_base.group_factory_manager,1,0,0,0
+access_factory_mold_report,factory.mold.report,model_factory_mold_report,factory_base.group_factory_production_manager,1,0,0,0
+access_factory_waste_report,factory.waste.report,model_factory_waste_report,factory_base.group_factory_production_manager,1,0,0,0

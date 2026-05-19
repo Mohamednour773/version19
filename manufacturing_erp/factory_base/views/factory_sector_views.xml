@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View | قائمة -->
+    <record id="view_factory_sector_list" model="ir.ui.view">
+        <field name="name">factory.sector.list</field>
+        <field name="model">factory.sector</field>
+        <field name="arch" type="xml">
+            <list string="Sectors | القطاعات" decoration-info="state == 'draft'"
+                  decoration-success="state == 'done'"
+                  decoration-warning="state in ('in_production','delivering','installing')"
+                  decoration-muted="state == 'cancelled'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="partner_id" optional="show"/>
+                <field name="product_id" optional="show"/>
+                <field name="planned_quantity" sum="Total Planned"/>
+                <field name="produced_quantity" sum="Total Produced"/>
+                <field name="delivered_quantity" sum="Total Delivered"/>
+                <field name="installed_quantity" sum="Total Installed" optional="hide"/>
+                <field name="uom_id"/>
+                <field name="unit_price" optional="show"/>
+                <field name="total_value" sum="Grand Total" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'done'"
+                       decoration-warning="state in ('in_production','delivering','installing')"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View | استمارة -->
+    <record id="view_factory_sector_form" model="ir.ui.view">
+        <field name="name">factory.sector.form</field>
+        <field name="model">factory.sector</field>
+        <field name="arch" type="xml">
+            <form string="Sector | القطاع">
+                <header>
+                    <button name="action_confirm" string="Confirm | تأكيد"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_start_production" string="Start Production | بدء الإنتاج"
+                            type="object" class="btn-primary"
+                            invisible="state != 'confirmed'"/>
+                    <button name="action_done" string="Mark Done | إنهاء"
+                            type="object" class="btn-primary"
+                            invisible="state not in ('installing','delivering')"/>
+                    <button name="action_cancel" string="Cancel | إلغاء"
+                            type="object"
+                            invisible="state in ('done','cancelled')"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft | إعادة لمسودة"
+                            type="object"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,in_production,delivering,installing,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Sector Name | اسم القطاع"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Identification | التعريف">
+                            <field name="code"/>
+                            <field name="project_id"/>
+                            <field name="partner_id"/>
+                            <field name="product_id"/>
+                            <field name="analytic_account_id"/>
+                        </group>
+                        <group string="Quantities &amp; Pricing | الكميات والتسعير">
+                            <field name="planned_quantity"/>
+                            <field name="uom_id"/>
+                            <field name="unit_price"/>
+                            <field name="total_value" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Progress | التقدم">
+                        <group>
+                            <field name="produced_quantity"/>
+                            <field name="delivered_quantity"/>
+                            <field name="installed_quantity"/>
+                        </group>
+                        <group>
+                            <field name="remaining_to_produce"/>
+                            <field name="remaining_to_deliver"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description | الوصف">
+                            <field name="description" placeholder="Add a description of this sector... | أضف وصفاً لهذا القطاع..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View | البحث -->
+    <record id="view_factory_sector_search" model="ir.ui.view">
+        <field name="name">factory.sector.search</field>
+        <field name="model">factory.sector</field>
+        <field name="arch" type="xml">
+            <search string="Search Sectors | بحث القطاعات">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="project_id"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <filter string="Draft | مسودة" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="In Production | تحت الإنتاج" name="in_prod" domain="[('state','=','in_production')]"/>
+                <filter string="Delivering | جاري التوريد" name="delivering" domain="[('state','=','delivering')]"/>
+                <filter string="Done | منتهي" name="done" domain="[('state','=','done')]"/>
+                <separator/>
+                <filter string="Archived | مؤرشف" name="inactive" domain="[('active','=',False)]"/>
+                <group expand="0" string="Group By | تجميع حسب">
+                    <filter string="Project | المشروع" name="group_project" context="{'group_by': 'project_id'}"/>
+                    <filter string="Customer | العميل" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="State | الحالة" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_factory_sector" model="ir.actions.act_window">
+        <field name="name">Sectors | القطاعات</field>
+        <field name="res_model">factory.sector</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_factory_sector_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first sector | أنشئ قطاعك الأول
+            </p>
+            <p>
+                Sectors are sub-divisions of a project. Each sector can have its own
+                mix design, molds, and production schedule.
+                <br/>
+                القطاعات هي تقسيمات فرعية للمشروع. كل قطاع يمكن أن يكون له خلطته وقوالبه
+                وجدوله الإنتاجي الخاص.
+            </p>
+        </field>
+    </record>
+
+</odoo>

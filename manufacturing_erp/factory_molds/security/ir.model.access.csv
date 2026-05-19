@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_factory_mold_user,factory.mold.user,model_factory_mold,factory_base.group_factory_user,1,1,0,0
+access_factory_mold_prod_mgr,factory.mold.prod.mgr,model_factory_mold,factory_base.group_factory_production_manager,1,1,1,0
+access_factory_mold_mgr,factory.mold.mgr,model_factory_mold,factory_base.group_factory_manager,1,1,1,1
+access_factory_mold_usage_user,factory.mold.usage.user,model_factory_mold_usage,factory_base.group_factory_user,1,1,1,0
+access_factory_mold_usage_mgr,factory.mold.usage.mgr,model_factory_mold_usage,factory_base.group_factory_manager,1,1,1,1
+access_factory_mold_category_user,factory.mold.category.user,model_factory_mold_category,factory_base.group_factory_user,1,0,0,0
+access_factory_mold_category_mgr,factory.mold.category.mgr,model_factory_mold_category,factory_base.group_factory_production_manager,1,1,1,1

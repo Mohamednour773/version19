@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_factory_estim_user,factory.estim.user,model_factory_estimation,factory_base.group_factory_user,1,0,0,0
+access_factory_estim_prod_mgr,factory.estim.prod.mgr,model_factory_estimation,factory_base.group_factory_production_manager,1,1,1,0
+access_factory_estim_mgr,factory.estim.mgr,model_factory_estimation,factory_base.group_factory_manager,1,1,1,1
+access_factory_estim_line_user,factory.estim.line.user,model_factory_estimation_line,factory_base.group_factory_user,1,0,0,0
+access_factory_estim_line_mgr,factory.estim.line.mgr,model_factory_estimation_line,factory_base.group_factory_production_manager,1,1,1,1

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_estimation_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>
+                            <span>Project Estimation | مقايسة المشروع</span>
+                            <span class="float-end" t-field="doc.name"/>
+                        </h2>
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <strong>Customer | العميل:</strong>
+                                <div t-field="doc.partner_id"/>
+                            </div>
+                            <div class="col-3">
+                                <strong>Date | التاريخ:</strong>
+                                <div t-field="doc.date"/>
+                            </div>
+                            <div class="col-3">
+                                <strong>Validity | السريان:</strong>
+                                <div t-field="doc.validity_date"/>
+                            </div>
+                        </div>
+                        <h3 class="mt-3" t-field="doc.title"/>
+
+                        <table class="table table-sm mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Sector | القطاع</th>
+                                    <th>Category | الفئة</th>
+                                    <th>Description | الوصف</th>
+                                    <th class="text-end">Qty | الكمية</th>
+                                    <th>UoM | الوحدة</th>
+                                    <th class="text-end">Unit Price | سعر الوحدة</th>
+                                    <th class="text-end">Subtotal | الإجمالي</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.line_ids" t-as="line">
+                                    <td t-field="line.sector_name"/>
+                                    <td t-field="line.cost_category"/>
+                                    <td>
+                                        <span t-field="line.product_id"/>
+                                        <span t-if="line.description"> - <t t-esc="line.description"/></span>
+                                    </td>
+                                    <td class="text-end" t-field="line.quantity"/>
+                                    <td t-field="line.uom_id"/>
+                                    <td class="text-end" t-field="line.unit_price" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    <td class="text-end" t-field="line.subtotal" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="row mt-3">
+                            <div class="col-6 offset-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Direct Cost | التكلفة المباشرة:</strong></td>
+                                        <td class="text-end" t-field="doc.total_direct_cost" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Overheads | المصاريف العمومية
+                                            (<span t-field="doc.overhead_percent"/>%)
+                                        </td>
+                                        <td class="text-end" t-field="doc.subtotal_overheads" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Contingency | الطوارئ
+                                            (<span t-field="doc.contingency_percent"/>%)
+                                        </td>
+                                        <td class="text-end" t-field="doc.contingency_amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Total Cost | إجمالي التكلفة:</strong></td>
+                                        <td class="text-end" t-field="doc.total_cost" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Profit | الربح
+                                            (<span t-field="doc.profit_percent"/>%)
+                                        </td>
+                                        <td class="text-end" t-field="doc.profit_amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </tr>
+                                    <tr class="table-active">
+                                        <td><strong>Total Price | إجمالي السعر:</strong></td>
+                                        <td class="text-end"><strong t-field="doc.total_amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div t-if="doc.notes" class="mt-4">
+                            <strong>Notes | ملاحظات:</strong>
+                            <p t-field="doc.notes"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

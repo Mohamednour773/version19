@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_project_project_form_factory" model="ir.ui.view">
+        <field name="name">project.project.form.factory</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <notebook name="factory_notebook">
+                    <page string="Factory | المصنع" name="factory_tab">
+                        <group>
+                            <group>
+                                <field name="is_factory_project"/>
+                                <field name="estimation_id" readonly="1"/>
+                            </group>
+                            <group invisible="not is_factory_project">
+                                <field name="total_planned_value" widget="monetary"/>
+                                <field name="total_produced_value" widget="monetary"/>
+                                <field name="total_delivered_value" widget="monetary"/>
+                                <field name="progress_percent" widget="percentage"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </group>
+                        <field name="sector_ids" invisible="not is_factory_project">
+                            <list>
+                                <field name="code"/>
+                                <field name="name"/>
+                                <field name="product_id"/>
+                                <field name="planned_quantity"/>
+                                <field name="produced_quantity"/>
+                                <field name="delivered_quantity"/>
+                                <field name="installed_quantity"/>
+                                <field name="state" widget="badge"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

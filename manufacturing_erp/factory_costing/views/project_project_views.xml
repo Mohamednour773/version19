@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_project_project_form_costing" model="ir.ui.view">
+        <field name="name">project.project.form.costing</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="factory_project.view_project_project_form_factory"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='factory_tab']" position="after">
+                <page string="Profitability | الربحية" name="profitability_tab"
+                      invisible="not is_factory_project">
+                    <group>
+                        <group string="Estimated | المتوقع">
+                            <field name="estimated_revenue" widget="monetary"/>
+                            <field name="estimated_cost" widget="monetary"/>
+                            <field name="estimated_margin" widget="monetary"/>
+                        </group>
+                        <group string="Actual | الفعلي">
+                            <field name="actual_revenue" widget="monetary"/>
+                            <field name="actual_cost_total" widget="monetary"/>
+                            <field name="actual_margin" widget="monetary"/>
+                            <field name="actual_margin_percent" widget="percentage"/>
+                        </group>
+                    </group>
+                    <separator string="Actual Cost Breakdown | تفصيل التكلفة الفعلية"/>
+                    <group>
+                        <group>
+                            <field name="actual_cost_materials" widget="monetary"/>
+                            <field name="actual_cost_molds" widget="monetary"/>
+                            <field name="actual_cost_labor" widget="monetary"/>
+                        </group>
+                        <group>
+                            <field name="actual_cost_installation" widget="monetary"/>
+                            <field name="actual_cost_expenses" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <separator string="Variance | الفرق"/>
+                    <group>
+                        <group>
+                            <field name="cost_variance" widget="monetary"/>
+                            <field name="cost_variance_percent" widget="percentage"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

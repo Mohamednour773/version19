@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="seq_factory_mold" model="ir.sequence">
+            <field name="name">Factory Mold | قالب المصنع</field>
+            <field name="code">factory.mold</field>
+            <field name="prefix">MOLD/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_factory_mold_usage" model="ir.sequence">
+            <field name="name">Mold Usage | استخدام قالب</field>
+            <field name="code">factory.mold.usage</field>
+            <field name="prefix">MUSE/%(year)s/</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

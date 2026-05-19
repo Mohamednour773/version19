@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_factory_molds_root"
+              name="Molds | القوالب"
+              parent="factory_base.menu_factory_root"
+              sequence="20"/>
+
+    <menuitem id="menu_factory_molds"
+              name="Molds | القوالب"
+              parent="menu_factory_molds_root"
+              action="action_factory_mold"
+              sequence="10"/>
+
+    <menuitem id="menu_factory_mold_usages"
+              name="Usage Records | سجلات الاستخدام"
+              parent="menu_factory_molds_root"
+              action="action_factory_mold_usage"
+              sequence="20"/>
+
+    <menuitem id="menu_factory_mold_categories"
+              name="Mold Categories | فئات القوالب"
+              parent="factory_base.menu_factory_configuration"
+              action="action_factory_mold_category"
+              sequence="20"/>
+
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="stage_mold_prep" model="factory.stage">
+            <field name="name">Mold Preparation | تجهيز القالب</field>
+            <field name="code">MOLD_PREP</field>
+            <field name="sequence">10</field>
+            <field name="stage_type">mold_prep</field>
+            <field name="default_duration_hours">1.0</field>
+        </record>
+
+        <record id="stage_casting" model="factory.stage">
+            <field name="name">Casting / Spraying | الصب / الرش</field>
+            <field name="code">CASTING</field>
+            <field name="sequence">20</field>
+            <field name="stage_type">casting</field>
+            <field name="default_duration_hours">2.0</field>
+            <field name="track_waste" eval="True"/>
+        </record>
+
+        <record id="stage_demolding" model="factory.stage">
+            <field name="name">Demolding | الفك</field>
+            <field name="code">DEMOLD</field>
+            <field name="sequence">30</field>
+            <field name="stage_type">demolding</field>
+            <field name="default_duration_hours">0.5</field>
+        </record>
+
+        <record id="stage_curing" model="factory.stage">
+            <field name="name">Curing | المعالجة</field>
+            <field name="code">CURING</field>
+            <field name="sequence">40</field>
+            <field name="stage_type">curing</field>
+            <field name="default_duration_hours">24.0</field>
+        </record>
+
+        <record id="stage_finishing" model="factory.stage">
+            <field name="name">Finishing | التشطيب</field>
+            <field name="code">FINISH</field>
+            <field name="sequence">50</field>
+            <field name="stage_type">finishing</field>
+            <field name="default_duration_hours">3.0</field>
+            <field name="track_waste" eval="True"/>
+            <field name="requires_quality_check" eval="True"/>
+        </record>
+
+        <record id="stage_storage" model="factory.stage">
+            <field name="name">Storage | التخزين</field>
+            <field name="code">STORAGE</field>
+            <field name="sequence">60</field>
+            <field name="stage_type">storage</field>
+            <field name="default_duration_hours">0.5</field>
+        </record>
+
+        <record id="stage_delivery" model="factory.stage">
+            <field name="name">Delivery to Site | التوريد للموقع</field>
+            <field name="code">DELIVERY</field>
+            <field name="sequence">70</field>
+            <field name="stage_type">delivery</field>
+        </record>
+
+        <record id="stage_installation" model="factory.stage">
+            <field name="name">Site Installation | التركيب بالموقع</field>
+            <field name="code">INSTALL</field>
+            <field name="sequence">80</field>
+            <field name="stage_type">installation</field>
+            <field name="requires_quality_check" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

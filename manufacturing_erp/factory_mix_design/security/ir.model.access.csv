@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_factory_mix_user,factory.mix.user,model_factory_mix,factory_base.group_factory_user,1,0,0,0
+access_factory_mix_prod_mgr,factory.mix.prod.mgr,model_factory_mix,factory_base.group_factory_production_manager,1,1,1,0
+access_factory_mix_mgr,factory.mix.mgr,model_factory_mix,factory_base.group_factory_manager,1,1,1,1
+access_factory_mix_line_user,factory.mix.line.user,model_factory_mix_line,factory_base.group_factory_user,1,0,0,0
+access_factory_mix_line_prod_mgr,factory.mix.line.prod.mgr,model_factory_mix_line,factory_base.group_factory_production_manager,1,1,1,1
+access_factory_mix_cons_user,factory.mix.cons.user,model_factory_mix_consumption,factory_base.group_factory_user,1,1,1,0
+access_factory_mix_cons_mgr,factory.mix.cons.mgr,model_factory_mix_consumption,factory_base.group_factory_manager,1,1,1,1
+access_factory_mix_cons_line_user,factory.mix.cons.line.user,model_factory_mix_consumption_line,factory_base.group_factory_user,1,1,1,1

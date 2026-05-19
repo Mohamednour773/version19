@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_factory_mold_usage_list" model="ir.ui.view">
+        <field name="name">factory.mold.usage.list</field>
+        <field name="model">factory.mold.usage</field>
+        <field name="arch" type="xml">
+            <list string="Mold Usage Records | سجلات استخدام القوالب"
+                  decoration-success="state == 'done'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="usage_date"/>
+                <field name="mold_id"/>
+                <field name="project_id"/>
+                <field name="sector_id"/>
+                <field name="use_count" sum="Total Uses"/>
+                <field name="produced_quantity" sum="Total Produced"/>
+                <field name="cost_per_use" widget="monetary"/>
+                <field name="total_cost" sum="Total Cost" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_factory_mold_usage_form" model="ir.ui.view">
+        <field name="name">factory.mold.usage.form</field>
+        <field name="model">factory.mold.usage</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" string="Confirm | تأكيد"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_cancel" string="Cancel | إلغاء"
+                            type="object"
+                            invisible="state == 'cancelled'"/>
+                    <button name="action_reset" string="Reset | إعادة"
+                            type="object"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="mold_id" options="{'no_create': True}"/>
+                            <field name="usage_date"/>
+                            <field name="project_id"/>
+                            <field name="sector_id"/>
+                            <field name="production_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="use_count"/>
+                            <field name="produced_quantity"/>
+                            <field name="cost_per_use" widget="monetary"/>
+                            <field name="total_cost" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="analytic_account_id"/>
+                        </group>
+                    </group>
+                    <separator string="Notes | ملاحظات"/>
+                    <field name="notes"/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_factory_mold_usage" model="ir.actions.act_window">
+        <field name="name">Mold Usages | استخدامات القوالب</field>
+        <field name="res_model">factory.mold.usage</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_factory_load_user,factory.load.user,model_factory_loading_permit,factory_base.group_factory_user,1,1,1,0
+access_factory_load_mgr,factory.load.mgr,model_factory_loading_permit,factory_base.group_factory_manager,1,1,1,1
+access_factory_load_line,factory.load.line,model_factory_loading_permit_line,factory_base.group_factory_user,1,1,1,1
+access_factory_deliv_user,factory.deliv.user,model_factory_delivery_permit,factory_base.group_factory_user,1,1,1,0
+access_factory_deliv_mgr,factory.deliv.mgr,model_factory_delivery_permit,factory_base.group_factory_manager,1,1,1,1
+access_factory_deliv_line,factory.deliv.line,model_factory_delivery_permit_line,factory_base.group_factory_user,1,1,1,1
+access_factory_inst_user,factory.inst.user,model_factory_installation,factory_base.group_factory_user,1,1,1,0
+access_factory_inst_mgr,factory.inst.mgr,model_factory_installation,factory_base.group_factory_manager,1,1,1,1
+access_factory_inst_acc,factory.inst.acc,model_factory_installation_accessory,factory_base.group_factory_user,1,1,1,1
+access_factory_inst_fin,factory.inst.fin,model_factory_installation_finishing,factory_base.group_factory_user,1,1,1,1
+access_factory_site_exp_user,factory.site.exp.user,model_factory_site_expense,factory_base.group_factory_user,1,1,1,0
+access_factory_site_exp_mgr,factory.site.exp.mgr,model_factory_site_expense,factory_base.group_factory_manager,1,1,1,1

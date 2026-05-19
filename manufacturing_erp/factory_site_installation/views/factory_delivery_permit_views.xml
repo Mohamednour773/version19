@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_factory_delivery_permit_list" model="ir.ui.view">
+        <field name="name">factory.delivery.permit.list</field>
+        <field name="model">factory.delivery.permit</field>
+        <field name="arch" type="xml">
+            <list string="Delivery Permits | أذون التوريد"
+                  decoration-success="state == 'confirmed'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="project_id"/>
+                <field name="sector_id"/>
+                <field name="loading_permit_id"/>
+                <field name="total_delivered" sum="Total Delivered"/>
+                <field name="total_damaged" sum="Total Damaged"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_factory_delivery_permit_form" model="ir.ui.view">
+        <field name="name">factory.delivery.permit.form</field>
+        <field name="model">factory.delivery.permit</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_load_from_loading" string="Load from Loading Permit | تحميل من إذن التحميل"
+                            type="object" class="btn-secondary"
+                            invisible="state != 'draft' or not loading_permit_id"/>
+                    <button name="action_confirm" string="Confirm | تأكيد"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_cancel" string="Cancel | إلغاء"
+                            type="object"
+                            invisible="state == 'cancelled'"/>
+                    <button name="action_reset" string="Reset | إعادة"
+                            type="object"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="project_id"/>
+                            <field name="sector_id"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="loading_permit_id" options="{'no_create': True}"/>
+                            <field name="site_receiver"/>
+                            <field name="site_receiver_phone"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Items | البنود">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="uom_id"/>
+                                    <field name="quantity_loaded"/>
+                                    <field name="quantity_delivered"/>
+                                    <field name="quantity_damaged"/>
+                                    <field name="damage_notes"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="total_delivered"/>
+                                <field name="total_damaged"/>
+                            </group>
+                        </page>
+                        <page string="Notes | ملاحظات">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_factory_delivery_permit" model="ir.actions.act_window">
+        <field name="name">Delivery Permits | أذون التوريد</field>
+        <field name="res_model">factory.delivery.permit</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

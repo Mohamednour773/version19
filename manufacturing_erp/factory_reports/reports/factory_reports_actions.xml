@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_estimation" model="ir.actions.report">
+        <field name="name">Estimation | المقايسة</field>
+        <field name="model">factory.estimation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">factory_reports.report_estimation_template</field>
+        <field name="report_file">factory_reports.report_estimation_template</field>
+        <field name="paperformat_id" ref="paperformat_factory_a4"/>
+        <field name="binding_model_id" ref="factory_project.model_factory_estimation"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_delivery_permit" model="ir.actions.report">
+        <field name="name">Delivery Permit | إذن التوريد</field>
+        <field name="model">factory.delivery.permit</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">factory_reports.report_delivery_permit_template</field>
+        <field name="report_file">factory_reports.report_delivery_permit_template</field>
+        <field name="paperformat_id" ref="paperformat_factory_a4"/>
+        <field name="binding_model_id" ref="factory_site_installation.model_factory_delivery_permit"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

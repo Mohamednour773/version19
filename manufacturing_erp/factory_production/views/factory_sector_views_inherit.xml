@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_factory_sector_form_production" model="ir.ui.view">
+        <field name="name">factory.sector.form.production</field>
+        <field name="model">factory.sector</field>
+        <field name="inherit_id" ref="factory_base.view_factory_sector_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_create_production" string="Create Production | إنشاء أمر إنتاج"
+                        type="object" class="btn-secondary"
+                        invisible="state in ('draft','done','cancelled')"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Production Orders | أوامر الإنتاج">
+                    <field name="production_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="date_planned"/>
+                            <field name="quantity_planned"/>
+                            <field name="quantity_produced"/>
+                            <field name="quantity_waste"/>
+                            <field name="current_stage_id"/>
+                            <field name="cost_total" widget="monetary"/>
+                            <field name="currency_id" column_invisible="True"/>
+                            <field name="state" widget="badge"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

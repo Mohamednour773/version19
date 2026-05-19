@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_factory_sector_form_costing" model="ir.ui.view">
+        <field name="name">factory.sector.form.costing</field>
+        <field name="model">factory.sector</field>
+        <field name="inherit_id" ref="factory_base.view_factory_sector_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Costing &amp; Profitability | التكلفة والربحية">
+                    <group>
+                        <group string="Cost Breakdown | تفصيل التكلفة">
+                            <field name="actual_cost_materials" widget="monetary"/>
+                            <field name="actual_cost_molds" widget="monetary"/>
+                            <field name="actual_cost_labor" widget="monetary"/>
+                            <field name="actual_cost_installation" widget="monetary"/>
+                            <field name="actual_cost_total" widget="monetary" class="oe_subtotal_footer_separator"/>
+                            <field name="actual_cost_per_unit" widget="monetary"/>
+                        </group>
+                        <group string="Profitability | الربحية">
+                            <field name="total_value" widget="monetary"/>
+                            <field name="actual_margin" widget="monetary"/>
+                            <field name="actual_margin_percent" widget="percentage"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

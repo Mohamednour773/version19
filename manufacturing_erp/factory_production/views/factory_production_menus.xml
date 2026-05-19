@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_factory_production_root"
+              name="Production | الإنتاج"
+              parent="factory_base.menu_factory_root"
+              sequence="15"/>
+
+    <menuitem id="menu_factory_production"
+              name="Production Orders | أوامر الإنتاج"
+              parent="menu_factory_production_root"
+              action="action_factory_production"
+              sequence="10"/>
+
+    <menuitem id="menu_factory_production_stages"
+              name="Production Stages | مراحل الإنتاج"
+              parent="menu_factory_production_root"
+              action="action_factory_production_stage"
+              sequence="20"/>
+
+</odoo>

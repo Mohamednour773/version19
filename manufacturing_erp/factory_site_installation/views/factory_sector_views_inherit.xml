@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_factory_sector_form_site" model="ir.ui.view">
+        <field name="name">factory.sector.form.site</field>
+        <field name="model">factory.sector</field>
+        <field name="inherit_id" ref="factory_base.view_factory_sector_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Deliveries | التوريدات">
+                    <field name="delivery_permit_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="total_delivered"/>
+                            <field name="total_damaged"/>
+                            <field name="state" widget="badge"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Installations | التركيبات">
+                    <field name="installation_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="quantity_installed"/>
+                            <field name="total_cost" widget="monetary"/>
+                            <field name="currency_id" column_invisible="True"/>
+                            <field name="state" widget="badge"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_factory_sector_form_molds" model="ir.ui.view">
+        <field name="name">factory.sector.form.molds</field>
+        <field name="model">factory.sector</field>
+        <field name="inherit_id" ref="factory_base.view_factory_sector_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside" />
+            <xpath expr="//notebook" position="inside">
+                <page string="Molds | القوالب">
+                    <group>
+                        <field name="mold_count" readonly="1"/>
+                        <field name="total_mold_cost" widget="monetary" readonly="1"/>
+                    </group>
+                    <field name="mold_ids">
+                        <list>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="category_id"/>
+                            <field name="actual_uses"/>
+                            <field name="expected_uses"/>
+                            <field name="cost_per_unit" widget="monetary"/>
+                            <field name="currency_id" column_invisible="True"/>
+                            <field name="state" widget="badge"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

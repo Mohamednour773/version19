@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_factory_sector_user,factory.sector.user,model_factory_sector,group_factory_user,1,1,1,0
+access_factory_sector_manager,factory.sector.manager,model_factory_sector,group_factory_manager,1,1,1,1
+access_factory_stage_user,factory.stage.user,model_factory_stage,group_factory_user,1,0,0,0
+access_factory_stage_manager,factory.stage.manager,model_factory_stage,group_factory_production_manager,1,1,1,1

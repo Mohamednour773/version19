@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_factory_site_root"
+              name="Site &amp; Delivery | الموقع والتوريد"
+              parent="factory_base.menu_factory_root"
+              sequence="40"/>
+
+    <menuitem id="menu_factory_loading_permits"
+              name="Loading Permits | أذون التحميل"
+              parent="menu_factory_site_root"
+              action="action_factory_loading_permit"
+              sequence="10"/>
+
+    <menuitem id="menu_factory_delivery_permits"
+              name="Delivery Permits | أذون التوريد"
+              parent="menu_factory_site_root"
+              action="action_factory_delivery_permit"
+              sequence="20"/>
+
+    <menuitem id="menu_factory_installations"
+              name="Site Installations | تركيبات الموقع"
+              parent="menu_factory_site_root"
+              action="action_factory_installation"
+              sequence="30"/>
+
+    <menuitem id="menu_factory_site_expenses"
+              name="Site Expenses | مصاريف الموقع"
+              parent="menu_factory_site_root"
+              action="action_factory_site_expense"
+              sequence="40"/>
+
+</odoo>

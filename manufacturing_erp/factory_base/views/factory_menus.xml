@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root Menu | القائمة الرئيسية -->
+    <menuitem id="menu_factory_root"
+              name="Factory | المصنع"
+              sequence="40"
+              web_icon="factory_base,static/description/icon.png"
+              groups="group_factory_user"/>
+
+    <!-- Operations | العمليات -->
+    <menuitem id="menu_factory_operations"
+              name="Operations | العمليات"
+              parent="menu_factory_root"
+              sequence="10"/>
+
+    <menuitem id="menu_factory_sectors"
+              name="Sectors | القطاعات"
+              parent="menu_factory_operations"
+              action="action_factory_sector"
+              sequence="10"/>
+
+    <!-- Configuration | الإعدادات -->
+    <menuitem id="menu_factory_configuration"
+              name="Configuration | الإعدادات"
+              parent="menu_factory_root"
+              sequence="90"
+              groups="group_factory_production_manager"/>
+
+    <menuitem id="menu_factory_stages"
+              name="Manufacturing Stages | مراحل التصنيع"
+              parent="menu_factory_configuration"
+              action="action_factory_stage"
+              sequence="10"/>
+
+    <menuitem id="menu_factory_settings"
+              name="Settings | الإعدادات"
+              parent="menu_factory_configuration"
+              action="action_factory_config_settings"
+              sequence="100"
+              groups="group_factory_manager"/>
+
+</odoo>

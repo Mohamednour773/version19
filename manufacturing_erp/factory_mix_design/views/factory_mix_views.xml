@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_factory_mix_list" model="ir.ui.view">
+        <field name="name">factory.mix.list</field>
+        <field name="model">factory.mix</field>
+        <field name="arch" type="xml">
+            <list string="Mix Designs | تصميمات الخلطات"
+                  decoration-success="state == 'approved'"
+                  decoration-muted="state == 'obsolete'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="version"/>
+                <field name="product_id"/>
+                <field name="output_quantity"/>
+                <field name="output_uom_id"/>
+                <field name="strength_class" optional="show"/>
+                <field name="cost_per_unit" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="total_waste_percent" widget="percentage" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'approved'"
+                       decoration-muted="state == 'obsolete'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_factory_mix_form" model="ir.ui.view">
+        <field name="name">factory.mix.form</field>
+        <field name="model">factory.mix</field>
+        <field name="arch" type="xml">
+            <form string="Mix Design | تصميم الخلطة">
+                <header>
+                    <button name="action_approve" string="Approve | اعتماد"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_obsolete" string="Mark Obsolete | تعطيل"
+                            type="object"
+                            invisible="state != 'approved'"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft | إعادة لمسودة"
+                            type="object"
+                            invisible="state != 'obsolete'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_sectors" type="object"
+                                class="oe_stat_button" icon="fa-cubes">
+                            <field name="sector_count" widget="statinfo" string="Sectors | قطاعات"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                        <h3>
+                            <field name="code" readonly="1"/> &#8226;
+                            v<field name="version"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Product &amp; Output | المنتج والإنتاج">
+                            <field name="product_id"/>
+                            <field name="output_quantity"/>
+                            <field name="output_uom_id"/>
+                        </group>
+                        <group string="Characteristics | الخصائص">
+                            <field name="strength_class"/>
+                            <field name="target_weight"/>
+                            <field name="finishing_type"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Materials | الخامات">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="product_id"/>
+                                    <field name="quantity"/>
+                                    <field name="uom_id"/>
+                                    <field name="waste_percent"/>
+                                    <field name="quantity_with_waste"/>
+                                    <field name="unit_cost"/>
+                                    <field name="total_cost" sum="Total"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="notes" optional="hide"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="total_material_cost" widget="monetary"/>
+                                <field name="cost_per_unit" widget="monetary"/>
+                                <field name="total_waste_percent" widget="percentage"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </page>
+                        <page string="Description | الوصف">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_factory_mix_search" model="ir.ui.view">
+        <field name="name">factory.mix.search</field>
+        <field name="model">factory.mix</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="product_id"/>
+                <filter string="Approved | معتمد" name="approved" domain="[('state','=','approved')]"/>
+                <filter string="Draft | مسودة" name="draft" domain="[('state','=','draft')]"/>
+                <group expand="0" string="Group By | تجميع">
+                    <filter string="Product | المنتج" name="g_product" context="{'group_by': 'product_id'}"/>
+                    <filter string="State | الحالة" name="g_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_factory_mix" model="ir.actions.act_window">
+        <field name="name">Mix Designs | تصميمات الخلطات</field>
+        <field name="res_model">factory.mix</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_factory_mix_search"/>
+    </record>
+
+</odoo>

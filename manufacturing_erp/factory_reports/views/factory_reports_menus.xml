@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_factory_reports_root"
+              name="Reports | التقارير"
+              parent="factory_base.menu_factory_root"
+              sequence="80"
+              groups="factory_base.group_factory_production_manager"/>
+
+    <menuitem id="menu_factory_profitability_report"
+              name="Project Profitability | ربحية المشاريع"
+              parent="menu_factory_reports_root"
+              action="action_factory_profitability_report"
+              sequence="10"
+              groups="factory_base.group_factory_manager"/>
+
+    <menuitem id="menu_factory_mold_report"
+              name="Mold Utilization | استخدام القوالب"
+              parent="menu_factory_reports_root"
+              action="action_factory_mold_report"
+              sequence="20"/>
+
+    <menuitem id="menu_factory_waste_report"
+              name="Waste Analysis | تحليل الهالك"
+              parent="menu_factory_reports_root"
+              action="action_factory_waste_report"
+              sequence="30"/>
+
+</odoo>

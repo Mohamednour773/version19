@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_factory_profitability_report_list" model="ir.ui.view">
+        <field name="name">factory.profitability.report.list</field>
+        <field name="model">factory.profitability.report</field>
+        <field name="arch" type="xml">
+            <list string="Project Profitability | ربحية المشاريع"
+                  decoration-success="actual_margin_percent &gt; 15"
+                  decoration-warning="actual_margin_percent &lt;= 15 and actual_margin_percent &gt; 0"
+                  decoration-danger="actual_margin_percent &lt;= 0">
+                <field name="project_id"/>
+                <field name="partner_id"/>
+                <field name="user_id" optional="show"/>
+                <field name="estimated_revenue" widget="monetary" sum="Est. Revenue"/>
+                <field name="actual_revenue" widget="monetary" sum="Actual Revenue"/>
+                <field name="estimated_cost" widget="monetary" sum="Est. Cost" optional="hide"/>
+                <field name="actual_cost_total" widget="monetary" sum="Actual Cost"/>
+                <field name="estimated_margin" widget="monetary" sum="Est. Margin" optional="hide"/>
+                <field name="actual_margin" widget="monetary" sum="Actual Margin"/>
+                <field name="actual_margin_percent" widget="percentage"/>
+                <field name="cost_variance_percent" widget="percentage" optional="show"/>
+                <field name="progress_percent" widget="progressbar"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_factory_profitability_report_pivot" model="ir.ui.view">
+        <field name="name">factory.profitability.report.pivot</field>
+        <field name="model">factory.profitability.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Project Profitability | ربحية المشاريع">
+                <field name="partner_id" type="row"/>
+                <field name="project_id" type="row"/>
+                <field name="actual_revenue" type="measure"/>
+                <field name="actual_cost_total" type="measure"/>
+                <field name="actual_margin" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_factory_profitability_report_graph" model="ir.ui.view">
+        <field name="name">factory.profitability.report.graph</field>
+        <field name="model">factory.profitability.report</field>
+        <field name="arch" type="xml">
+            <graph string="Project Profitability | ربحية المشاريع" type="bar">
+                <field name="project_id"/>
+                <field name="actual_margin" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_factory_profitability_report_search" model="ir.ui.view">
+        <field name="name">factory.profitability.report.search</field>
+        <field name="model">factory.profitability.report</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="project_id"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <filter string="Profitable | مربح" name="profitable" domain="[('actual_margin','&gt;',0)]"/>
+                <filter string="Loss | خسارة" name="loss" domain="[('actual_margin','&lt;=',0)]"/>
+                <filter string="Over Budget | تجاوز الميزانية" name="over_budget" domain="[('cost_variance','&gt;',0)]"/>
+                <group expand="0" string="Group By | تجميع">
+                    <filter string="Customer | العميل" name="g_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Manager | المدير" name="g_user" context="{'group_by': 'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_factory_profitability_report" model="ir.actions.act_window">
+        <field name="name">Project Profitability | ربحية المشاريع</field>
+        <field name="res_model">factory.profitability.report</field>
+        <field name="view_mode">list,pivot,graph</field>
+    </record>
+
+</odoo>

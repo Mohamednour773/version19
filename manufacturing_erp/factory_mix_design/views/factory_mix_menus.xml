@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_factory_mix_root"
+              name="Mix Designs | الخلطات"
+              parent="factory_base.menu_factory_root"
+              sequence="30"/>
+
+    <menuitem id="menu_factory_mix"
+              name="Mix Designs | تصميمات الخلطات"
+              parent="menu_factory_mix_root"
+              action="action_factory_mix"
+              sequence="10"/>
+
+    <menuitem id="menu_factory_mix_consumption"
+              name="Consumption Records | سجلات الاستهلاك"
+              parent="menu_factory_mix_root"
+              action="action_factory_mix_consumption"
+              sequence="20"/>
+
+</odoo>
