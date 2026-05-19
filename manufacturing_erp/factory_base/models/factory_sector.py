@@ -104,7 +104,6 @@ class FactorySector(models.Model):
     product_id = fields.Many2one(
         'product.product',
         string='Product | المنتج',
-        domain=[('type', '=', 'consu')],
         help='The manufactured product for this sector | المنتج المصنع لهذا القطاع',
     )
     analytic_account_id = fields.Many2one(

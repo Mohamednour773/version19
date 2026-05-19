@@ -55,7 +55,7 @@
                         <group>
                             <field name="project_id"/>
                             <field name="sector_id"/>
-                            <field name="production_id"/>
+                            <field name="production_ref"/>
                         </group>
                     </group>
                     <notebook>

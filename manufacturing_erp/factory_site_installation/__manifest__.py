@@ -21,7 +21,6 @@ Site Delivery & Installation
         'factory_base',
         'factory_production',
         'stock',
-        'hr_expense',
     ],
     'data': [
         'security/ir.model.access.csv',

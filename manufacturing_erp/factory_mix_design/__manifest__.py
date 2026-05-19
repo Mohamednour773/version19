@@ -22,7 +22,6 @@ Mix Design Module
     'depends': [
         'factory_base',
         'stock',
-        'mrp',
     ],
     'data': [
         'security/ir.model.access.csv',

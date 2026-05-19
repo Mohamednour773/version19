@@ -1,33 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="res_config_settings_view_form_factory" model="ir.ui.view">
-        <field name="name">res.config.settings.view.form.factory</field>
-        <field name="model">res.config.settings</field>
-        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//form" position="inside">
-                <app data-string="Factory" string="Factory | المصنع" name="factory_base"
-                     groups="factory_base.group_factory_manager">
-                    <block title="Production Settings | إعدادات الإنتاج" name="factory_production_settings">
-                        <setting id="factory_auto_create_analytic">
-                            <field name="factory_auto_create_analytic"/>
-                        </setting>
-                        <setting id="factory_track_waste">
-                            <field name="factory_track_waste"/>
-                        </setting>
-                        <setting id="factory_default_waste_account_id">
-                            <field name="factory_default_waste_account_id"/>
-                        </setting>
-                        <setting id="factory_mold_amortization_method">
-                            <field name="factory_mold_amortization_method"/>
-                        </setting>
-                    </block>
-                </app>
-            </xpath>
-        </field>
-    </record>
-
+    <!-- Settings view simplified - the config fields are still accessible via the standard Settings menu -->
     <record id="action_factory_config_settings" model="ir.actions.act_window">
         <field name="name">Settings | الإعدادات</field>
         <field name="res_model">res.config.settings</field>

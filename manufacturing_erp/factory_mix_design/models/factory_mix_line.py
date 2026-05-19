@@ -23,7 +23,6 @@ class FactoryMixLine(models.Model):
         'product.product',
         string='Material | الخامة',
         required=True,
-        domain="[('type', '!=', 'service')]",
     )
     quantity = fields.Float(
         string='Quantity | الكمية',

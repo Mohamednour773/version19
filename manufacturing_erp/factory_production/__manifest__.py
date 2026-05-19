@@ -25,9 +25,8 @@ Factory Production
         'factory_base',
         'factory_molds',
         'factory_mix_design',
-        'mrp',
         'stock',
-        'hr_timesheet',
+        'hr',
     ],
     'data': [
         'security/ir.model.access.csv',

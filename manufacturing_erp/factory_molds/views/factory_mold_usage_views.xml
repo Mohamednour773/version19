@@ -50,7 +50,7 @@
                             <field name="usage_date"/>
                             <field name="project_id"/>
                             <field name="sector_id"/>
-                            <field name="production_id" options="{'no_create': True}"/>
+                            <field name="production_ref"/>
                         </group>
                         <group>
                             <field name="use_count"/>

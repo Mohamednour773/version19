@@ -148,8 +148,7 @@ class FactoryInstallationAccessory(models.Model):
 
     installation_id = fields.Many2one('factory.installation', required=True, ondelete='cascade')
     product_id = fields.Many2one(
-        'product.product', string='Accessory | الإكسسوار', required=True,
-        domain="[('type','!=','service')]")
+        'product.product', string='Accessory | الإكسسوار', required=True)
     quantity = fields.Float(string='Qty | الكمية', digits='Product Unit of Measure', required=True)
     uom_id = fields.Many2one('uom.uom', string='UoM | الوحدة')
     unit_cost = fields.Monetary(string='Unit Cost | تكلفة الوحدة', currency_field='currency_id')
@@ -183,8 +182,7 @@ class FactoryInstallationFinishing(models.Model):
 
     installation_id = fields.Many2one('factory.installation', required=True, ondelete='cascade')
     product_id = fields.Many2one(
-        'product.product', string='Material | الخامة', required=True,
-        domain="[('type','!=','service')]")
+        'product.product', string='Material | الخامة', required=True)
     quantity = fields.Float(string='Qty | الكمية', digits='Product Unit of Measure', required=True)
     uom_id = fields.Many2one('uom.uom', string='UoM | الوحدة')
     unit_cost = fields.Monetary(string='Unit Cost | تكلفة الوحدة', currency_field='currency_id')

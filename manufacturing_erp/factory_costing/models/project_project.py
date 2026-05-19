@@ -89,22 +89,25 @@ class ProjectProject(models.Model):
     def _compute_actual_revenue(self):
         """Pull confirmed invoice lines tied to this project's analytic account."""
         for rec in self:
-            if not rec.analytic_account_id:
+            # Defensive: project may not always have analytic_account_id depending on installed apps
+            analytic = rec.analytic_account_id if hasattr(rec, 'analytic_account_id') else False
+            if not analytic:
                 rec.actual_revenue = 0.0
                 continue
-            # Use analytic lines on invoices as a proxy for revenue
-            AAL = self.env['account.analytic.line']
-            lines = AAL.search([
-                ('auto_account_id', '=', rec.analytic_account_id.id),
-                ('amount', '>', 0),  # positive amounts on invoices
-            ])
-            # Sum amounts originating from posted invoices
-            total = 0.0
-            for ln in lines:
-                if ln.move_line_id and ln.move_line_id.move_id.state == 'posted':
-                    if ln.move_line_id.move_id.move_type in ('out_invoice', 'out_refund'):
-                        total += ln.amount
-            rec.actual_revenue = total
+            try:
+                AAL = self.env['account.analytic.line']
+                lines = AAL.search([
+                    ('auto_account_id', '=', analytic.id),
+                    ('amount', '>', 0),
+                ])
+                total = 0.0
+                for ln in lines:
+                    if ln.move_line_id and ln.move_line_id.move_id.state == 'posted':
+                        if ln.move_line_id.move_id.move_type in ('out_invoice', 'out_refund'):
+                            total += ln.amount
+                rec.actual_revenue = total
+            except Exception:
+                rec.actual_revenue = 0.0
 
     @api.depends('actual_revenue', 'actual_cost_total', 'estimated_cost')
     def _compute_profitability(self):

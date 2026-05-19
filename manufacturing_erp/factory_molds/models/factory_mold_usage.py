@@ -47,10 +47,9 @@ class FactoryMoldUsage(models.Model):
         string='Sector | القطاع',
         domain="[('project_id', '=', project_id)]",
     )
-    production_id = fields.Many2one(
-        'mrp.production',
-        string='Production Order | أمر الإنتاج',
-        help='Linked manufacturing order if any | أمر الإنتاج المرتبط إن وجد',
+    production_ref = fields.Char(
+        string='Production Reference | مرجع أمر الإنتاج',
+        help='Linked manufacturing order reference if any | مرجع أمر الإنتاج المرتبط',
     )
     
     cost_per_use = fields.Monetary(

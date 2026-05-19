@@ -171,7 +171,7 @@
                                 </list>
                             </field>
                         </page>
-                        <page string="Accounting | المحاسبة" groups="account.group_account_user">
+                        <page string="Accounting | المحاسبة">
                             <group>
                                 <field name="asset_account_id"/>
                                 <field name="expense_account_id"/>

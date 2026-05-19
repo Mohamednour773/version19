@@ -23,7 +23,6 @@ Factory Molds Management
         'factory_base',
         'stock',
         'account',
-        'maintenance',
     ],
     'data': [
         'security/ir.model.access.csv',

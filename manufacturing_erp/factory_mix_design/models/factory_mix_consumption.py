@@ -26,7 +26,7 @@ class FactoryMixConsumption(models.Model):
         string='Sector | القطاع',
         domain="[('project_id','=',project_id)]",
     )
-    production_id = fields.Many2one('mrp.production', string='Production Order | أمر الإنتاج')
+    production_ref = fields.Char(string='Production Order Ref | مرجع أمر الإنتاج')
     
     produced_quantity = fields.Float(
         string='Produced Quantity | الكمية المنتجة',
