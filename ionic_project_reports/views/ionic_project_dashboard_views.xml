@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_ionic_project_dashboard" model="ir.actions.client">
+        <field name="name">Ionic Project Dashboard</field>
+        <field name="tag">ionic_project_dashboard</field>
+    </record>
+
+    <menuitem
+        id="menu_ionic_project_reports_root"
+        name="Ionic Reports"
+        parent="project.menu_main_pm"
+        groups="ionic_project_core.group_ionic_project_user"
+        sequence="8"/>
+
+    <menuitem
+        id="menu_ionic_project_dashboard"
+        name="Dashboard"
+        parent="menu_ionic_project_reports_root"
+        action="action_ionic_project_dashboard"
+        groups="ionic_project_core.group_ionic_project_user"
+        sequence="10"/>
+</odoo>

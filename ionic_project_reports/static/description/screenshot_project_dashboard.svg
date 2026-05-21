@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <rect width="960" height="540" fill="#f6f7fb"/>
+  <text x="52" y="72" font-family="Arial" font-size="30" font-weight="700" fill="#111827">Ionic Project Dashboard</text>
+  <rect x="52" y="112" width="156" height="96" rx="6" fill="#ffffff" stroke="#d7dee8"/>
+  <text x="74" y="148" font-family="Arial" font-size="13" fill="#667085">Active Projects</text>
+  <text x="74" y="186" font-family="Arial" font-size="32" font-weight="700" fill="#0f766e">4</text>
+  <rect x="228" y="112" width="156" height="96" rx="6" fill="#ffffff" stroke="#d7dee8"/>
+  <text x="250" y="148" font-family="Arial" font-size="13" fill="#667085">In Production</text>
+  <text x="250" y="186" font-family="Arial" font-size="32" font-weight="700" fill="#0f766e">9</text>
+  <rect x="404" y="112" width="156" height="96" rx="6" fill="#ffffff" stroke="#d7dee8"/>
+  <text x="426" y="148" font-family="Arial" font-size="13" fill="#667085">Delivered Today</text>
+  <text x="426" y="186" font-family="Arial" font-size="32" font-weight="700" fill="#0f766e">28</text>
+  <rect x="52" y="252" width="856" height="236" rx="6" fill="#ffffff" stroke="#d7dee8"/>
+  <rect x="80" y="292" width="800" height="42" fill="#eef2f7"/>
+  <text x="104" y="319" font-family="Arial" font-size="15" font-weight="700" fill="#374151">Sector</text>
+  <text x="358" y="319" font-family="Arial" font-size="15" font-weight="700" fill="#374151">Planned</text>
+  <text x="522" y="319" font-family="Arial" font-size="15" font-weight="700" fill="#374151">Produced</text>
+  <text x="700" y="319" font-family="Arial" font-size="15" font-weight="700" fill="#374151">Installed</text>
+  <text x="104" y="382" font-family="Arial" font-size="15" fill="#111827">Sector A</text>
+  <text x="358" y="382" font-family="Arial" font-size="15" fill="#111827">320</text>
+  <text x="522" y="382" font-family="Arial" font-size="15" fill="#111827">120</text>
+  <text x="700" y="382" font-family="Arial" font-size="15" fill="#111827">84</text>
+</svg>

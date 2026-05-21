@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_project_profitability" model="ir.actions.report">
+        <field name="name">Project Profitability Statement</field>
+        <field name="model">project.project</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ionic_project_reports.report_project_profitability_document</field>
+        <field name="report_file">ionic_project_reports.report_project_profitability_document</field>
+        <field name="binding_model_id" ref="project.model_project_project"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_material_consumption" model="ir.actions.report">
+        <field name="name">Material Consumption Report</field>
+        <field name="model">project.project</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ionic_project_reports.report_material_consumption_document</field>
+        <field name="report_file">ionic_project_reports.report_material_consumption_document</field>
+        <field name="binding_model_id" ref="project.model_project_project"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_mold_utilization" model="ir.actions.report">
+        <field name="name">Mold Utilization Report</field>
+        <field name="model">ionic.mold</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ionic_project_reports.report_mold_utilization_document</field>
+        <field name="report_file">ionic_project_reports.report_mold_utilization_document</field>
+        <field name="binding_model_id" ref="ionic_project_core.model_ionic_mold"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_project_profitability_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="project">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Project Profitability Statement / قائمة ربحية المشروع</h2>
+                        <h3><span t-field="project.name"/></h3>
+                        <table class="table table-sm mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Sector / القطاع</th>
+                                    <th class="text-end">Revenue / الإيراد</th>
+                                    <th class="text-end">Cost / التكلفة</th>
+                                    <th class="text-end">Margin / الهامش</th>
+                                    <th class="text-end">Margin %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="project.sector_ids" t-as="sector">
+                                    <td><span t-field="sector.name"/></td>
+                                    <td class="text-end"><span t-field="sector.total_revenue"/></td>
+                                    <td class="text-end"><span t-field="sector.total_cost"/></td>
+                                    <td class="text-end"><span t-field="sector.margin"/></td>
+                                    <td class="text-end"><span t-field="sector.margin_percent"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_material_consumption_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="project">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Material Consumption Report / تقرير استهلاك المواد</h2>
+                        <h3><span t-field="project.name"/></h3>
+                        <table class="table table-sm mt-4">
+                            <thead>
+                                <tr>
+                                    <th>MO / أمر التصنيع</th>
+                                    <th>Material / المادة</th>
+                                    <th class="text-end">Quantity / الكمية</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="mos" t-value="env['mrp.production'].sudo().search([('ionic_project_id', '=', project.id), ('state', '=', 'done')])"/>
+                                <tr t-foreach="mos.mapped('move_raw_ids')" t-as="move">
+                                    <td><span t-field="move.raw_material_production_id.name"/></td>
+                                    <td><span t-field="move.product_id"/></td>
+                                    <td class="text-end"><span t-esc="move.quantity or move.product_uom_qty"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_mold_utilization_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="mold">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Mold Utilization Report / تقرير استخدام القوالب</h2>
+                        <h3><span t-field="mold.display_name"/></h3>
+                        <table class="table table-sm mt-4">
+                            <tr><td>Usage / الاستخدام</td><td class="text-end"><span t-field="mold.actual_usage_count"/> / <span t-field="mold.expected_usage_count"/></td></tr>
+                            <tr><td>Remaining Life / العمر المتبقي</td><td class="text-end"><span t-field="mold.remaining_usage"/></td></tr>
+                            <tr><td>Manufacturing Cost / تكلفة التصنيع</td><td class="text-end"><span t-field="mold.manufacturing_cost"/></td></tr>
+                            <tr><td>Recovered Allocation / التكلفة المحملة</td><td class="text-end"><span t-esc="sum(mold.usage_log_ids.mapped('allocated_cost'))"/></td></tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="dashboard_demo_record" model="ionic.project.dashboard">
+        <field name="name">Ionic Project Dashboard</field>
+    </record>
+</odoo>

@@ -1,0 +1,37 @@
+.o_ionic_project_dashboard {
+    padding: 24px;
+}
+
+.o_ionic_kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.o_ionic_kpi {
+    border: 1px solid #d8dee8;
+    border-radius: 6px;
+    padding: 14px;
+    background: #fff;
+}
+
+.o_ionic_kpi span {
+    display: block;
+    color: #667085;
+    font-size: 12px;
+}
+
+.o_ionic_kpi strong {
+    display: block;
+    color: #0f766e;
+    font-size: 26px;
+    margin-top: 8px;
+}
+
+.o_ionic_sector_table {
+    background: #fff;
+    border: 1px solid #d8dee8;
+    border-radius: 6px;
+    padding: 12px;
+}

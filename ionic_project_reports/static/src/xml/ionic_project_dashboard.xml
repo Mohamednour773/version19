@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="ionic_project_reports.ProjectDashboard">
+        <div class="o_ionic_project_dashboard">
+            <div class="o_ionic_kpis">
+                <div class="o_ionic_kpi"><span>Active Projects</span><strong t-esc="state.kpis.active_projects || 0"/></div>
+                <div class="o_ionic_kpi"><span>In Production</span><strong t-esc="state.kpis.in_production_sectors || 0"/></div>
+                <div class="o_ionic_kpi"><span>Delivered Today</span><strong t-esc="state.kpis.delivered_today || 0"/></div>
+                <div class="o_ionic_kpi"><span>Installed Week</span><strong t-esc="state.kpis.installed_this_week || 0"/></div>
+                <div class="o_ionic_kpi"><span>Avg Margin %</span><strong t-esc="(state.kpis.avg_margin_percent || 0).toFixed(1)"/></div>
+            </div>
+            <div class="o_ionic_sector_table">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Sector</th>
+                            <th class="text-end">Planned</th>
+                            <th class="text-end">Produced</th>
+                            <th class="text-end">Delivered</th>
+                            <th class="text-end">Installed</th>
+                            <th class="text-end">Damaged</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="state.sectors" t-as="sector" t-key="sector.id">
+                            <td t-esc="sector.name"/>
+                            <td class="text-end" t-esc="sector.target_qty"/>
+                            <td class="text-end" t-esc="sector.produced_qty"/>
+                            <td class="text-end" t-esc="sector.delivered_qty"/>
+                            <td class="text-end" t-esc="sector.installed_qty"/>
+                            <td class="text-end" t-esc="sector.damaged_qty"/>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </t>
+</templates>
